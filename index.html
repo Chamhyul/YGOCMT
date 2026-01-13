@@ -100,9 +100,9 @@
     input:checked + .slider { background-color: var(--primary-color); }
     input:checked + .slider:before { transform: translateX(18px); }
     
-    /* Region Switch CSS */
+    /* Region Switch CSS - 위치 변경됨 (좌측 버전 정보 옆) */
     .region-switch-wrapper {
-        position: absolute; top: 6px; right: 240px;
+        position: absolute; top: 6px; left: 90px; 
         display: flex; align-items: center; gap: 5px; z-index: 10;
     }
     .region-icon {
@@ -111,7 +111,7 @@
     .custom-header-select {
         background-color: transparent; border: none; border-bottom: 1px solid transparent;
         color: var(--text-muted); font-size: 0.75rem; font-weight: 600; height: 18px; padding: 0; width: auto;
-        cursor: pointer; text-align: right; appearance: none; -webkit-appearance: none;
+        cursor: pointer; text-align: left; appearance: none; -webkit-appearance: none;
         transition: color 0.2s;
     }
     .custom-header-select:hover { color: var(--primary-color); }
@@ -667,7 +667,7 @@
 </head>
 <body>
 
-<div class="version-info">ver. 0.7.13</div>
+<div class="version-info">ver. 0.7.14</div>
 
 <div class="region-switch-wrapper">
     <i class="material-icons region-icon">public</i>
@@ -739,7 +739,7 @@
     <span class="modal-subtitle">카드의 보관 장소를 변경할 수 있습니다.</span>
     <div style="overflow-x: auto;">
       <table class="add-modal-table">
-        <thead><tr><th style="width: 20%;">카드 이름</th><th style="width: 12%;">카드 번호</th><th style="width: 10%;">어나더</th><th style="width: 10%;">레어도</th><th style="width: 13%;">보관 위치</th><th style="width: 18%;">이동 위치</th><th style="width: 8%;">보관 수량</th><th style="width: 9%;">이동 수량</th></tr></thead>
+        <thead><tr><th style="width: 5%;">No</th><th style="width: 18%;">카드 이름</th><th style="width: 11%;">카드 번호</th><th style="width: 10%;">어나더</th><th style="width: 10%;">레어도</th><th style="width: 13%;">보관 위치</th><th style="width: 18%;">이동 위치</th><th style="width: 8%;">보관 수량</th><th style="width: 7%;">이동 수량</th></tr></thead>
         <tbody id="manage-card-tbody"></tbody>
       </table>
     </div>
@@ -815,7 +815,6 @@
     </div>
   </div>
   <div class="modal-footer" style="display:flex; justify-content:flex-end; padding-right:24px; gap:8px;">
-    <button class="btn btn-flat-action" onclick="handleContinueRegistration()">추가 등록</button>
     <button class="btn cyan-theme modal-close">확인</button>
   </div>
 </div>
@@ -830,10 +829,10 @@
 
   let allProcessingTypes = [], allNames = [], allLocations = [], localCardDatabase = [], rarityMap = {}, clientCache = {}, nameDb = {};
   let rarityMappingRaw = []; 
-  let rarityLookup = {}; // New: Lookup Map for optimized search
+  let rarityLookup = {}; 
   let isAppConfigured = false, acInstance = null, isLoading = false, validationTimeout = null, isFabOpen = false;
   let hasRegisteredInSession = false;
-  let isContinuingRegistration = false;
+  // let isContinuingRegistration = false; // [MOD] Removed
   let blurTimer = null;
   let currentRegion = 'ko';
 
@@ -852,11 +851,8 @@
                 }
                 if(el.id === 'manage-card-modal') resetManageModal(); 
                 if(el.id === 'add-result-modal') {
-                      if (isContinuingRegistration) {
-                          isContinuingRegistration = false;
-                      } else {
-                          location.reload();
-                      }
+                      // [MOD] 무조건 새로고침
+                      location.reload();
                 }
             } 
         };
@@ -1384,25 +1380,10 @@
   }
 
   // Manage functions
-  function addManageRows(count = null) { const tbody = document.getElementById('manage-card-tbody'); let increment = count || ((tbody.children.length === 1) ? 4 : 5); for (let i = 0; i < increment; i++) { const row = document.createElement('tr'); row.innerHTML = `<td><span class="card-name-fetch">카드 번호를 입력해주세요.</span></td><td><input type="text" class="manage-card-no" onblur="updateManageDropdowns(this)" placeholder="번호 입력"></td><td><select class="browser-default manage-another flex-select" onchange="updateManageProcessing(this)" disabled><option value="">선택</option></select></td><td><select class="browser-default manage-proc flex-select" onchange="updateManageStorage(this)" disabled><option value="">선택</option></select></td><td><select class="browser-default manage-loc flex-select" onchange="updateManageMoveLoc(this)" disabled><option value="">선택</option></select></td><td><div class="td-flex-container"><select class="browser-default move-loc flex-select" onchange="syncDirectInputManage(this)" disabled><option value="" disabled selected>선택</option></select><input type="text" class="direct-input loc-direct flex-input" placeholder="새 위치"></div></td><td><span class="storage-qty-disp">-</span></td><td><input type="number" class="move-qty" min="1" disabled style="height:2.2rem !important; text-align:center;"></td>`; tbody.appendChild(row); } }
+  // [MOD] addManageRows: No열 처리
+  function addManageRows(count = null) { const tbody = document.getElementById('manage-card-tbody'); let startIdx = tbody.children.length + 1; let increment = count || ((tbody.children.length === 1) ? 4 : 5); for (let i = 0; i < increment; i++) { const row = document.createElement('tr'); row.innerHTML = `<td style="font-weight:600; color:#888;">${startIdx + i}</td><td><span class="card-name-fetch">카드 번호를 입력해주세요.</span></td><td><input type="text" class="manage-card-no" onblur="updateManageDropdowns(this)" placeholder="번호 입력"></td><td><select class="browser-default manage-another flex-select" onchange="updateManageProcessing(this)" disabled><option value="">선택</option></select></td><td><select class="browser-default manage-proc flex-select" onchange="updateManageStorage(this)" disabled><option value="">선택</option></select></td><td><select class="browser-default manage-loc flex-select" onchange="updateManageMoveLoc(this)" disabled><option value="">선택</option></select></td><td><div class="td-flex-container"><select class="browser-default move-loc flex-select" onchange="syncDirectInputManage(this)" disabled><option value="" disabled selected>선택</option></select><input type="text" class="direct-input loc-direct flex-input" placeholder="새 위치"></div></td><td><span class="storage-qty-disp">-</span></td><td><input type="number" class="move-qty" min="1" disabled style="height:2.2rem !important; text-align:center;"></td>`; tbody.appendChild(row); } }
   function updateManageDropdowns(inputEl) { const row = inputEl.closest('tr'); const cardNo = inputEl.value.trim().toUpperCase(); inputEl.value = cardNo; const nameSpan = row.querySelector('.card-name-fetch'); resetManageRow(row, 'another'); if (!cardNo) { nameSpan.innerText = "카드 번호를 입력해주세요."; return; } const matches = localCardDatabase.filter(r => String(r[1]).toUpperCase() === cardNo); if (matches.length > 0) { nameSpan.innerText = matches[0][0]; const anotherSel = row.querySelector('.manage-another'); const anothers = [...new Set(matches.map(r => r[5] || ""))]; if (anothers.length === 1 && anothers[0] === "") { anotherSel.innerHTML = `<option value="" selected>기본</option>`; anotherSel.value = ""; anotherSel.disabled = true; updateManageProcessing(anotherSel); } else { anotherSel.innerHTML = `<option value="__placeholder__" disabled selected>선택</option>` + (anothers.includes("") ? `<option value="">기본</option>` : '') + anothers.filter(a => a !== "").map(a => `<option value="${a}">${a}</option>`).join(''); anotherSel.disabled = false; } } else { nameSpan.innerText = "보유하지 않은 카드"; } }
-  
-  // [NEW] updateManageProcessing: 카드 이동 모달의 레어도 목록에도 현지화 적용
-  function updateManageProcessing(anotherEl) { 
-      const row = anotherEl.closest('tr'); 
-      if (anotherEl.value === "__placeholder__") return; 
-      resetManageRow(row, 'proc'); 
-      const cardNo = row.querySelector('.manage-card-no').value.trim().toUpperCase(); 
-      const another = anotherEl.value; 
-      const matches = localCardDatabase.filter(r => String(r[1]).toUpperCase() === cardNo && String(r[5] || "").trim() === String(another).trim()); 
-      const procSel = row.querySelector('.manage-proc'); 
-      const procs = [...new Set(matches.map(r => r[2]))]; 
-      // getLocalizedRarity 적용
-      procSel.innerHTML = `<option value="" disabled selected>선택</option>` + 
-                          procs.map(p => `<option value="${p}">${getLocalizedRarity(p)}</option>`).join(''); 
-      procSel.disabled = false; 
-  }
-
+  function updateManageProcessing(anotherEl) { const row = anotherEl.closest('tr'); if (anotherEl.value === "__placeholder__") return; resetManageRow(row, 'proc'); const cardNo = row.querySelector('.manage-card-no').value.trim().toUpperCase(); const another = anotherEl.value; const matches = localCardDatabase.filter(r => String(r[1]).toUpperCase() === cardNo && String(r[5] || "").trim() === String(another).trim()); const procSel = row.querySelector('.manage-proc'); const procs = [...new Set(matches.map(r => r[2]))]; procSel.innerHTML = `<option value="" disabled selected>선택</option>` + procs.map(p => `<option value="${p}">${getLocalizedRarity(p)}</option>`).join(''); procSel.disabled = false; }
   function updateManageStorage(procEl) { const row = procEl.closest('tr'); resetManageRow(row, 'storage'); const cardNo = row.querySelector('.manage-card-no').value.trim().toUpperCase(); const another = row.querySelector('.manage-another').value; const proc = procEl.value; const matches = localCardDatabase.filter(r => String(r[1]).toUpperCase() === cardNo && String(r[5] || "").trim() === String(another).trim() && String(r[2]).trim() === String(proc).trim()); const storageSel = row.querySelector('.manage-loc'); const locs = [...new Set(matches.map(r => r[4]))]; storageSel.innerHTML = `<option value="" disabled selected>선택</option>` + locs.map(l => `<option value="${l}">${l}</option>`).join(''); storageSel.disabled = false; }
   function updateManageMoveLoc(locEl) { const row = locEl.closest('tr'); resetManageRow(row, 'move'); const cardNo = row.querySelector('.manage-card-no').value.trim().toUpperCase(); const another = row.querySelector('.manage-another').value; const proc = row.querySelector('.manage-proc').value; const currentLoc = locEl.value; const matches = localCardDatabase.filter(r => String(r[1]).toUpperCase() === cardNo && String(r[5] || "").trim() === String(another).trim() && String(r[2]).trim() === String(proc).trim() && String(r[4]).trim() === String(currentLoc).trim()); const totalQty = matches.reduce((sum, r) => sum + (parseInt(r[3]) || 0), 0); row.querySelector('.storage-qty-disp').innerText = totalQty; const moveSel = row.querySelector('.move-loc'); const availableLocs = allLocations.filter(l => l !== currentLoc); moveSel.innerHTML = `<option value="" disabled selected>선택</option>` + availableLocs.map(l => `<option value="${l}">${l}</option>`).join('') + `<option value="DIRECT">직접 입력</option>`; moveSel.disabled = false; }
   function syncDirectInputManage(sel) { const row = sel.closest('tr'); const input = sel.nextElementSibling; const qtyInput = row.querySelector('.move-qty'); const maxQty = parseInt(row.querySelector('.storage-qty-disp').innerText); if (sel.value === 'DIRECT') { sel.style.flex = "0 0 35%"; input.style.display = 'block'; input.style.flex = "1"; input.disabled = false; input.value = ""; input.focus(); } else { sel.style.flex = "1"; input.style.display = 'none'; input.disabled = true; input.value = sel.value; } qtyInput.disabled = false; qtyInput.max = maxQty; 
@@ -1428,7 +1409,6 @@
 
     for (let i = 0; i < increment; i++) {
       const row = document.createElement('tr');
-      // [NEW] 레어도 선택지 생성 시 getLocalizedRarity 적용
       row.innerHTML = `
         <td style="font-weight:600; color:#888;">${startIdx + i}</td>
         <td><span class="card-name-fetch">카드 번호를 입력해주세요.</span></td>
