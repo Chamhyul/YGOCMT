@@ -709,7 +709,7 @@
 </head>
 <body>
 
-<div class="version-info">ver. 0.7.22</div>
+<div class="version-info">ver. 0.7.23</div>
 <div class="maker-info">Made by <a href="https://www.youtube.com/@참혈" target="_blank"><i class="fab fa-youtube"></i>참혈</a></div>
 
 <div class="header-right-container">
@@ -897,7 +897,7 @@
   document.addEventListener('DOMContentLoaded', function() {
     loadTheme();
     loadRegion();
-    checkClearBtn(); // 초기 로드 시 버튼 상태 체크
+    checkClearBtn(); 
 
     const modals = document.querySelectorAll('.modal');
     modals.forEach(modal => {
@@ -953,7 +953,7 @@
         const val = e.target.value;
         if (!val) showRecentInDropdown();
         else filterAndShowDropdown(val);
-        checkClearBtn(); // [NEW]
+        checkClearBtn(); 
     });
     
     searchInput.addEventListener('keydown', function(e) { 
@@ -1069,7 +1069,7 @@
           li.onclick = (e) => {
               if(e.target !== delBtn) {
                   document.getElementById('card-search').value = r;
-                  checkClearBtn(); // [NEW]
+                  checkClearBtn(); // [NEW] Trigger Check
                   startSearch();
               }
           };
@@ -1124,7 +1124,7 @@
           li.innerHTML = html;
           li.onclick = () => {
               document.getElementById('card-search').value = m;
-              checkClearBtn(); // [NEW]
+              checkClearBtn(); // [NEW] Trigger Check
               startSearch();
           };
           list.appendChild(li);
@@ -1260,6 +1260,19 @@
             }
         });
 
+        // [NEW] Expand allNames (Suggestion Pool)
+        const expandedSet = new Set(allNames); 
+        allNames.forEach(name => {
+            const entry = nameDb[name];
+            if (entry && entry.id) {
+                const siblings = cidLookup[entry.id];
+                if (siblings) {
+                    siblings.forEach(sName => expandedSet.add(sName));
+                }
+            }
+        });
+        allNames = Array.from(expandedSet).sort();
+
         rarityLookup = {};
         rarityMappingRaw.forEach((row, index) => {
             Object.values(row).forEach(val => {
@@ -1273,7 +1286,6 @@
     } catch (e) { showLoading(false); } 
   }
 
-  // [NEW] Modified Search Logic (Multi-Language Support via CID)
   function startSearch() { 
     if (!localStorage.getItem(STORAGE_KEY)) {
         openGuideFromMain();
@@ -1494,7 +1506,7 @@
   }
 
   // Manage functions
-  function addManageRows(count = null) { const tbody = document.getElementById('manage-card-tbody'); let increment = count || ((tbody.children.length === 1) ? 4 : 5); let startIdx = tbody.children.length + 1; for (let i = 0; i < increment; i++) { const row = document.createElement('tr'); row.innerHTML = `<td>${startIdx + i}</td><td><span class="card-name-fetch">카드 번호를 입력해주세요.</span></td><td><input type="text" class="manage-card-no" onblur="updateManageDropdowns(this)" placeholder="번호 입력"></td><td><select class="browser-default manage-another flex-select" onchange="updateManageProcessing(this)" disabled><option value="">선택</option></select></td><td><select class="browser-default manage-proc flex-select" onchange="updateManageStorage(this)" disabled><option value="">선택</option></select></td><td><select class="browser-default manage-loc flex-select" onchange="updateManageMoveLoc(this)" disabled><option value="">선택</option></select></td><td><div class="td-flex-container"><select class="browser-default move-loc flex-select" onchange="syncDirectInputManage(this)" disabled><option value="" disabled selected>선택</option></select><input type="text" class="direct-input loc-direct flex-input" placeholder="새 위치"></div></td><td><span class="storage-qty-disp">-</span></td><td><input type="number" class="move-qty" min="1" disabled style="height:2.2rem !important; text-align:center;"></td>`; tbody.appendChild(row); } }
+  function addManageRows(count = null) { const tbody = document.getElementById('manage-card-tbody'); let increment = count || ((tbody.children.length === 1) ? 4 : 5); for (let i = 0; i < increment; i++) { const row = document.createElement('tr'); row.innerHTML = `<td><span class="card-name-fetch">카드 번호를 입력해주세요.</span></td><td><input type="text" class="manage-card-no" onblur="updateManageDropdowns(this)" placeholder="번호 입력"></td><td><select class="browser-default manage-another flex-select" onchange="updateManageProcessing(this)" disabled><option value="">선택</option></select></td><td><select class="browser-default manage-proc flex-select" onchange="updateManageStorage(this)" disabled><option value="">선택</option></select></td><td><select class="browser-default manage-loc flex-select" onchange="updateManageMoveLoc(this)" disabled><option value="">선택</option></select></td><td><div class="td-flex-container"><select class="browser-default move-loc flex-select" onchange="syncDirectInputManage(this)" disabled><option value="" disabled selected>선택</option></select><input type="text" class="direct-input loc-direct flex-input" placeholder="새 위치"></div></td><td><span class="storage-qty-disp">-</span></td><td><input type="number" class="move-qty" min="1" disabled style="height:2.2rem !important; text-align:center;"></td>`; tbody.appendChild(row); } }
   function updateManageDropdowns(inputEl) { const row = inputEl.closest('tr'); const cardNo = inputEl.value.trim().toUpperCase(); inputEl.value = cardNo; const nameSpan = row.querySelector('.card-name-fetch'); resetManageRow(row, 'another'); if (!cardNo) { nameSpan.innerText = "카드 번호를 입력해주세요."; return; } const matches = localCardDatabase.filter(r => String(r[1]).toUpperCase() === cardNo); if (matches.length > 0) { nameSpan.innerText = matches[0][0]; const anotherSel = row.querySelector('.manage-another'); const anothers = [...new Set(matches.map(r => r[5] || ""))]; if (anothers.length === 1 && anothers[0] === "") { anotherSel.innerHTML = `<option value="" selected>기본</option>`; anotherSel.value = ""; anotherSel.disabled = true; updateManageProcessing(anotherSel); } else { anotherSel.innerHTML = `<option value="__placeholder__" disabled selected>선택</option>` + (anothers.includes("") ? `<option value="">기본</option>` : '') + anothers.filter(a => a !== "").map(a => `<option value="${a}">${a}</option>`).join(''); anotherSel.disabled = false; } } else { nameSpan.innerText = "보유하지 않은 카드"; } }
   
   // [NEW] updateManageProcessing: 카드 이동 모달의 레어도 목록에도 현지화 적용
