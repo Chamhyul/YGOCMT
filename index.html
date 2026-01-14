@@ -62,7 +62,7 @@
     .maker-info a { color: var(--text-muted); text-decoration: none; display: flex; align-items: center; gap: 3px; transition: color 0.2s; }
     .maker-info a:hover { color: var(--error-red); }
 
-    /* 상단 헤더 우측 컨테이너 */
+    /* 상단 헤더 우측 컨테이너 (Flexbox) */
     .header-right-container {
         position: absolute; top: 6px; right: 12px;
         display: flex; align-items: center; 
@@ -70,7 +70,7 @@
         z-index: 10;
     }
 
-    /* 사용법 버튼 수정: 아이콘 크기 확대 및 위치 보정 */
+    /* 사용법 버튼 */
     .help-trigger-btn {
         font-size: 0.75rem;
         font-weight: 600;
@@ -83,10 +83,9 @@
         line-height: 1 !important;
     }
     
-    /* 아이콘 개별 보정 */
     .help-trigger-btn i {
-        font-size: 1.1rem; /* 아이콘 크기 확대 */
-        transform: translateY(-1px); /* 시각적 중앙 정렬을 위해 살짝 위로 이동 */
+        font-size: 1.1rem; 
+        transform: translateY(-1px); 
     }
 
     .help-trigger-btn:hover { color: var(--error-red); }
@@ -230,17 +229,10 @@
         flex-shrink: 0; 
     }
 
-    .btn.grey {
-        border-radius: 50% !important;
-        width: 45px !important;
-        height: 45px !important;
-        padding: 0 !important;
-        display: flex; align-items: center; justify-content: center;
-        flex-shrink: 0;
-    }
-
+    /* 검색바 텍스트 좌측 정렬 */
     input#card-search { 
-        text-align: center !important; font-size: 1.1rem; 
+        text-align: left !important; /* Center -> Left 변경 */
+        font-size: 1.1rem; 
         padding-left: 20px !important; 
         padding-right: 40px !important; 
         box-sizing: border-box; 
@@ -255,7 +247,20 @@
     
     body.dark-mode ::placeholder { color: #757575 !important; }
     
-    .clear-search-btn { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-muted); display: none; z-index: 5; }
+    /* 내용 지우기 버튼 (눈에 덜 띄게 수정) */
+    .clear-search-btn { 
+        position: absolute; right: 15px; top: 50%; transform: translateY(-50%); 
+        cursor: pointer; 
+        color: rgba(0,0,0,0.25); /* 기본 상태 흐리게 */
+        display: none; 
+        z-index: 5; 
+        transition: color 0.2s;
+    }
+    .clear-search-btn:hover { color: rgba(0,0,0,0.6); } /* 호버 시 진하게 */
+    
+    body.dark-mode .clear-search-btn { color: rgba(255,255,255,0.25); }
+    body.dark-mode .clear-search-btn:hover { color: rgba(255,255,255,0.7); }
+
     .btn.cyan-theme { background-color: var(--primary-color) !important; font-weight: 600; color: #fff; }
     
     @media only screen and (max-width: 600px) { 
@@ -708,7 +713,7 @@
 </head>
 <body>
 
-<div class="version-info">ver. 0.7.19</div>
+<div class="version-info">ver. 0.7.20</div>
 <div class="maker-info">Made by <a href="https://www.youtube.com/@참혈" target="_blank"><i class="fab fa-youtube"></i>참혈</a></div>
 
 <div class="header-right-container">
@@ -895,6 +900,7 @@
   document.addEventListener('DOMContentLoaded', function() {
     loadTheme();
     loadRegion();
+    updateClearBtnState(); // 초기 상태 반영
 
     const modals = document.querySelectorAll('.modal');
     modals.forEach(modal => {
@@ -950,7 +956,8 @@
         const val = e.target.value;
         if (!val) showRecentInDropdown();
         else filterAndShowDropdown(val);
-        document.getElementById('clear-btn').style.display = val ? 'block' : 'none';
+        
+        updateClearBtnState();
     });
     
     searchInput.addEventListener('keydown', function(e) { 
@@ -986,6 +993,13 @@
     
     updateDisconnectBtn(); refreshInitialData();
   });
+
+  // [NEW] Clear Button State Updater
+  function updateClearBtnState() {
+      const val = document.getElementById('card-search').value;
+      const btn = document.getElementById('clear-btn');
+      btn.style.display = val ? 'block' : 'none';
+  }
 
   function openSettingsWithGuide() {
       M.Modal.getInstance(document.getElementById('settings-modal')).open();
