@@ -56,7 +56,7 @@
     body, input, button, table, .btn, .modal-content, select { font-family: 'Pretendard', sans-serif !important; }
     body { background-color: var(--bg-body); color: var(--text-primary); transition: background-color 0.3s, color 0.3s; }
     
-    /* 상단 헤더 배치 수정 */
+    /* 상단 헤더 배치 */
     .version-info { position: absolute; top: 8px; left: 12px; font-size: 0.75rem; color: var(--text-muted); font-weight: 600; z-index: 10; }
     .maker-info { position: absolute; top: 8px; left: 80px; font-size: 0.75rem; color: var(--text-muted); font-weight: 600; z-index: 10; display: flex; align-items: center; gap: 4px; }
     .maker-info a { color: var(--text-muted); text-decoration: none; display: flex; align-items: center; gap: 3px; transition: color 0.2s; }
@@ -100,24 +100,26 @@
     input:checked + .slider { background-color: var(--primary-color); }
     input:checked + .slider:before { transform: translateX(18px); }
     
-    /* Region Switch CSS (Capsule Style) */
+    /* Region Switch CSS (Dynamic Width Capsule) */
     .region-switch-wrapper {
-        position: absolute; top: 4px; right: 130px;
+        position: absolute; top: 4px; right: 130px; /* 우측 기준 고정 */
         display: flex; align-items: center; gap: 4px; z-index: 10;
         background-color: var(--bg-surface);
         border: 1px solid var(--border-color);
         padding: 2px 8px;
         border-radius: 20px;
         box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        transition: width 0.2s ease; /* 부드러운 너비 변경 */
     }
     .region-icon {
-        color: var(--text-muted); font-size: 0.9rem;
+        color: var(--text-muted); font-size: 0.9rem; flex-shrink: 0;
     }
     .custom-header-select {
         background-color: transparent; border: none; border-bottom: 1px solid transparent;
-        color: var(--text-primary); font-size: 0.75rem; font-weight: 700; height: 18px; padding: 0; width: auto;
+        color: var(--text-primary); font-size: 0.75rem; font-weight: 700; height: 18px; padding: 0; 
         cursor: pointer; text-align: right; appearance: none; -webkit-appearance: none;
         transition: color 0.2s;
+        /* Width는 JS로 제어 */
     }
     .custom-header-select:hover { color: var(--primary-color); }
     .custom-header-select:focus { outline: none; }
@@ -177,20 +179,20 @@
         display: flex; align-items: center; gap: 4px;
         transition: color 0.2s;
         width: 100%;
-        max-width: 700px; /* 검색바와 동일한 폭 */
-        margin: 0 auto 5px auto; /* 중앙 정렬 */
+        max-width: 700px; 
+        margin: 0 auto 5px auto; 
         justify-content: flex-start;
     }
     .help-trigger-btn:hover { color: var(--primary-color); }
 
     .search-row { 
         display: flex; align-items: center; justify-content: center; 
-        width: 100%; max-width: 700px; /* 너비 확장 */
+        width: 100%; max-width: 700px; 
         gap: 8px; 
     }
     
     .search-input-wrapper { 
-        flex: 1; /* 남은 공간 모두 차지 */
+        flex: 1; 
         position: relative; 
         background: var(--bg-surface);
         border: 1px solid var(--border-color);
@@ -214,6 +216,15 @@
         padding: 0;
         display: flex; align-items: center; justify-content: center;
         flex-shrink: 0; 
+    }
+
+    .btn.grey {
+        border-radius: 50% !important;
+        width: 45px !important;
+        height: 45px !important;
+        padding: 0 !important;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
     }
 
     input#card-search { 
@@ -686,7 +697,7 @@
 </head>
 <body>
 
-<div class="version-info">ver. 0.7.14</div>
+<div class="version-info">ver. 0.7.15</div>
 <div class="maker-info">Made by <a href="https://www.youtube.com/@참혈" target="_blank"><i class="fab fa-youtube"></i>참혈</a></div>
 
 <div class="region-switch-wrapper">
@@ -1141,12 +1152,38 @@
         currentRegion = savedRegion;
         document.getElementById('region-select').value = savedRegion;
     }
+    adjustRegionWidth(); // 로드 시 초기 너비 설정
   }
 
   function changeRegion() {
     const val = document.getElementById('region-select').value;
     currentRegion = val;
     localStorage.setItem(REGION_KEY, val);
+    adjustRegionWidth(); // 변경 시 너비 조절
+  }
+
+  // [NEW] Region Button Width Adjuster
+  function adjustRegionWidth() {
+      const select = document.getElementById('region-select');
+      const tempSpan = document.createElement('span');
+      
+      // Select와 동일한 폰트 스타일 적용
+      tempSpan.style.visibility = 'hidden';
+      tempSpan.style.position = 'absolute';
+      tempSpan.style.fontSize = window.getComputedStyle(select).fontSize;
+      tempSpan.style.fontWeight = window.getComputedStyle(select).fontWeight;
+      tempSpan.style.fontFamily = window.getComputedStyle(select).fontFamily;
+      
+      // 현재 선택된 텍스트
+      const selectedOption = select.options[select.selectedIndex];
+      tempSpan.innerText = selectedOption.text;
+      
+      document.body.appendChild(tempSpan);
+      const width = tempSpan.getBoundingClientRect().width;
+      document.body.removeChild(tempSpan);
+      
+      // 계산된 너비 + 여유분 적용
+      select.style.width = (width + 4) + 'px'; 
   }
 
   function updateFabState(fabElem) { if (isFabOpen) fabElem.classList.add('fab-open'); else fabElem.classList.remove('fab-open'); }
@@ -1397,30 +1434,11 @@
   function toggleAnother(rowId) {
   }
 
-  function addManageRows(count = null) { 
-      const tbody = document.getElementById('manage-card-tbody'); 
-      let increment = count || ((tbody.children.length === 1) ? 4 : 5); 
-      let startIdx = tbody.children.length + 1;
-
-      for (let i = 0; i < increment; i++) { 
-          const row = document.createElement('tr'); 
-          row.innerHTML = `
-            <td style="font-weight:600; color:#888;">${startIdx + i}</td>
-            <td><span class="card-name-fetch">카드 번호를 입력해주세요.</span></td>
-            <td><input type="text" class="manage-card-no" onblur="updateManageDropdowns(this)" placeholder="번호 입력"></td>
-            <td><select class="browser-default manage-another flex-select" onchange="updateManageProcessing(this)" disabled><option value="">선택</option></select></td>
-            <td><select class="browser-default manage-proc flex-select" onchange="updateManageStorage(this)" disabled><option value="">선택</option></select></td>
-            <td><select class="browser-default manage-loc flex-select" onchange="updateManageMoveLoc(this)" disabled><option value="">선택</option></select></td>
-            <td><div class="td-flex-container"><select class="browser-default move-loc flex-select" onchange="syncDirectInputManage(this)" disabled><option value="" disabled selected>선택</option></select><input type="text" class="direct-input loc-direct flex-input" placeholder="새 위치"></div></td>
-            <td><span class="storage-qty-disp">-</span></td>
-            <td><input type="number" class="move-qty" min="1" disabled style="height:2.2rem !important; text-align:center;"></td>
-          `; 
-          tbody.appendChild(row); 
-      } 
-  }
-
+  // Manage functions
+  function addManageRows(count = null) { const tbody = document.getElementById('manage-card-tbody'); let increment = count || ((tbody.children.length === 1) ? 4 : 5); for (let i = 0; i < increment; i++) { const row = document.createElement('tr'); row.innerHTML = `<td><span class="card-name-fetch">카드 번호를 입력해주세요.</span></td><td><input type="text" class="manage-card-no" onblur="updateManageDropdowns(this)" placeholder="번호 입력"></td><td><select class="browser-default manage-another flex-select" onchange="updateManageProcessing(this)" disabled><option value="">선택</option></select></td><td><select class="browser-default manage-proc flex-select" onchange="updateManageStorage(this)" disabled><option value="">선택</option></select></td><td><select class="browser-default manage-loc flex-select" onchange="updateManageMoveLoc(this)" disabled><option value="">선택</option></select></td><td><div class="td-flex-container"><select class="browser-default move-loc flex-select" onchange="syncDirectInputManage(this)" disabled><option value="" disabled selected>선택</option></select><input type="text" class="direct-input loc-direct flex-input" placeholder="새 위치"></div></td><td><span class="storage-qty-disp">-</span></td><td><input type="number" class="move-qty" min="1" disabled style="height:2.2rem !important; text-align:center;"></td>`; tbody.appendChild(row); } }
   function updateManageDropdowns(inputEl) { const row = inputEl.closest('tr'); const cardNo = inputEl.value.trim().toUpperCase(); inputEl.value = cardNo; const nameSpan = row.querySelector('.card-name-fetch'); resetManageRow(row, 'another'); if (!cardNo) { nameSpan.innerText = "카드 번호를 입력해주세요."; return; } const matches = localCardDatabase.filter(r => String(r[1]).toUpperCase() === cardNo); if (matches.length > 0) { nameSpan.innerText = matches[0][0]; const anotherSel = row.querySelector('.manage-another'); const anothers = [...new Set(matches.map(r => r[5] || ""))]; if (anothers.length === 1 && anothers[0] === "") { anotherSel.innerHTML = `<option value="" selected>기본</option>`; anotherSel.value = ""; anotherSel.disabled = true; updateManageProcessing(anotherSel); } else { anotherSel.innerHTML = `<option value="__placeholder__" disabled selected>선택</option>` + (anothers.includes("") ? `<option value="">기본</option>` : '') + anothers.filter(a => a !== "").map(a => `<option value="${a}">${a}</option>`).join(''); anotherSel.disabled = false; } } else { nameSpan.innerText = "보유하지 않은 카드"; } }
   
+  // [NEW] updateManageProcessing: 카드 이동 모달의 레어도 목록에도 현지화 적용
   function updateManageProcessing(anotherEl) { 
       const row = anotherEl.closest('tr'); 
       if (anotherEl.value === "__placeholder__") return; 
@@ -1430,6 +1448,7 @@
       const matches = localCardDatabase.filter(r => String(r[1]).toUpperCase() === cardNo && String(r[5] || "").trim() === String(another).trim()); 
       const procSel = row.querySelector('.manage-proc'); 
       const procs = [...new Set(matches.map(r => r[2]))]; 
+      // getLocalizedRarity 적용
       procSel.innerHTML = `<option value="" disabled selected>선택</option>` + 
                           procs.map(p => `<option value="${p}">${getLocalizedRarity(p)}</option>`).join(''); 
       procSel.disabled = false; 
@@ -1460,6 +1479,7 @@
 
     for (let i = 0; i < increment; i++) {
       const row = document.createElement('tr');
+      // [NEW] 레어도 선택지 생성 시 getLocalizedRarity 적용
       row.innerHTML = `
         <td style="font-weight:600; color:#888;">${startIdx + i}</td>
         <td><span class="card-name-fetch">카드 번호를 입력해주세요.</span></td>
@@ -1673,6 +1693,7 @@
     anotherSel.innerHTML = optionsHtml;
 
     if (!data.isFallback && data.rarities && data.rarities.length > 0) {
+        // [NEW] 레어도 선택지 생성 시 getLocalizedRarity 적용
         procSel.innerHTML = `<option value="" disabled selected>보유 레어도 선택</option>` + 
                             data.rarities.map(r => `<option value="${r}">${getLocalizedRarity(r)}</option>`).join('');
     }
