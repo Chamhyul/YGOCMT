@@ -62,7 +62,7 @@
     .maker-info a { color: var(--text-muted); text-decoration: none; display: flex; align-items: center; gap: 3px; transition: color 0.2s; }
     .maker-info a:hover { color: var(--error-red); }
 
-    /* 상단 헤더 우측 컨테이너 (Flexbox) */
+    /* 상단 헤더 우측 컨테이너 */
     .header-right-container {
         position: absolute; top: 6px; right: 12px;
         display: flex; align-items: center; 
@@ -70,7 +70,7 @@
         z-index: 10;
     }
 
-    /* 사용법 버튼 (높이 및 정렬 조정) */
+    /* 사용법 버튼 수정: 아이콘 크기 확대 및 위치 보정 */
     .help-trigger-btn {
         font-size: 0.75rem;
         font-weight: 600;
@@ -79,20 +79,25 @@
         display: flex; align-items: center; gap: 4px;
         transition: color 0.2s;
         margin-right: 5px;
-        
-        /* 다크모드 스위치와 높이 통일 */
         height: 18px !important; 
         line-height: 1 !important;
     }
+    
+    /* 아이콘 개별 보정 */
+    .help-trigger-btn i {
+        font-size: 1.1rem; /* 아이콘 크기 확대 */
+        transform: translateY(-1px); /* 시각적 중앙 정렬을 위해 살짝 위로 이동 */
+    }
+
     .help-trigger-btn:hover { color: var(--error-red); }
 
     .theme-switch-wrapper { 
         display: flex; align-items: center; gap: 8px; 
-        height: 18px !important; /* 높이 명시 */
+        height: 18px !important; 
     }
     #theme-label { 
         font-size: 0.75rem; color: var(--text-muted); font-weight: 600; 
-        line-height: 1 !important; /* 수직 정렬 보정 */
+        line-height: 1 !important; 
     }
     
     .theme-switch { 
@@ -134,7 +139,7 @@
         border-radius: 20px;
         box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         transition: width 0.2s ease;
-        height: 24px; box-sizing: border-box; /* 높이 매칭 */
+        height: 24px; box-sizing: border-box;
     }
     .region-icon {
         color: var(--text-muted); font-size: 0.9rem; flex-shrink: 0;
@@ -703,7 +708,7 @@
 </head>
 <body>
 
-<div class="version-info">ver. 0.7.18</div>
+<div class="version-info">ver. 0.7.19</div>
 <div class="maker-info">Made by <a href="https://www.youtube.com/@참혈" target="_blank"><i class="fab fa-youtube"></i>참혈</a></div>
 
 <div class="header-right-container">
