@@ -709,7 +709,7 @@
 </head>
 <body>
 
-<div class="version-info">ver. 0.7.27</div>
+<div class="version-info">ver. 0.7.28</div>
 <div class="maker-info">Made by <a href="https://www.youtube.com/@참혈" target="_blank"><i class="fab fa-youtube"></i>참혈</a></div>
 
 <div class="header-right-container">
@@ -958,22 +958,62 @@
         checkClearBtn(); 
     });
     
+    // [NEW] Event Delegation for Dropdown (Solves Click Issues)
+    const dropdown = document.getElementById('custom-dropdown');
+    dropdown.addEventListener('mousedown', function(e) {
+        e.preventDefault(); // Stop blur from happening
+
+        const target = e.target;
+
+        // 1. Clear All
+        if (target.classList.contains('clear-all-btn')) {
+            clearAllHistory();
+            return;
+        }
+
+        // 2. Delete Single Item
+        if (target.classList.contains('item-delete-btn')) {
+            const li = target.closest('li');
+            if (li && li.dataset.val) {
+                deleteRecentItem(li.dataset.val);
+            }
+            return;
+        }
+
+        // 3. Select Suggestion or Recent Item
+        const li = target.closest('li');
+        if (li && !li.classList.contains('recent-header-item') && !li.classList.contains('no-result-item')) {
+            const val = li.dataset.val;
+            if (val) {
+                document.getElementById('card-search').value = val;
+                checkClearBtn();
+                startSearch();
+            }
+        }
+    });
+
+    // Keydown Logic (Updated to use data-val)
     searchInput.addEventListener('keydown', function(e) { 
         let list = document.getElementById('custom-dropdown');
         if (list.style.display === 'none') return;
         
         let items = list.querySelectorAll('li:not(.recent-header-item):not(.no-result-item)');
         
-        if (e.keyCode == 40) { // Arrow Down
+        if (e.keyCode == 40) { // Down
             currentFocus++;
             addActive(items);
-        } else if (e.keyCode == 38) { // Arrow Up
+        } else if (e.keyCode == 38) { // Up
             currentFocus--;
             addActive(items);
         } else if (e.keyCode == 13) { // Enter
             e.preventDefault();
-            if (currentFocus > -1 && items) {
-                if (items[currentFocus]) items[currentFocus].onmousedown();
+            if (currentFocus > -1 && items && items[currentFocus]) {
+                const val = items[currentFocus].dataset.val;
+                if (val) {
+                    document.getElementById('card-search').value = val;
+                    checkClearBtn();
+                    startSearch();
+                }
             } else {
                 this.blur();
                 startSearch();
@@ -1068,17 +1108,17 @@
       
       const headerLi = document.createElement('li');
       headerLi.className = 'recent-header-item';
-      // [NEW] Use onmousedown + preventDefault for Clear All
+      // No inline handler needed, event delegation handles class 'clear-all-btn'
       headerLi.innerHTML = `
         <span class="recent-title">최근 검색</span>
-        <span class="clear-all-btn" onmousedown="event.preventDefault(); clearAllHistory()">전체 제거</span>
+        <span class="clear-all-btn">전체 제거</span>
       `;
       list.appendChild(headerLi);
 
       recent.slice(0, 5).forEach(r => {
           const li = document.createElement('li');
           li.className = 'recent-item-row';
-          li.dataset.val = r; 
+          li.dataset.val = r; // Important for delegation
           
           const textSpan = document.createElement('span');
           textSpan.className = 'recent-text text-suggest';
@@ -1087,19 +1127,10 @@
           const delBtn = document.createElement('i');
           delBtn.className = 'material-icons item-delete-btn';
           delBtn.innerText = 'close';
-          delBtn.onmousedown = (e) => { e.preventDefault(); e.stopPropagation(); deleteRecentItem(r); };
+          // No inline handler needed
           
           li.appendChild(textSpan);
           li.appendChild(delBtn);
-          
-          // [NEW] Use onmousedown + preventDefault for Item Click
-          li.onmousedown = (e) => {
-              if (e) e.preventDefault(); 
-              if(e && e.target === delBtn) return;
-              document.getElementById('card-search').value = r;
-              checkClearBtn(); 
-              startSearch();
-          };
           
           list.appendChild(li);
       });
@@ -1149,7 +1180,7 @@
       matches.slice(0, 10).forEach(m => {
           const li = document.createElement('li');
           li.className = 'text-suggest'; 
-          li.dataset.val = m;
+          li.dataset.val = m; // Important for delegation
           
           let html = "";
           let searchIdx = 0;
@@ -1166,14 +1197,7 @@
           }
           
           li.innerHTML = html;
-
-          // [NEW] Use onmousedown + preventDefault for Suggestion Click
-          li.onmousedown = (e) => {
-              if (e) e.preventDefault();
-              document.getElementById('card-search').value = m;
-              checkClearBtn(); 
-              startSearch();
-          };
+          // No inline handler needed
           list.appendChild(li);
       });
       list.style.display = 'block';
@@ -1189,7 +1213,8 @@
 
   function clearAllHistory() {
       localStorage.removeItem(RECENT_KEY);
-      showRecentInDropdown(); // [NEW] Instant Refresh
+      showRecentInDropdown(); 
+      document.getElementById('card-search').focus(); // Ensure focus remains
   }
 
   function updateDisconnectBtn() { const btn = document.getElementById('disconnect-btn'); if (localStorage.getItem(STORAGE_KEY)) btn.classList.remove('disabled'); else btn.classList.add('disabled'); }
