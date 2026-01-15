@@ -709,7 +709,7 @@
 </head>
 <body>
 
-<div class="version-info">ver. 0.7.26</div>
+<div class="version-info">ver. 0.7.27</div>
 <div class="maker-info">Made by <a href="https://www.youtube.com/@참혈" target="_blank"><i class="fab fa-youtube"></i>참혈</a></div>
 
 <div class="header-right-container">
@@ -894,7 +894,6 @@
   let blurTimer = null;
   let currentRegion = 'ko';
 
-  // [NEW] Global variable for keyboard navigation
   let currentFocus = -1;
 
   document.addEventListener('DOMContentLoaded', function() {
@@ -959,12 +958,10 @@
         checkClearBtn(); 
     });
     
-    // [NEW] Keydown Event Listener for Navigation
     searchInput.addEventListener('keydown', function(e) { 
         let list = document.getElementById('custom-dropdown');
         if (list.style.display === 'none') return;
         
-        // Select only suggestion items (exclude headers and no-result items)
         let items = list.querySelectorAll('li:not(.recent-header-item):not(.no-result-item)');
         
         if (e.keyCode == 40) { // Arrow Down
@@ -976,29 +973,23 @@
         } else if (e.keyCode == 13) { // Enter
             e.preventDefault();
             if (currentFocus > -1 && items) {
-                // Simulate click on active item
                 if (items[currentFocus]) items[currentFocus].onmousedown();
             } else {
-                // No item selected, perform normal search
                 this.blur();
                 startSearch();
             }
         }
     });
 
-    // [NEW] Helper function to add active class
     function addActive(items) {
         if (!items) return false;
         removeActive(items);
         if (currentFocus >= items.length) currentFocus = 0;
         if (currentFocus < 0) currentFocus = items.length - 1;
         items[currentFocus].classList.add("active");
-        
-        // Optional: Scroll to view
         items[currentFocus].scrollIntoView({ block: 'nearest', inline: 'start' });
     }
 
-    // [NEW] Helper function to remove active class
     function removeActive(items) {
         for (let i = 0; i < items.length; i++) {
             items[i].classList.remove("active");
@@ -1066,7 +1057,7 @@
       const recent = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]');
       const list = document.getElementById('custom-dropdown');
       list.innerHTML = '';
-      currentFocus = -1; // Reset focus
+      currentFocus = -1; 
       
       if (recent.length === 0) {
           list.innerHTML = '<li class="no-result-item">검색 기록이 없습니다.</li>';
@@ -1077,9 +1068,10 @@
       
       const headerLi = document.createElement('li');
       headerLi.className = 'recent-header-item';
+      // [NEW] Use onmousedown + preventDefault for Clear All
       headerLi.innerHTML = `
         <span class="recent-title">최근 검색</span>
-        <span class="clear-all-btn" onclick="clearAllHistory()" onmousedown="event.preventDefault()">전체 제거</span>
+        <span class="clear-all-btn" onmousedown="event.preventDefault(); clearAllHistory()">전체 제거</span>
       `;
       list.appendChild(headerLi);
 
@@ -1100,8 +1092,10 @@
           li.appendChild(textSpan);
           li.appendChild(delBtn);
           
-          // [NEW] Use onmousedown to prevent blur race condition
-          li.onmousedown = () => {
+          // [NEW] Use onmousedown + preventDefault for Item Click
+          li.onmousedown = (e) => {
+              if (e) e.preventDefault(); 
+              if(e && e.target === delBtn) return;
               document.getElementById('card-search').value = r;
               checkClearBtn(); 
               startSearch();
@@ -1119,7 +1113,7 @@
       const list = document.getElementById('custom-dropdown');
       const normalizedInput = normalizeStr(val);
       const decomposedInput = decomposeHangul(normalizedInput); 
-      currentFocus = -1; // Reset focus
+      currentFocus = -1; 
       
       let matches = allNames.filter(name => {
           const normName = normalizeStr(name);
@@ -1173,8 +1167,9 @@
           
           li.innerHTML = html;
 
-          // [NEW] Use onmousedown to fix double-click issue
-          li.onmousedown = () => {
+          // [NEW] Use onmousedown + preventDefault for Suggestion Click
+          li.onmousedown = (e) => {
+              if (e) e.preventDefault();
               document.getElementById('card-search').value = m;
               checkClearBtn(); 
               startSearch();
@@ -1194,7 +1189,7 @@
 
   function clearAllHistory() {
       localStorage.removeItem(RECENT_KEY);
-      showRecentInDropdown(); 
+      showRecentInDropdown(); // [NEW] Instant Refresh
   }
 
   function updateDisconnectBtn() { const btn = document.getElementById('disconnect-btn'); if (localStorage.getItem(STORAGE_KEY)) btn.classList.remove('disabled'); else btn.classList.add('disabled'); }
@@ -1240,15 +1235,19 @@
     adjustRegionWidth(); // 변경 시 너비 조절
   }
 
+  // [NEW] Region Button Width Adjuster
   function adjustRegionWidth() {
       const select = document.getElementById('region-select');
       const tempSpan = document.createElement('span');
+      
+      // Select와 동일한 폰트 스타일 적용
       tempSpan.style.visibility = 'hidden';
       tempSpan.style.position = 'absolute';
       tempSpan.style.fontSize = window.getComputedStyle(select).fontSize;
       tempSpan.style.fontWeight = window.getComputedStyle(select).fontWeight;
       tempSpan.style.fontFamily = window.getComputedStyle(select).fontFamily;
       
+      // 현재 선택된 텍스트
       const selectedOption = select.options[select.selectedIndex];
       tempSpan.innerText = selectedOption.text;
       
@@ -1256,6 +1255,7 @@
       const width = tempSpan.getBoundingClientRect().width;
       document.body.removeChild(tempSpan);
       
+      // 계산된 너비 + 여유분 적용
       select.style.width = (width + 4) + 'px'; 
   }
 
