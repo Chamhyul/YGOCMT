@@ -709,7 +709,7 @@
 </head>
 <body>
 
-<div class="version-info">ver. 0.7.33 (Debug Mode)</div>
+<div class="version-info">ver. 0.7.34 (Debug Mode 2)</div>
 <div class="maker-info">Made by <a href="https://www.youtube.com/@참혈" target="_blank"><i class="fab fa-youtube"></i>참혈</a></div>
 
 <div class="header-right-container">
@@ -949,7 +949,6 @@
         }
     };
     
-    // [MODIFIED] Removed 'click' listener to prevent double trigger
     searchInput.addEventListener('focus', handleFocusOrClick);
     
     searchInput.addEventListener('input', (e) => {
@@ -959,7 +958,6 @@
         checkClearBtn(); 
     });
     
-    // [MODIFIED] Event Delegation with DEBUG Toasts
     const dropdown = document.getElementById('custom-dropdown');
     dropdown.addEventListener('mousedown', function(e) {
         M.toast({html: '[이벤트] Dropdown Mousedown', classes: 'green'}); // [DEBUG]
@@ -967,7 +965,6 @@
 
         const target = e.target;
 
-        // 1. Clear All Handler (Inlined)
         if (target.classList.contains('clear-all-btn')) {
             M.toast({html: '[로직] 전체 제거 분기 진입', classes: 'blue darken-2'}); // [DEBUG]
             try {
@@ -980,7 +977,6 @@
             return;
         }
 
-        // 2. Single Item Delete Handler
         if (target.classList.contains('item-delete-btn') || target.closest('.item-delete-btn')) {
             const delBtn = target.classList.contains('item-delete-btn') ? target : target.closest('.item-delete-btn');
             const li = delBtn.closest('li');
@@ -990,7 +986,6 @@
             return;
         }
 
-        // 3. Selection Handler
         const li = target.closest('li');
         if (li && !li.classList.contains('recent-header-item') && !li.classList.contains('no-result-item')) {
             M.toast({html: '[로직] 검색어 선택 분기 진입', classes: 'blue'}); // [DEBUG]
@@ -1047,7 +1042,7 @@
     }
     
     searchInput.addEventListener('blur', () => {
-        M.toast({html: '[이벤트] Input Blur', classes: 'red'}); // [DEBUG]
+        M.toast({html: '[이벤트] 포커스 해제 (Blur)', classes: 'red'}); // [DEBUG: ADDED]
         blurTimer = setTimeout(() => {
             document.getElementById('custom-dropdown').style.display = 'none';
             toggleSearchWrapper(false); 
