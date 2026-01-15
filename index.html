@@ -31,10 +31,11 @@
       --overlay-bg: rgba(255, 255, 255, 0.85);
       
       /* Navigation Colors (Default: Light Mode - Grey) */
-      --nav-bg: rgba(238, 238, 238, 0.9);
-      --nav-text: #616161;
+      /* [MODIFIED] Darker gray for better visibility in light mode */
+      --nav-bg: #cfcfcf; 
+      --nav-text: #424242;
       --nav-text-active: #009688;
-      --nav-border: rgba(0, 0, 0, 0.05);
+      --nav-border: rgba(0, 0, 0, 0.1);
       --nav-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
 
@@ -871,7 +872,7 @@
 </head>
 <body>
 
-<nav class="app-sidebar">
+<aside class="app-sidebar">
     <a class="nav-item">
         <i class="material-icons">search</i>
         <span class="nav-text">검색</span>
@@ -892,7 +893,7 @@
         <i class="material-icons">link</i>
         <span class="nav-text">시트 연결</span>
     </a>
-</nav>
+</aside>
 
 <div class="mobile-nav-container">
     <div class="nav-capsule">
