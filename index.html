@@ -709,7 +709,7 @@
 </head>
 <body>
 
-<div class="version-info">ver. 0.7.35</div>
+<div class="version-info">ver. 0.7.31</div>
 <div class="maker-info">Made by <a href="https://www.youtube.com/@참혈" target="_blank"><i class="fab fa-youtube"></i>참혈</a></div>
 
 <div class="header-right-container">
@@ -948,7 +948,7 @@
         }
     };
     
-    searchInput.addEventListener('click', handleFocusOrClick);
+    // [MODIFIED] Removed 'click' listener to prevent double trigger
     searchInput.addEventListener('focus', handleFocusOrClick);
     
     searchInput.addEventListener('input', (e) => {
@@ -958,16 +958,24 @@
         checkClearBtn(); 
     });
     
-    // [MODIFIED] Use 'pointerdown' instead of 'mousedown'
+    // [MODIFIED] Event Delegation with Inlined Logic & Try-Catch
     const dropdown = document.getElementById('custom-dropdown');
-    dropdown.addEventListener('pointerdown', function(e) {
-        e.preventDefault(); // Prevents blur & input commit
+    dropdown.addEventListener('mousedown', function(e) {
+        e.preventDefault(); 
 
         const target = e.target;
 
-        // 1. Clear All Handler
+        // 1. Clear All Handler (Inlined)
         if (target.classList.contains('clear-all-btn')) {
-            clearAllHistory();
+            M.toast({html: '전체 제거 버튼 입력', classes: 'blue darken-2'}); 
+            try {
+                M.toast({html: 'DEBUG: 스토리지 삭제 시도', classes: 'blue'});
+                localStorage.removeItem(RECENT_KEY);
+                showRecentInDropdown();
+            } catch (error) {
+                M.toast({html: '에러 발생: ' + error.message, classes: 'red'});
+                console.error(error);
+            }
             return;
         }
 
@@ -1093,11 +1101,15 @@
 
   function normalizeStr(str) { return str.replace(/\s+/g, '').toLowerCase(); }
 
-  // [MODIFIED] Partial Update Logic (No Child Handlers)
+  // [MODIFIED] Partial Update Logic with Debug Toasts
   function showRecentInDropdown() {
+      M.toast({html: 'DEBUG: UI 갱신 시작', classes: 'orange'}); 
+
       const recent = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]');
       const list = document.getElementById('custom-dropdown');
       
+      M.toast({html: 'DEBUG: 데이터 로드됨 (' + recent.length + '개)', classes: 'orange'}); 
+
       currentFocus = -1; 
 
       // 1. Clean existing items EXCEPT the header
@@ -1106,6 +1118,7 @@
               child.remove();
           }
       });
+      M.toast({html: 'DEBUG: 기존 목록 청소', classes: 'orange'}); 
       
       // 2. Ensure Header exists
       let header = list.querySelector('.recent-header-item');
@@ -1121,6 +1134,7 @@
 
       // 3. Append new items
       if (recent.length === 0) {
+          M.toast({html: 'DEBUG: 빈 목록 렌더링', classes: 'green'}); 
           const noResultLi = document.createElement('li');
           noResultLi.className = 'no-result-item';
           noResultLi.innerText = '검색 기록이 없습니다.';
@@ -1148,6 +1162,7 @@
       
       list.style.display = 'block';
       toggleSearchWrapper(true);
+      M.toast({html: '목록 갱신', classes: 'green darken-2'}); 
   }
 
   function filterAndShowDropdown(val) {
@@ -1222,8 +1237,7 @@
   }
 
   function clearAllHistory() {
-      localStorage.removeItem(RECENT_KEY);
-      showRecentInDropdown(); 
+      // Logic moved inline to event listener
   }
 
   function updateDisconnectBtn() { const btn = document.getElementById('disconnect-btn'); if (localStorage.getItem(STORAGE_KEY)) btn.classList.remove('disabled'); else btn.classList.add('disabled'); }
