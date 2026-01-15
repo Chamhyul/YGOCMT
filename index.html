@@ -31,6 +31,7 @@
       --overlay-bg: rgba(255, 255, 255, 0.85);
       
       /* Navigation Colors (Default: Light Mode - Grey) */
+      /* [MODIFIED] Darker gray for better visibility in light mode */
       --nav-bg: #cfcfcf; 
       --nav-text: #424242;
       --nav-text-active: #009688;
@@ -356,9 +357,12 @@
     .bg-rect {
         position: absolute;
         top: 50%;
-        transform: translateY(-50%);
-        height: 1.8rem; /* 72% of 2.5rem */
-        width: 60px;
+        /* [MODIFIED] transform to push upwards (-0.1rem adjustment) */
+        transform: translateY(calc(-50% - 0.1rem));
+        /* [MODIFIED] height calculated: 1.8 + 0.3 + 0.5 = 2.6rem */
+        height: 2.6rem; 
+        /* [MODIFIED] width to cover text width */
+        width: 50%;
         z-index: 1;
         opacity: 0.15;
     }
