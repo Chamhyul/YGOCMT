@@ -709,7 +709,7 @@
 </head>
 <body>
 
-<div class="version-info">ver. 0.7.31</div>
+<div class="version-info">ver. 0.7.37</div>
 <div class="maker-info">Made by <a href="https://www.youtube.com/@참혈" target="_blank"><i class="fab fa-youtube"></i>참혈</a></div>
 
 <div class="header-right-container">
@@ -948,7 +948,7 @@
         }
     };
     
-    // [MODIFIED] Removed 'click' listener to prevent double trigger
+    searchInput.addEventListener('click', handleFocusOrClick);
     searchInput.addEventListener('focus', handleFocusOrClick);
     
     searchInput.addEventListener('input', (e) => {
@@ -958,24 +958,17 @@
         checkClearBtn(); 
     });
     
-    // [MODIFIED] Event Delegation with Inlined Logic & Try-Catch
+    // [MODIFIED] Use 'pointerdown' & Inline Logic for Clear All (Restore 0.7.31 fix)
     const dropdown = document.getElementById('custom-dropdown');
-    dropdown.addEventListener('mousedown', function(e) {
-        e.preventDefault(); 
+    dropdown.addEventListener('pointerdown', function(e) {
+        e.preventDefault(); // Prevents blur & input commit
 
         const target = e.target;
 
-        // 1. Clear All Handler (Inlined)
+        // 1. Clear All Handler (Inline Logic Restored)
         if (target.classList.contains('clear-all-btn')) {
-            M.toast({html: '전체 제거 버튼 입력', classes: 'blue darken-2'}); 
-            try {
-                M.toast({html: 'DEBUG: 스토리지 삭제 시도', classes: 'blue'});
-                localStorage.removeItem(RECENT_KEY);
-                showRecentInDropdown();
-            } catch (error) {
-                M.toast({html: '에러 발생: ' + error.message, classes: 'red'});
-                console.error(error);
-            }
+            localStorage.removeItem(RECENT_KEY);
+            showRecentInDropdown();
             return;
         }
 
@@ -1005,6 +998,7 @@
         let list = document.getElementById('custom-dropdown');
         if (list.style.display === 'none') return;
         
+        // Get valid items (exclude header and no-result message)
         let items = list.querySelectorAll('li:not(.recent-header-item):not(.no-result-item)');
         
         if (e.keyCode == 40) { // Down
@@ -1015,17 +1009,23 @@
             addActive(items);
         } else if (e.keyCode == 13) { // Enter
             e.preventDefault();
-            if (currentFocus > -1 && items && items[currentFocus]) {
-                const val = items[currentFocus].dataset.val;
-                if (val) {
-                    document.getElementById('card-search').value = val;
-                    checkClearBtn();
-                    startSearch();
+            
+            let targetVal = this.value; // Default to current input
+
+            // If dropdown is open and has items
+            if (list.style.display !== 'none' && items.length > 0) {
+                let activeIndex = currentFocus > -1 ? currentFocus : 0; // Default to 0 if none selected
+                if (items[activeIndex]) {
+                    targetVal = items[activeIndex].dataset.val;
                 }
-            } else {
-                this.blur();
-                startSearch();
             }
+
+            // Update input and search
+            if (targetVal) {
+                this.value = targetVal;
+            }
+            this.blur();
+            startSearch();
         }
     });
 
@@ -1101,15 +1101,11 @@
 
   function normalizeStr(str) { return str.replace(/\s+/g, '').toLowerCase(); }
 
-  // [MODIFIED] Partial Update Logic with Debug Toasts
+  // [MODIFIED] Partial Update Logic (No Child Handlers)
   function showRecentInDropdown() {
-      M.toast({html: 'DEBUG: UI 갱신 시작', classes: 'orange'}); 
-
       const recent = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]');
       const list = document.getElementById('custom-dropdown');
       
-      M.toast({html: 'DEBUG: 데이터 로드됨 (' + recent.length + '개)', classes: 'orange'}); 
-
       currentFocus = -1; 
 
       // 1. Clean existing items EXCEPT the header
@@ -1118,7 +1114,6 @@
               child.remove();
           }
       });
-      M.toast({html: 'DEBUG: 기존 목록 청소', classes: 'orange'}); 
       
       // 2. Ensure Header exists
       let header = list.querySelector('.recent-header-item');
@@ -1134,7 +1129,6 @@
 
       // 3. Append new items
       if (recent.length === 0) {
-          M.toast({html: 'DEBUG: 빈 목록 렌더링', classes: 'green'}); 
           const noResultLi = document.createElement('li');
           noResultLi.className = 'no-result-item';
           noResultLi.innerText = '검색 기록이 없습니다.';
@@ -1162,7 +1156,6 @@
       
       list.style.display = 'block';
       toggleSearchWrapper(true);
-      M.toast({html: '목록 갱신', classes: 'green darken-2'}); 
   }
 
   function filterAndShowDropdown(val) {
@@ -1236,9 +1229,8 @@
       showRecentInDropdown();
   }
 
-  function clearAllHistory() {
-      // Logic moved inline to event listener
-  }
+  // [REMOVED] Function call removed as logic is now inline
+  // function clearAllHistory() { ... }
 
   function updateDisconnectBtn() { const btn = document.getElementById('disconnect-btn'); if (localStorage.getItem(STORAGE_KEY)) btn.classList.remove('disabled'); else btn.classList.add('disabled'); }
   function toggleGuide(forceOpen = null) { 
