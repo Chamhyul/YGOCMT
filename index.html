@@ -709,7 +709,7 @@
 </head>
 <body>
 
-<div class="version-info">ver. 0.7.32</div>
+<div class="version-info">ver. 0.7.33 (Debug Mode)</div>
 <div class="maker-info">Made by <a href="https://www.youtube.com/@참혈" target="_blank"><i class="fab fa-youtube"></i>참혈</a></div>
 
 <div class="header-right-container">
@@ -935,6 +935,7 @@
     const searchInput = document.getElementById('card-search');
     
     const handleFocusOrClick = () => {
+        M.toast({html: '[이벤트] Input Focus', classes: 'green'}); // [DEBUG]
         if (!localStorage.getItem(STORAGE_KEY)) {
             searchInput.blur();
             openGuideFromMain();
@@ -948,7 +949,7 @@
         }
     };
     
-    searchInput.addEventListener('click', handleFocusOrClick);
+    // [MODIFIED] Removed 'click' listener to prevent double trigger
     searchInput.addEventListener('focus', handleFocusOrClick);
     
     searchInput.addEventListener('input', (e) => {
@@ -958,18 +959,28 @@
         checkClearBtn(); 
     });
     
-    // [MODIFIED] Unified Event Delegation with Cleaned Logic
+    // [MODIFIED] Event Delegation with DEBUG Toasts
     const dropdown = document.getElementById('custom-dropdown');
     dropdown.addEventListener('mousedown', function(e) {
+        M.toast({html: '[이벤트] Dropdown Mousedown', classes: 'green'}); // [DEBUG]
         e.preventDefault(); 
 
         const target = e.target;
 
+        // 1. Clear All Handler (Inlined)
         if (target.classList.contains('clear-all-btn')) {
-            clearAllHistory();
+            M.toast({html: '[로직] 전체 제거 분기 진입', classes: 'blue darken-2'}); // [DEBUG]
+            try {
+                localStorage.removeItem(RECENT_KEY);
+                showRecentInDropdown();
+            } catch (error) {
+                M.toast({html: '에러 발생: ' + error.message, classes: 'red'});
+                console.error(error);
+            }
             return;
         }
 
+        // 2. Single Item Delete Handler
         if (target.classList.contains('item-delete-btn') || target.closest('.item-delete-btn')) {
             const delBtn = target.classList.contains('item-delete-btn') ? target : target.closest('.item-delete-btn');
             const li = delBtn.closest('li');
@@ -979,8 +990,10 @@
             return;
         }
 
+        // 3. Selection Handler
         const li = target.closest('li');
         if (li && !li.classList.contains('recent-header-item') && !li.classList.contains('no-result-item')) {
+            M.toast({html: '[로직] 검색어 선택 분기 진입', classes: 'blue'}); // [DEBUG]
             const val = li.dataset.val;
             if (val) {
                 document.getElementById('card-search').value = val;
@@ -1034,6 +1047,7 @@
     }
     
     searchInput.addEventListener('blur', () => {
+        M.toast({html: '[이벤트] Input Blur', classes: 'red'}); // [DEBUG]
         blurTimer = setTimeout(() => {
             document.getElementById('custom-dropdown').style.display = 'none';
             toggleSearchWrapper(false); 
@@ -1090,8 +1104,10 @@
 
   function normalizeStr(str) { return str.replace(/\s+/g, '').toLowerCase(); }
 
-  // [MODIFIED] Partial Update Logic (No Child Handlers)
+  // [MODIFIED] Partial Update Logic with Debug Toasts
   function showRecentInDropdown() {
+      M.toast({html: '[렌더링] UI 갱신 시작', classes: 'orange'}); 
+
       const recent = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]');
       const list = document.getElementById('custom-dropdown');
       
@@ -1118,11 +1134,13 @@
 
       // 3. Append new items
       if (recent.length === 0) {
+          M.toast({html: '[렌더링] 빈 목록 표시', classes: 'green'}); 
           const noResultLi = document.createElement('li');
           noResultLi.className = 'no-result-item';
           noResultLi.innerText = '검색 기록이 없습니다.';
           list.appendChild(noResultLi);
       } else {
+          M.toast({html: '[렌더링] 목록 표시 (' + recent.length + '개)', classes: 'green'});
           recent.slice(0, 5).forEach(r => {
               const li = document.createElement('li');
               li.className = 'recent-item-row';
@@ -1147,7 +1165,6 @@
       toggleSearchWrapper(true);
   }
 
-  // [MODIFIED] No Child Handlers
   function filterAndShowDropdown(val) {
       if(!isAppConfigured) return;
       const list = document.getElementById('custom-dropdown');
@@ -1219,10 +1236,8 @@
       showRecentInDropdown();
   }
 
-  // [MODIFIED] Cleaned up logic (removed try-catch debug)
   function clearAllHistory() {
-      localStorage.removeItem(RECENT_KEY);
-      showRecentInDropdown(); 
+      // Logic moved inline to event listener
   }
 
   function updateDisconnectBtn() { const btn = document.getElementById('disconnect-btn'); if (localStorage.getItem(STORAGE_KEY)) btn.classList.remove('disabled'); else btn.classList.add('disabled'); }
@@ -1268,6 +1283,7 @@
     adjustRegionWidth(); // 변경 시 너비 조절
   }
 
+  // [NEW] Region Button Width Adjuster
   function adjustRegionWidth() {
       const select = document.getElementById('region-select');
       const tempSpan = document.createElement('span');
