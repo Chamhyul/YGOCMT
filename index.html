@@ -31,7 +31,6 @@
       --overlay-bg: rgba(255, 255, 255, 0.85);
       
       /* Navigation Colors (Default: Light Mode - Grey) */
-      /* [MODIFIED] Darker gray for better visibility in light mode */
       --nav-bg: #cfcfcf; 
       --nav-text: #424242;
       --nav-text-active: #009688;
@@ -340,41 +339,18 @@
         margin-bottom: 3px; 
         z-index: 1;
     }
-    .synapse-wrapper {
-        position: relative;
-        display: inline-block;
-        z-index: 1;
+    /* Logo Container for SVG */
+    .synapse-logo-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 5px 0;
+        width: 100%;
     }
-    .title-synapse {
-        font-size: 2.5rem;
-        font-weight: 900;
-        color: var(--text-primary);
-        margin: 0;
-        letter-spacing: 1px;
-        position: relative;
-        z-index: 2;
-    }
-    .bg-rect {
-        position: absolute;
-        top: 50%;
-        /* [MODIFIED] Center alignment restored */
-        transform: translateY(-50%);
-        /* [MODIFIED] height: 2.4rem */
-        height: 2.4rem; 
-        /* [MODIFIED] width: 70% */
-        width: 70%;
-        z-index: 1;
-        opacity: 0.15;
-    }
-    .bg-rect.left {
-        /* [MODIFIED] Gap increased to 4% (starts at 54%) */
-        right: 54%;
-        background: linear-gradient(to left, var(--text-primary), transparent);
-    }
-    .bg-rect.right {
-        /* [MODIFIED] Gap increased to 4% (starts at 54%) */
-        left: 54%;
-        background: linear-gradient(to right, var(--text-primary), transparent);
+    .synapse-logo-svg {
+        width: 100%;
+        max-width: 220px;
+        height: auto;
     }
 
     .title-beta {
@@ -992,10 +968,34 @@
 <div class="container">
   <div class="app-title-container">
       <span class="title-ygo">유희왕</span>
-      <div class="synapse-wrapper">
-          <span class="title-synapse">SYNAPSE</span>
-          <div class="bg-rect left"></div>
-          <div class="bg-rect right"></div>
+      <div class="synapse-logo-container">
+        <svg id="_레이어_1" data-name="레이어_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 30" class="synapse-logo-svg">
+          <defs>
+            <linearGradient id="grad-1" data-name="무제 그라디언트 43" x1="13.27" y1="15" x2="106.38" y2="15" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="var(--text-primary)" stop-opacity="0"/>
+              <stop offset=".38" stop-color="var(--text-primary)" stop-opacity=".24"/>
+              <stop offset=".9" stop-color="var(--text-primary)" stop-opacity=".4"/>
+            </linearGradient>
+            <linearGradient id="grad-2" data-name="무제 그라디언트 43" x1="106.38" x2="13.27" y2="15" xlink:href="#grad-1">
+                <stop offset="0" stop-color="var(--text-primary)" stop-opacity="0"/>
+                <stop offset=".38" stop-color="var(--text-primary)" stop-opacity=".24"/>
+                <stop offset=".9" stop-color="var(--text-primary)" stop-opacity=".4"/>
+            </linearGradient>
+          </defs>
+          <g id="bg_x5F_group">
+            <polygon id="bg_x5F_down" points="106.38 25.59 13.27 4.41 13.27 25.59 106.38 25.59" fill="url(#grad-1)"/>
+            <polygon id="bg_x5F_up" points="13.27 4.41 106.38 25.59 106.38 4.41 13.27 4.41" fill="url(#grad-2)"/>
+          </g>
+          <g id="title" fill="var(--text-primary)">
+            <path d="M12.79,10.17c-1.4,0-2.05.55-2.07,1.33-.02.83.74,1.29,2.25,1.61l1.33.28c3.5.76,5.06,2.46,5.06,4.97,0,3.18-2.44,4.99-6.54,4.97-4.21.02-6.95-1.82-7-5.8h4.1c.07,1.5,1.1,2.28,2.81,2.3,1.47-.02,2.25-.62,2.25-1.47,0-.78-.67-1.24-2.48-1.66l-1.61-.37c-2.88-.6-4.65-2.03-4.65-4.56,0-3.06,2.72-5.13,6.53-5.11,3.91-.02,6.35,2.07,6.4,5.25h-4.14c-.07-1.1-.78-1.75-2.25-1.75Z"/>
+            <path d="M24.57,6.86l3.27,6.67h.14l3.22-6.67h4.79l-5.98,11.09v5.2h-4.23v-5.2l-5.98-11.09h4.79Z"/>
+            <path d="M51.62,23.15h-3.59l-6.03-8.79h-.09v8.79h-4.28V6.86h3.64l5.94,8.79h.14V6.86h4.28v16.29Z"/>
+            <path d="M53.31,23.15l5.38-16.29h5.84l5.38,16.29h-4.6l-.97-3.18h-5.48l-.97,3.18h-4.6ZM63.37,16.76l-1.68-5.52h-.14l-1.68,5.52h3.5Z"/>
+            <path d="M71.64,6.86h6.9c3.66.02,6.03,2.3,6.03,5.75s-2.44,5.64-6.17,5.66h-2.48v4.88h-4.28V6.86ZM77.57,14.92c1.61,0,2.53-.9,2.53-2.3s-.92-2.3-2.53-2.3h-1.66v4.6h1.66Z"/>
+            <path d="M92.82,10.17c-1.4,0-2.05.55-2.07,1.33-.02.83.74,1.29,2.25,1.61l1.33.28c3.5.76,5.06,2.46,5.06,4.97,0,3.18-2.44,4.99-6.53,4.97-4.21.02-6.95-1.82-7-5.8h4.1c.07,1.5,1.1,2.28,2.81,2.3,1.47-.02,2.26-.62,2.26-1.47,0-.78-.67-1.24-2.49-1.66l-1.61-.37c-2.88-.6-4.65-2.03-4.65-4.56,0-3.06,2.71-5.13,6.54-5.11,3.91-.02,6.35,2.07,6.4,5.25h-4.14c-.07-1.1-.78-1.75-2.25-1.75Z"/>
+            <path d="M101.71,6.86h11.6v3.5h-7.32v2.95h6.72v3.45h-6.72v2.95h7.32v3.45h-11.6V6.86Z"/>
+          </g>
+        </svg>
       </div>
       <span class="title-beta">BETA</span>
   </div>
