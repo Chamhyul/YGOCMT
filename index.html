@@ -709,7 +709,7 @@
 </head>
 <body>
 
-<div class="version-info">ver. 0.7.28</div>
+<div class="version-info">ver. 0.7.29</div>
 <div class="maker-info">Made by <a href="https://www.youtube.com/@참혈" target="_blank"><i class="fab fa-youtube"></i>참혈</a></div>
 
 <div class="header-right-container">
@@ -894,6 +894,8 @@
   let blurTimer = null;
   let currentRegion = 'ko';
 
+  let currentFocus = -1;
+
   document.addEventListener('DOMContentLoaded', function() {
     loadTheme();
     loadRegion();
@@ -956,21 +958,84 @@
         checkClearBtn(); 
     });
     
-    searchInput.addEventListener('keydown', function(e) { 
-        if (e.key === 'Enter') { 
-            const list = document.getElementById('custom-dropdown');
-            if(list.style.display === 'block' && list.firstElementChild) {
-                const firstItem = list.querySelector('li[data-val]');
-                if(firstItem && !firstItem.classList.contains('no-result-item')) {
-                    this.value = firstItem.dataset.val;
-                } else if(list.querySelector('.no-result-item')) {
-                    return; 
-                }
+    // [NEW] Event Delegation with Partial Update Logic
+    const dropdown = document.getElementById('custom-dropdown');
+    dropdown.addEventListener('mousedown', function(e) {
+        // Critical: Prevent blur to keep dropdown open during clicks
+        e.preventDefault(); 
+
+        const target = e.target;
+
+        // 1. Clear All Handler
+        if (target.classList.contains('clear-all-btn')) {
+            clearAllHistory();
+            return;
+        }
+
+        // 2. Single Item Delete Handler
+        if (target.classList.contains('item-delete-btn') || target.closest('.item-delete-btn')) {
+            const delBtn = target.classList.contains('item-delete-btn') ? target : target.closest('.item-delete-btn');
+            const li = delBtn.closest('li');
+            if (li && li.dataset.val) {
+                deleteRecentItem(li.dataset.val);
             }
-            this.blur(); 
-            startSearch(); 
-        } 
+            return;
+        }
+
+        // 3. Selection Handler
+        const li = target.closest('li');
+        if (li && !li.classList.contains('recent-header-item') && !li.classList.contains('no-result-item')) {
+            const val = li.dataset.val;
+            if (val) {
+                document.getElementById('card-search').value = val;
+                checkClearBtn();
+                startSearch();
+            }
+        }
     });
+
+    searchInput.addEventListener('keydown', function(e) { 
+        let list = document.getElementById('custom-dropdown');
+        if (list.style.display === 'none') return;
+        
+        let items = list.querySelectorAll('li:not(.recent-header-item):not(.no-result-item)');
+        
+        if (e.keyCode == 40) { // Down
+            currentFocus++;
+            addActive(items);
+        } else if (e.keyCode == 38) { // Up
+            currentFocus--;
+            addActive(items);
+        } else if (e.keyCode == 13) { // Enter
+            e.preventDefault();
+            if (currentFocus > -1 && items && items[currentFocus]) {
+                const val = items[currentFocus].dataset.val;
+                if (val) {
+                    document.getElementById('card-search').value = val;
+                    checkClearBtn();
+                    startSearch();
+                }
+            } else {
+                this.blur();
+                startSearch();
+            }
+        }
+    });
+
+    function addActive(items) {
+        if (!items) return false;
+        removeActive(items);
+        if (currentFocus >= items.length) currentFocus = 0;
+        if (currentFocus < 0) currentFocus = items.length - 1;
+        items[currentFocus].classList.add("active");
+        items[currentFocus].scrollIntoView({ block: 'nearest', inline: 'start' });
+    }
+
+    function removeActive(items) {
+        for (let i = 0; i < items.length; i++) {
+            items[i].classList.remove("active");
+        }
+    }
     
     searchInput.addEventListener('blur', () => {
         blurTimer = setTimeout(() => {
@@ -1029,21 +1094,33 @@
 
   function normalizeStr(str) { return str.replace(/\s+/g, '').toLowerCase(); }
 
+  // [MODIFIED] Partial Update Logic to prevent Button Self-Destruction
   function showRecentInDropdown() {
       const recent = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]');
       const list = document.getElementById('custom-dropdown');
-      list.innerHTML = '';
       
-      // [NEW] 1. 항상 헤더를 먼저 생성
-      const headerLi = document.createElement('li');
-      headerLi.className = 'recent-header-item';
-      headerLi.innerHTML = `
-        <span class="recent-title">최근 검색</span>
-        <span class="clear-all-btn" onmousedown="event.preventDefault(); clearAllHistory()">전체 제거</span>
-      `;
-      list.appendChild(headerLi);
+      currentFocus = -1; 
 
-      // [NEW] 2. 데이터 유무에 따라 분기
+      // 1. Clean existing items EXCEPT the header
+      Array.from(list.children).forEach(child => {
+          if (!child.classList.contains('recent-header-item')) {
+              child.remove();
+          }
+      });
+      
+      // 2. Ensure Header exists (Create once if missing)
+      let header = list.querySelector('.recent-header-item');
+      if (!header) {
+          header = document.createElement('li');
+          header.className = 'recent-header-item';
+          header.innerHTML = `
+            <span class="recent-title">최근 검색</span>
+            <span class="clear-all-btn">전체 제거</span>
+          `;
+          list.prepend(header); 
+      }
+
+      // 3. Append new items
       if (recent.length === 0) {
           const noResultLi = document.createElement('li');
           noResultLi.className = 'no-result-item';
@@ -1062,18 +1139,10 @@
               const delBtn = document.createElement('i');
               delBtn.className = 'material-icons item-delete-btn';
               delBtn.innerText = 'close';
-              delBtn.onmousedown = (e) => { e.preventDefault(); e.stopPropagation(); deleteRecentItem(r); };
+              // Note: Click handling is delegated to parent
               
               li.appendChild(textSpan);
               li.appendChild(delBtn);
-              
-              li.onclick = (e) => {
-                  if(e.target !== delBtn) {
-                      document.getElementById('card-search').value = r;
-                      checkClearBtn(); 
-                      startSearch();
-                  }
-              };
               
               list.appendChild(li);
           });
@@ -1088,6 +1157,7 @@
       const list = document.getElementById('custom-dropdown');
       const normalizedInput = normalizeStr(val);
       const decomposedInput = decomposeHangul(normalizedInput); 
+      currentFocus = -1; 
       
       let matches = allNames.filter(name => {
           const normName = normalizeStr(name);
@@ -1140,11 +1210,7 @@
           }
           
           li.innerHTML = html;
-          li.onclick = () => {
-              document.getElementById('card-search').value = m;
-              checkClearBtn(); 
-              startSearch();
-          };
+          // Note: Click handling delegated
           list.appendChild(li);
       });
       list.style.display = 'block';
@@ -1161,7 +1227,6 @@
   function clearAllHistory() {
       localStorage.removeItem(RECENT_KEY);
       showRecentInDropdown(); 
-      document.getElementById('card-search').focus(); 
   }
 
   function updateDisconnectBtn() { const btn = document.getElementById('disconnect-btn'); if (localStorage.getItem(STORAGE_KEY)) btn.classList.remove('disabled'); else btn.classList.add('disabled'); }
