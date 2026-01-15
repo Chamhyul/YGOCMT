@@ -709,7 +709,7 @@
 </head>
 <body>
 
-<div class="version-info">ver. 0.7.37</div>
+<div class="version-info">ver. 0.8.0</div>
 <div class="maker-info">Made by <a href="https://www.youtube.com/@참혈" target="_blank"><i class="fab fa-youtube"></i>참혈</a></div>
 
 <div class="header-right-container">
@@ -958,7 +958,7 @@
         checkClearBtn(); 
     });
     
-    // [MODIFIED] Use 'mousedown' & Inline Logic for Clear All (Restore 0.7.31 fix)
+    // [MODIFIED] Use 'mousedown' & Inline Logic for Clear All (Fix for Safari IME issue)
     const dropdown = document.getElementById('custom-dropdown');
     dropdown.addEventListener('mousedown', function(e) {
         e.preventDefault(); // Prevents blur & input commit
