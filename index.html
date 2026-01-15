@@ -958,9 +958,9 @@
         checkClearBtn(); 
     });
     
-    // [MODIFIED] Use 'pointerdown' & Inline Logic for Clear All (Restore 0.7.31 fix)
+    // [MODIFIED] Use 'mousedown' & Inline Logic for Clear All (Restore 0.7.31 fix)
     const dropdown = document.getElementById('custom-dropdown');
-    dropdown.addEventListener('pointerdown', function(e) {
+    dropdown.addEventListener('mousedown', function(e) {
         e.preventDefault(); // Prevents blur & input commit
 
         const target = e.target;
