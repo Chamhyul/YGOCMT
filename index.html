@@ -709,7 +709,7 @@
 </head>
 <body>
 
-<div class="version-info">ver. 0.7.29</div>
+<div class="version-info">ver. 0.7.30</div>
 <div class="maker-info">Made by <a href="https://www.youtube.com/@참혈" target="_blank"><i class="fab fa-youtube"></i>참혈</a></div>
 
 <div class="header-right-container">
@@ -958,21 +958,21 @@
         checkClearBtn(); 
     });
     
-    // [NEW] Event Delegation with Partial Update Logic
+    // [NEW] Event Delegation with DEBUG Toasts
     const dropdown = document.getElementById('custom-dropdown');
     dropdown.addEventListener('mousedown', function(e) {
-        // Critical: Prevent blur to keep dropdown open during clicks
-        e.preventDefault(); 
+        e.preventDefault(); // Prevent blur
 
         const target = e.target;
 
-        // 1. Clear All Handler
+        // 1. Clear All
         if (target.classList.contains('clear-all-btn')) {
+            M.toast({html: '전체 제거 버튼 입력', classes: 'blue darken-2'}); // [DEBUG]
             clearAllHistory();
             return;
         }
 
-        // 2. Single Item Delete Handler
+        // 2. Single Delete
         if (target.classList.contains('item-delete-btn') || target.closest('.item-delete-btn')) {
             const delBtn = target.classList.contains('item-delete-btn') ? target : target.closest('.item-delete-btn');
             const li = delBtn.closest('li');
@@ -982,7 +982,7 @@
             return;
         }
 
-        // 3. Selection Handler
+        // 3. Selection
         const li = target.closest('li');
         if (li && !li.classList.contains('recent-header-item') && !li.classList.contains('no-result-item')) {
             const val = li.dataset.val;
@@ -1096,9 +1096,13 @@
 
   // [MODIFIED] Partial Update Logic to prevent Button Self-Destruction
   function showRecentInDropdown() {
+      M.toast({html: 'DEBUG: UI 갱신 시작', classes: 'orange'}); // [DEBUG]
+
       const recent = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]');
       const list = document.getElementById('custom-dropdown');
       
+      M.toast({html: 'DEBUG: 데이터 로드됨 (' + recent.length + '개)', classes: 'orange'}); // [DEBUG]
+
       currentFocus = -1; 
 
       // 1. Clean existing items EXCEPT the header
@@ -1107,8 +1111,9 @@
               child.remove();
           }
       });
+      M.toast({html: 'DEBUG: 기존 목록 청소', classes: 'orange'}); // [DEBUG]
       
-      // 2. Ensure Header exists (Create once if missing)
+      // 2. Ensure Header exists
       let header = list.querySelector('.recent-header-item');
       if (!header) {
           header = document.createElement('li');
@@ -1122,6 +1127,7 @@
 
       // 3. Append new items
       if (recent.length === 0) {
+          M.toast({html: 'DEBUG: 빈 목록 렌더링', classes: 'green'}); // [DEBUG]
           const noResultLi = document.createElement('li');
           noResultLi.className = 'no-result-item';
           noResultLi.innerText = '검색 기록이 없습니다.';
@@ -1139,7 +1145,6 @@
               const delBtn = document.createElement('i');
               delBtn.className = 'material-icons item-delete-btn';
               delBtn.innerText = 'close';
-              // Note: Click handling is delegated to parent
               
               li.appendChild(textSpan);
               li.appendChild(delBtn);
@@ -1150,6 +1155,7 @@
       
       list.style.display = 'block';
       toggleSearchWrapper(true);
+      M.toast({html: '목록 갱신', classes: 'green darken-2'}); // [DEBUG]
   }
 
   function filterAndShowDropdown(val) {
@@ -1210,7 +1216,6 @@
           }
           
           li.innerHTML = html;
-          // Note: Click handling delegated
           list.appendChild(li);
       });
       list.style.display = 'block';
@@ -1225,6 +1230,7 @@
   }
 
   function clearAllHistory() {
+      M.toast({html: 'DEBUG: 기록 삭제 시작', classes: 'blue'}); // [DEBUG]
       localStorage.removeItem(RECENT_KEY);
       showRecentInDropdown(); 
   }
