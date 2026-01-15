@@ -958,6 +958,11 @@
         checkClearBtn(); 
     });
     
+    // [NEW] GLOBAL CLICK DEBUGGER (To confirm where clicks are landing)
+    document.addEventListener('mousedown', function(e) {
+        M.toast({html: '[전역] 클릭 감지: ' + e.target.tagName, classes: 'grey darken-3'}); 
+    });
+
     const dropdown = document.getElementById('custom-dropdown');
     dropdown.addEventListener('mousedown', function(e) {
         M.toast({html: '[이벤트] Dropdown Mousedown', classes: 'green'}); // [DEBUG]
