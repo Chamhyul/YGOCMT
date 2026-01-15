@@ -29,6 +29,11 @@
       --disabled-bg: #e0e0e0;
       --disabled-text: #9e9e9e;
       --overlay-bg: rgba(255, 255, 255, 0.85);
+      
+      /* Navigation Colors */
+      --nav-bg: #333333;
+      --nav-text: #e0e0e0;
+      --nav-text-active: #ffffff;
     }
 
     body.dark-mode {
@@ -56,9 +61,131 @@
     body, input, button, table, .btn, .modal-content, select { font-family: 'Pretendard', sans-serif !important; }
     body { background-color: var(--bg-body); color: var(--text-primary); transition: background-color 0.3s, color 0.3s; }
     
+    /* --- Navigation Styles Start --- */
+    
+    /* Desktop Sidebar */
+    .app-sidebar {
+        position: fixed;
+        left: 0; top: 0; bottom: 0;
+        width: 240px;
+        background-color: var(--nav-bg);
+        z-index: 900;
+        display: flex;
+        flex-direction: column;
+        padding-top: 60px; /* Header Space */
+        transition: width 0.3s ease;
+        box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    }
+
+    .nav-item {
+        display: flex;
+        align-items: center;
+        padding: 16px 24px;
+        color: var(--nav-text);
+        cursor: pointer;
+        transition: background-color 0.2s, color 0.2s;
+        text-decoration: none;
+    }
+
+    .nav-item:hover {
+        background-color: rgba(255,255,255,0.1);
+        color: var(--nav-text-active);
+    }
+
+    .nav-item i {
+        margin-right: 16px;
+        font-size: 24px;
+    }
+
+    .nav-text {
+        font-size: 0.95rem;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    /* Mobile Bottom Bar */
+    .mobile-bottom-nav {
+        display: none; /* Default Hidden */
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        height: 60px;
+        background-color: var(--nav-bg);
+        z-index: 1050; /* Above modals if needed, but below overlays */
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        justify-content: space-around;
+        align-items: center;
+        padding: 0 10px;
+        border-radius: 16px 16px 0 0; /* Capsule look at top */
+    }
+
+    .mobile-nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: var(--nav-text);
+        font-size: 0.7rem;
+        cursor: pointer;
+        flex: 1;
+        height: 100%;
+    }
+    
+    .mobile-nav-item i {
+        font-size: 22px;
+        margin-bottom: 2px;
+    }
+
+    .mobile-nav-item.circle-btn {
+        flex: 0 0 auto;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background-color: var(--primary-color);
+        color: white;
+        margin-bottom: 20px; /* Float effect */
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        justify-content: center;
+    }
+    
+    .mobile-nav-item.circle-btn i {
+        margin-bottom: 0;
+        font-size: 26px;
+    }
+
+    /* Responsive Logic */
+    @media only screen and (min-width: 993px) {
+        body { padding-left: 240px; } /* Push content */
+        .version-info { left: 252px !important; }
+        .maker-info { left: 320px !important; }
+    }
+
+    @media only screen and (min-width: 601px) and (max-width: 992px) {
+        body { padding-left: 72px; } /* Push content less */
+        .app-sidebar { width: 72px; }
+        .nav-text { display: none; } /* Hide Text */
+        .nav-item { justify-content: center; padding: 16px 0; }
+        .nav-item i { margin-right: 0; }
+        .version-info { left: 84px !important; }
+        .maker-info { left: 152px !important; }
+    }
+
+    @media only screen and (max-width: 600px) {
+        body { padding-bottom: 70px; } /* Space for bottom bar */
+        .app-sidebar { display: none; } /* Hide Sidebar */
+        .mobile-bottom-nav { display: flex; } /* Show Bottom Bar */
+        .header-right-container { top: 10px; }
+        .version-info { top: 12px; }
+        .maker-info { top: 12px; }
+        
+        /* FAB Adjust position on mobile to not overlap too much */
+        .fixed-action-btn { bottom: 80px !important; }
+    }
+
+    /* --- Navigation Styles End --- */
+
     /* 상단 헤더 좌측 */
-    .version-info { position: absolute; top: 8px; left: 12px; font-size: 0.75rem; color: var(--text-muted); font-weight: 600; z-index: 10; }
-    .maker-info { position: absolute; top: 8px; left: 80px; font-size: 0.75rem; color: var(--text-muted); font-weight: 600; z-index: 10; display: flex; align-items: center; gap: 4px; }
+    .version-info { position: absolute; top: 8px; left: 12px; font-size: 0.75rem; color: var(--text-muted); font-weight: 600; z-index: 10; transition: left 0.3s ease; }
+    .maker-info { position: absolute; top: 8px; left: 80px; font-size: 0.75rem; color: var(--text-muted); font-weight: 600; z-index: 10; display: flex; align-items: center; gap: 4px; transition: left 0.3s ease; }
     .maker-info a { color: var(--text-muted); text-decoration: none; display: flex; align-items: center; gap: 3px; transition: color 0.2s; }
     .maker-info a:hover { color: var(--error-red); }
 
@@ -708,6 +835,52 @@
   </style>
 </head>
 <body>
+
+<nav class="app-sidebar">
+    <a class="nav-item">
+        <i class="material-icons">search</i>
+        <span class="nav-text">Item 1</span>
+    </a>
+    <a class="nav-item">
+        <i class="material-icons">library_add</i>
+        <span class="nav-text">Item 2</span>
+    </a>
+    <a class="nav-item">
+        <i class="material-icons">drive_file_move</i>
+        <span class="nav-text">Item 3</span>
+    </a>
+    <a class="nav-item">
+        <i class="material-icons">disabled_by_default</i>
+        <span class="nav-text">Item 4</span>
+    </a>
+    <a class="nav-item">
+        <i class="material-icons">settings</i>
+        <span class="nav-text">Item 5</span>
+    </a>
+</nav>
+
+<nav class="mobile-bottom-nav">
+    <div class="mobile-nav-item">
+        <i class="material-icons">settings</i>
+        <span>Item 5</span>
+    </div>
+    <div class="mobile-nav-item">
+        <i class="material-icons">library_add</i>
+        <span>Item 2</span>
+    </div>
+    <div class="mobile-nav-item">
+        <i class="material-icons">drive_file_move</i>
+        <span>Item 3</span>
+    </div>
+    <div class="mobile-nav-item">
+        <i class="material-icons">disabled_by_default</i>
+        <span>Item 4</span>
+    </div>
+    <div class="mobile-nav-item circle-btn">
+        <i class="material-icons">search</i>
+    </div>
+</nav>
+
 
 <div class="version-info">ver. 0.8.0</div>
 <div class="maker-info">Made by <a href="https://www.youtube.com/@참혈" target="_blank"><i class="fab fa-youtube"></i>참혈</a></div>
