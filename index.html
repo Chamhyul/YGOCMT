@@ -357,21 +357,23 @@
     .bg-rect {
         position: absolute;
         top: 50%;
-        /* [MODIFIED] transform to push upwards (-0.1rem adjustment) */
-        transform: translateY(calc(-50% - 0.1rem));
-        /* [MODIFIED] height calculated: 1.8 + 0.3 + 0.5 = 2.6rem */
-        height: 2.6rem; 
-        /* [MODIFIED] width to cover text width */
-        width: 50%;
+        /* [MODIFIED] Center alignment restored */
+        transform: translateY(-50%);
+        /* [MODIFIED] height: 2.4rem */
+        height: 2.4rem; 
+        /* [MODIFIED] width: 70% */
+        width: 70%;
         z-index: 1;
         opacity: 0.15;
     }
     .bg-rect.left {
-        right: 52%;
+        /* [MODIFIED] Gap increased to 4% (starts at 54%) */
+        right: 54%;
         background: linear-gradient(to left, var(--text-primary), transparent);
     }
     .bg-rect.right {
-        left: 52%;
+        /* [MODIFIED] Gap increased to 4% (starts at 54%) */
+        left: 54%;
         background: linear-gradient(to right, var(--text-primary), transparent);
     }
 
@@ -2279,10 +2281,9 @@
     }
     document.getElementById('result-summary-body').innerHTML = summaryHtml;
 
-    let detailHtml = "";
-    detailLog.forEach(l => {
+    let detailHtml = detailLog.map(l => {
         const rowClass = l.status === 'success' ? 'success-row' : 'fail-row';
-        detailHtml += `<tr class="${rowClass}">
+        return `<tr class="${rowClass}">
             <td>${l.no}</td>
             <td style="${l.status==='fail' && (l.failReason==='invalid_no' || l.failReason==='error') ? 'color:var(--error-red); font-weight:700;' : ''}">${l.name}</td>
             <td>${l.cardNo}</td>
@@ -2291,7 +2292,7 @@
             <td style="${l.status==='fail' && l.failReason==='no_loc' ? 'color:var(--error-red); font-weight:700;' : ''}">${l.loc}</td>
             <td>${l.qty}</td>
         </tr>`;
-    });
+    }).join('');
     document.getElementById('result-detail-body').innerHTML = detailHtml;
 
     document.getElementById('result-detail-box').style.display = 'none';
