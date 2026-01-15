@@ -709,7 +709,7 @@
 </head>
 <body>
 
-<div class="version-info">ver. 0.7.25</div>
+<div class="version-info">ver. 0.7.26</div>
 <div class="maker-info">Made by <a href="https://www.youtube.com/@참혈" target="_blank"><i class="fab fa-youtube"></i>참혈</a></div>
 
 <div class="header-right-container">
@@ -887,12 +887,15 @@
   let allProcessingTypes = [], allNames = [], allLocations = [], localCardDatabase = [], rarityMap = {}, clientCache = {}, nameDb = {};
   let rarityMappingRaw = []; 
   let rarityLookup = {}; 
-  let cidLookup = {}; // [NEW] CID lookup map
+  let cidLookup = {}; 
   let isAppConfigured = false, acInstance = null, isLoading = false, validationTimeout = null, isFabOpen = false;
   let hasRegisteredInSession = false;
   let isContinuingRegistration = false;
   let blurTimer = null;
   let currentRegion = 'ko';
+
+  // [NEW] Global variable for keyboard navigation
+  let currentFocus = -1;
 
   document.addEventListener('DOMContentLoaded', function() {
     loadTheme();
@@ -956,21 +959,51 @@
         checkClearBtn(); 
     });
     
+    // [NEW] Keydown Event Listener for Navigation
     searchInput.addEventListener('keydown', function(e) { 
-        if (e.key === 'Enter') { 
-            const list = document.getElementById('custom-dropdown');
-            if(list.style.display === 'block' && list.firstElementChild) {
-                const firstItem = list.querySelector('li[data-val]');
-                if(firstItem && !firstItem.classList.contains('no-result-item')) {
-                    this.value = firstItem.dataset.val;
-                } else if(list.querySelector('.no-result-item')) {
-                    return; 
-                }
+        let list = document.getElementById('custom-dropdown');
+        if (list.style.display === 'none') return;
+        
+        // Select only suggestion items (exclude headers and no-result items)
+        let items = list.querySelectorAll('li:not(.recent-header-item):not(.no-result-item)');
+        
+        if (e.keyCode == 40) { // Arrow Down
+            currentFocus++;
+            addActive(items);
+        } else if (e.keyCode == 38) { // Arrow Up
+            currentFocus--;
+            addActive(items);
+        } else if (e.keyCode == 13) { // Enter
+            e.preventDefault();
+            if (currentFocus > -1 && items) {
+                // Simulate click on active item
+                if (items[currentFocus]) items[currentFocus].onmousedown();
+            } else {
+                // No item selected, perform normal search
+                this.blur();
+                startSearch();
             }
-            this.blur(); 
-            startSearch(); 
-        } 
+        }
     });
+
+    // [NEW] Helper function to add active class
+    function addActive(items) {
+        if (!items) return false;
+        removeActive(items);
+        if (currentFocus >= items.length) currentFocus = 0;
+        if (currentFocus < 0) currentFocus = items.length - 1;
+        items[currentFocus].classList.add("active");
+        
+        // Optional: Scroll to view
+        items[currentFocus].scrollIntoView({ block: 'nearest', inline: 'start' });
+    }
+
+    // [NEW] Helper function to remove active class
+    function removeActive(items) {
+        for (let i = 0; i < items.length; i++) {
+            items[i].classList.remove("active");
+        }
+    }
     
     searchInput.addEventListener('blur', () => {
         blurTimer = setTimeout(() => {
@@ -990,7 +1023,6 @@
     updateDisconnectBtn(); refreshInitialData();
   });
 
-  // [NEW] Helper function
   function checkClearBtn() {
       const val = document.getElementById('card-search').value;
       const btn = document.getElementById('clear-btn');
@@ -1034,9 +1066,9 @@
       const recent = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]');
       const list = document.getElementById('custom-dropdown');
       list.innerHTML = '';
+      currentFocus = -1; // Reset focus
       
       if (recent.length === 0) {
-          // [NEW] "검색 기록이 없습니다." 표시
           list.innerHTML = '<li class="no-result-item">검색 기록이 없습니다.</li>';
           list.style.display = 'block';
           toggleSearchWrapper(true);
@@ -1068,12 +1100,11 @@
           li.appendChild(textSpan);
           li.appendChild(delBtn);
           
-          li.onclick = (e) => {
-              if(e.target !== delBtn) {
-                  document.getElementById('card-search').value = r;
-                  checkClearBtn(); // [NEW] Trigger Check
-                  startSearch();
-              }
+          // [NEW] Use onmousedown to prevent blur race condition
+          li.onmousedown = () => {
+              document.getElementById('card-search').value = r;
+              checkClearBtn(); 
+              startSearch();
           };
           
           list.appendChild(li);
@@ -1088,6 +1119,7 @@
       const list = document.getElementById('custom-dropdown');
       const normalizedInput = normalizeStr(val);
       const decomposedInput = decomposeHangul(normalizedInput); 
+      currentFocus = -1; // Reset focus
       
       let matches = allNames.filter(name => {
           const normName = normalizeStr(name);
@@ -1095,23 +1127,19 @@
           return decompName.includes(decomposedInput);
       });
 
-      // [NEW] Smart Sorting Logic
       matches.sort((a, b) => {
           const normVal = normalizedInput;
           const normA = normalizeStr(a);
           const normB = normalizeStr(b);
 
-          // 1. Exact Match
           if (normA === normVal) return -1;
           if (normB === normVal) return 1;
 
-          // 2. Starts With
           const aStarts = normA.startsWith(normVal);
           const bStarts = normB.startsWith(normVal);
           if (aStarts && !bStarts) return -1;
           if (!aStarts && bStarts) return 1;
 
-          // 3. Length (Shorter is better / Closer match)
           return a.length - b.length || a.localeCompare(b);
       });
       
@@ -1144,9 +1172,11 @@
           }
           
           li.innerHTML = html;
-          li.onclick = () => {
+
+          // [NEW] Use onmousedown to fix double-click issue
+          li.onmousedown = () => {
               document.getElementById('card-search').value = m;
-              checkClearBtn(); // [NEW] Trigger Check
+              checkClearBtn(); 
               startSearch();
           };
           list.appendChild(li);
@@ -1164,7 +1194,7 @@
 
   function clearAllHistory() {
       localStorage.removeItem(RECENT_KEY);
-      showRecentInDropdown(); // [NEW] Refresh immediately
+      showRecentInDropdown(); 
   }
 
   function updateDisconnectBtn() { const btn = document.getElementById('disconnect-btn'); if (localStorage.getItem(STORAGE_KEY)) btn.classList.remove('disabled'); else btn.classList.add('disabled'); }
@@ -1210,19 +1240,15 @@
     adjustRegionWidth(); // 변경 시 너비 조절
   }
 
-  // [NEW] Region Button Width Adjuster
   function adjustRegionWidth() {
       const select = document.getElementById('region-select');
       const tempSpan = document.createElement('span');
-      
-      // Select와 동일한 폰트 스타일 적용
       tempSpan.style.visibility = 'hidden';
       tempSpan.style.position = 'absolute';
       tempSpan.style.fontSize = window.getComputedStyle(select).fontSize;
       tempSpan.style.fontWeight = window.getComputedStyle(select).fontWeight;
       tempSpan.style.fontFamily = window.getComputedStyle(select).fontFamily;
       
-      // 현재 선택된 텍스트
       const selectedOption = select.options[select.selectedIndex];
       tempSpan.innerText = selectedOption.text;
       
@@ -1230,7 +1256,6 @@
       const width = tempSpan.getBoundingClientRect().width;
       document.body.removeChild(tempSpan);
       
-      // 계산된 너비 + 여유분 적용
       select.style.width = (width + 4) + 'px'; 
   }
 
@@ -1272,7 +1297,6 @@
         clientCache = res.clientCache || {};
         nameDb = res.nameDb || {};
 
-        // [NEW] Build CID Lookup
         cidLookup = {};
         Object.keys(nameDb).forEach(nameKey => {
             const entry = nameDb[nameKey];
@@ -1282,7 +1306,6 @@
             }
         });
 
-        // [NEW] Expand allNames (Suggestion Pool)
         const expandedSet = new Set(allNames); 
         allNames.forEach(name => {
             const entry = nameDb[name];
@@ -1318,7 +1341,6 @@
     
     saveRecentSearch(name); 
     
-    // 1. Determine Target Names (All languages sharing the same CID)
     let targetNames = new Set();
     if (nameDb[name] && nameDb[name].id) {
         const cid = nameDb[name].id;
@@ -1328,11 +1350,9 @@
             targetNames.add(name);
         }
     } else {
-        // Fallback for custom cards or non-DB entries
         targetNames.add(name);
     }
 
-    // 2. Filter local database using the Set of target names
     const filteredRows = localCardDatabase.filter(row => targetNames.has(String(row[0]))); 
     
     renderTable(filteredRows); 
