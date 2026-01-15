@@ -709,7 +709,7 @@
 </head>
 <body>
 
-<div class="version-info">ver. 0.7.35</div>
+<div class="version-info">ver. 0.7.36</div>
 <div class="maker-info">Made by <a href="https://www.youtube.com/@참혈" target="_blank"><i class="fab fa-youtube"></i>참혈</a></div>
 
 <div class="header-right-container">
@@ -997,6 +997,7 @@
         let list = document.getElementById('custom-dropdown');
         if (list.style.display === 'none') return;
         
+        // Get valid items (exclude header and no-result message)
         let items = list.querySelectorAll('li:not(.recent-header-item):not(.no-result-item)');
         
         if (e.keyCode == 40) { // Down
@@ -1007,17 +1008,23 @@
             addActive(items);
         } else if (e.keyCode == 13) { // Enter
             e.preventDefault();
-            if (currentFocus > -1 && items && items[currentFocus]) {
-                const val = items[currentFocus].dataset.val;
-                if (val) {
-                    document.getElementById('card-search').value = val;
-                    checkClearBtn();
-                    startSearch();
+            
+            let targetVal = this.value; // Default to current input
+
+            // If dropdown is open and has items
+            if (list.style.display !== 'none' && items.length > 0) {
+                let activeIndex = currentFocus > -1 ? currentFocus : 0; // Default to 0 if none selected
+                if (items[activeIndex]) {
+                    targetVal = items[activeIndex].dataset.val;
                 }
-            } else {
-                this.blur();
-                startSearch();
             }
+
+            // Update input and search
+            if (targetVal) {
+                this.value = targetVal;
+            }
+            this.blur();
+            startSearch();
         }
     });
 
