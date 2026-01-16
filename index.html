@@ -215,9 +215,9 @@
         body { padding-bottom: 100px; }
         .app-sidebar { display: none; }
         .mobile-nav-container { display: flex; }
-        .header-right-container { top: 10px; }
-        .version-info { top: 12px; }
-        .maker-info { top: 12px; }
+        .header-right-container { top: 8px; } /* [MODIFIED] Unified top to 8px */
+        .version-info { top: 8px; } /* [MODIFIED] Unified top to 8px */
+        .maker-info { top: 8px; } /* [MODIFIED] Unified top to 8px */
         .container { max-width: 100% !important; padding: 0 15px; }
     }
 
@@ -231,7 +231,8 @@
 
     /* 상단 헤더 우측 컨테이너 */
     .header-right-container {
-        position: absolute; top: 6px; right: 12px;
+        position: absolute; top: 8px; /* [MODIFIED] Unified top to 8px */ 
+        right: 12px;
         display: flex; align-items: center; 
         gap: 10px; 
         z-index: 10;
@@ -325,8 +326,8 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        /* [MODIFIED] Reduced top margin to move logo up */
-        margin-top: 30px; 
+        /* [MODIFIED] Increased margin-top from 30px to 60px */
+        margin-top: 60px; 
         margin-bottom: 25px;
         text-align: center;
         line-height: 1;
@@ -337,7 +338,6 @@
         color: var(--text-primary);
         letter-spacing: 2px;
         opacity: 0.8;
-        /* [MODIFIED] Removed margin */
         margin-bottom: 0; 
         z-index: 1;
     }
@@ -346,7 +346,6 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        /* [MODIFIED] Removed margin */
         margin: 0;
         width: 100%;
     }
@@ -361,7 +360,6 @@
         font-weight: 700;
         color: var(--error-red);
         letter-spacing: 3px;
-        /* [MODIFIED] Removed margin */
         margin-top: 0;
     }
     
