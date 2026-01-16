@@ -311,7 +311,8 @@
         /* Home Position: Center Top */
         top: 0;
         left: 50%;
-        transform: translateX(-50%);
+        /* [MODIFIED] Unified Transform Axis for smooth transition */
+        transform: translate(-50%, 0);
         transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
     
@@ -338,7 +339,7 @@
         left: 50%;
         width: 90%;
         max-width: 700px;
-        transform: translateX(-50%);
+        transform: translate(-50%, 0);
         transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
         z-index: 1;
     }
@@ -355,7 +356,8 @@
     body.mode-compact .app-title-container {
         top: 50%;
         left: 0;
-        transform: translateY(-50%);
+        /* [MODIFIED] Unified Transform Axis */
+        transform: translate(0, -50%);
         align-items: flex-start;
     }
 
@@ -368,16 +370,17 @@
     }
 
     body.mode-compact .synapse-logo-svg {
-        max-width: 160px; /* [MODIFIED] Increased size for compact mode */
+        max-width: 160px; /* Logo Size in Compact Mode */
     }
 
     /* Search Box moves to Right of Logo */
     body.mode-compact .search-box {
         top: 50%;
-        left: 170px; /* Logo width + gap */
-        width: calc(100% - 170px);
+        /* [MODIFIED] Adjusted left value for spacing */
+        left: 180px; 
+        width: calc(100% - 180px);
         max-width: none;
-        transform: translateY(-50%);
+        transform: translate(0, -50%);
         align-items: flex-start;
     }
 
@@ -395,9 +398,11 @@
         transition: opacity 0.3s ease-in-out;
     }
     .content-section.active {
-        /* Display block is handled by JS, opacity triggers fade in */
         opacity: 1;
     }
+    
+    /* [MODIFIED] Removed max-height restriction for result area */
+    #result-area { overflow-x: auto; width: 100%; margin-top: 30px; }
 
     /* Existing Styles ... */
     .help-trigger-btn {
@@ -503,9 +508,6 @@
     #loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--overlay-bg); z-index: 11000; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
     body.dark-mode #loading-text { color: var(--primary-color) !important; }
     
-    #result-area { overflow-x: auto; max-height: 0; opacity: 0; transition: max-height 0.6s ease; width: 100%; margin-top: 30px; }
-    #result-area.show { max-height: 10000px; opacity: 1; }
-
     .new-card-box { margin-bottom: 20px; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; background: var(--bg-surface); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
 
     .summary-split-wrapper { display: flex; width: 100%; }
@@ -753,7 +755,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.8.4</span>
+        <span class="footer-item">ver. 0.8.5</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -1054,7 +1056,7 @@
 
   // [NEW] Robust Mode Switching Logic with Sequential Fading
   function switchToMode(mode) {
-      if (currentMode === mode) return; // Optimize: don't switch if same
+      if (currentMode === mode) return; 
       currentMode = mode;
       
       const body = document.body;
