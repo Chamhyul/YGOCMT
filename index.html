@@ -285,20 +285,20 @@
     
     .region-dropdown-list li:hover { background-color: var(--bg-sub); color: var(--primary-color); font-weight: 700; }
 
-    /* [MODIFIED] Added min-height to prevent layout jump during transition */
     .container { margin-top: 30px; max-width: 95% !important; min-height: 60vh; }
     
-    /* [MODIFIED] Absolute Positioning for Header Elements */
+    /* [MODIFIED] Absolute Positioning without Transform for Smooth Animation */
     #dynamic-header-wrapper {
         position: relative;
         width: 100%;
-        height: 220px; /* Default Height for Home Mode */
+        height: 220px; /* Home Mode Height */
         margin-top: 20px;
         margin-bottom: 20px;
         transition: height 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
         z-index: 100;
     }
 
+    /* Logo Container Animation */
     .app-title-container {
         position: absolute;
         display: flex;
@@ -308,11 +308,10 @@
         text-align: center;
         line-height: 1;
         z-index: 2;
-        /* Home Position: Center Top */
+        /* Home Mode */
         top: 0;
-        left: 50%;
-        /* [MODIFIED] Unified Transform Axis for smooth transition */
-        transform: translate(-50%, 0);
+        left: 0;
+        width: 100%;
         transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
     
@@ -325,6 +324,7 @@
     .synapse-logo-svg { width: 100%; max-width: 220px; height: auto; transition: max-width 0.5s ease; }
     .title-beta { font-size: 0.85rem; font-weight: 700; color: var(--error-red); letter-spacing: 3px; margin-top: 0; }
     
+    /* Search Box Animation */
     .search-box { 
         position: absolute;
         padding: 0; 
@@ -333,32 +333,29 @@
         display: flex; 
         flex-direction: column; 
         align-items: center; 
-        
-        /* Home Position: Below Logo */
+        /* Home Mode */
         top: 100px;
-        left: 50%;
+        left: 5%; /* 90% width centered (5% left) */
         width: 90%;
         max-width: 700px;
-        transform: translate(-50%, 0);
         transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
         z-index: 1;
     }
     .search-header-row { width: 100%; display: flex; justify-content: flex-start; padding-left: 5px; margin-bottom: 5px; transition: opacity 0.3s ease; }
     .search-row { display: flex; align-items: center; justify-content: center; width: 100%; gap: 8px; }
     
-    /* === COMPACT MODE STYLES (Absolute Transitions) === */
+    /* === COMPACT MODE STYLES (Unidirectional Movement) === */
     body.mode-compact #dynamic-header-wrapper {
         height: 70px; /* Reduced Height */
         margin-top: 0;
     }
 
-    /* Logo moves to Left Middle */
+    /* Logo moves to Left (Fixed width) */
     body.mode-compact .app-title-container {
-        top: 50%;
-        left: 0;
-        /* [MODIFIED] Unified Transform Axis */
-        transform: translate(0, -50%);
-        align-items: flex-start;
+        top: 15px; /* Fixed Top */
+        left: 10px; /* Fixed Left */
+        width: 160px; /* Shrink Width */
+        align-items: flex-start; /* Align internal logo left */
     }
 
     body.mode-compact .title-ygo, 
@@ -370,17 +367,15 @@
     }
 
     body.mode-compact .synapse-logo-svg {
-        max-width: 160px; /* Logo Size in Compact Mode */
+        max-width: 160px; /* Logo Size */
     }
 
-    /* Search Box moves to Right of Logo */
+    /* Search Box moves to Right (Dynamic width) */
     body.mode-compact .search-box {
-        top: 50%;
-        /* [MODIFIED] Adjusted left value for spacing */
-        left: 180px; 
-        width: calc(100% - 180px);
+        top: 12px; /* Fixed Top (Centered in 70px) */
+        left: 180px; /* Logo width + gap */
+        width: calc(100% - 190px); /* Fill remaining space */
         max-width: none;
-        transform: translate(0, -50%);
         align-items: flex-start;
     }
 
@@ -401,7 +396,7 @@
         opacity: 1;
     }
     
-    /* [MODIFIED] Removed max-height restriction for result area */
+    /* Result Area Style */
     #result-area { overflow-x: auto; width: 100%; margin-top: 30px; }
 
     /* Existing Styles ... */
@@ -755,7 +750,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.8.5</span>
+        <span class="footer-item">ver. 0.8.6</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
