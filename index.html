@@ -341,6 +341,12 @@
 
     .btn.cyan-theme { background-color: var(--primary-color) !important; font-weight: 600; color: #fff; }
     
+    /* [NEW] Disabled Style for Cyan Buttons */
+    .btn.cyan-theme.disabled, .btn.cyan-theme:disabled {
+        background-color: var(--disabled-bg) !important;
+        color: var(--disabled-text) !important;
+    }
+    
     .custom-dropdown {
       position: absolute; top: 100%; left: -1px; right: -1px; 
       background-color: var(--bg-surface); border: 1px solid var(--border-color); border-top: 1px solid #eee; 
@@ -476,6 +482,22 @@
     @media only screen and (max-width: 600px) {
         .footer-separator.mobile-hide { display: none; }
         .footer-item.copyright { width: 100%; margin-top: 4px; }
+    }
+
+    /* [NEW] Sheet Name Display Style */
+    .sheet-name-display {
+        display: inline-block;
+        max-width: 150px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        vertical-align: middle;
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        margin-left: 8px;
+    }
+    @media only screen and (max-width: 600px) {
+        .sheet-name-display { max-width: 100px; }
     }
   </style>
 </head>
@@ -629,7 +651,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.8.1</span>
+        <span class="footer-item">ver. 0.8.2</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -675,12 +697,15 @@
     <h5 style="font-weight: 800; margin-bottom: 10px;">사용법 및 연결</h5>
     <p style="color: var(--text-secondary); line-height: 1.5; margin-bottom: 20px;">이 앱은 구글 시트를 기반으로 사용자가 보유한 카드를 등록하여, 실물 카드 관리를 보조합니다.<br>양식에 맞는 구글 시트 링크를 입력해주세요.</p>
     <div class="guide-btn" id="guide-accordion-btn" onclick="toggleGuide()"><i class="material-icons">keyboard_arrow_right</i><span>양식 다운로드 및 연결법</span></div>
-    <div id="guide-box" class="guide-content"><ol><li><a href="https://docs.google.com/spreadsheets/d/16AVBIJvass2Zl6f4IwMpK5KcZkPOuGATWfo0FIdeOdw/copy" target="_blank" style="color: var(--primary-color); font-weight: 800; text-decoration: underline;">링크</a>를 눌러 양식 시트를 구글 드라이브에 복사합니다.</li><li>해당 파일을 <b>링크가 있는 모든 사용자 / 편집자</b>로 공유 설정을 변경합니다.</li><li>해당 파일의 공유 링크를 입력 후 확인을 눌러주세요.</li></ol></div>
+    <div id="guide-box" class="guide-content"><ol><li><a href="https://docs.google.com/spreadsheets/d/16AVBIJvass2Zl6f4IwMpK5KcZkPOuGATWfo0FIdeOdw/copy" target="_blank" style="color: var(--primary-color); font-weight: 800; text-decoration: underline;">링크</a>를 눌러 양식 시트를 구글 드라이브에 복사합니다.</li><li>해당 파일을 <b style="color: var(--primary-color);">링크가 있는 모든 사용자 / 편집자</b>로 공유 설정을 변경합니다.</li><li>해당 파일의 공유 링크를 입력 후 연결을 눌러주세요.</li></ol></div>
     <div class="url-input-container"><input type="text" id="sheet-url" placeholder="https://docs.google.com/spreadsheets/d/..." oninput="validateSheetLink()"><div id="valid-mark" class="valid-icon"></div></div>
     <div id="status-msg" class="status-msg"></div>
   </div>
   <div class="modal-footer" style="display: flex; justify-content: space-between; padding: 0 24px 20px 24px; align-items: center; height: auto;">
-    <button id="disconnect-btn" class="btn red darken-1 waves-effect waves-light" onclick="disconnectSheet()">연결 끊기</button>
+    <div style="display: flex; align-items: center;">
+        <button id="disconnect-btn" class="btn red darken-1 waves-effect waves-light" onclick="disconnectSheet()">연결 끊기</button>
+        <span id="connected-sheet-name" class="sheet-name-display"></span>
+    </div>
     <div><button class="btn-flat modal-close" style="color: var(--text-primary);">취소</button><button id="confirm-btn" class="btn cyan-theme waves-effect waves-light disabled" onclick="saveSettings()">연결</button></div>
   </div>
 </div>
@@ -738,7 +763,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <script>
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx2W7ZnDz-5gTTyIr6VxG8IbvkaPW-qZwRxmgXgfwpJ9hwPic9J1dh5ymDqxriCKuCI/exec";
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwmpn2TEr0cdbLJtgB6UZ51wBeUyAbaRvSPsXpqnttRbXLGj2xYDb5iwNlmqQ4DCpKIGg/exec";
   const STORAGE_KEY = 'yugioh_spreadsheet_id';
   const RECENT_KEY = 'recent_card_searches';
   const THEME_KEY = 'yugioh_theme_mode';
@@ -1107,7 +1132,17 @@
   // [REMOVED] Function call removed as logic is now inline
   // function clearAllHistory() { ... }
 
-  function updateDisconnectBtn() { const btn = document.getElementById('disconnect-btn'); if (localStorage.getItem(STORAGE_KEY)) btn.classList.remove('disabled'); else btn.classList.add('disabled'); }
+  function updateDisconnectBtn() {
+      const btn = document.getElementById('disconnect-btn');
+      const nameSpan = document.getElementById('connected-sheet-name');
+      if (localStorage.getItem(STORAGE_KEY)) {
+          btn.classList.remove('disabled');
+      } else {
+          btn.classList.add('disabled');
+          nameSpan.innerText = '';
+      }
+  }
+
   function toggleGuide(forceOpen = null) { 
       const btn = document.getElementById('guide-accordion-btn'); 
       const box = document.getElementById('guide-box'); 
@@ -1197,7 +1232,7 @@
   }
   function resetAddModal() { document.getElementById('add-card-tbody').innerHTML = ''; addMoreRows(1); }
   function resetManageModal() { document.getElementById('manage-card-tbody').innerHTML = ''; addManageRows(1); }
-  function validateSheetLink() { clearTimeout(validationTimeout); const url = document.getElementById('sheet-url').value.trim(); const mark = document.getElementById('valid-mark'), msg = document.getElementById('status-msg'), confirmBtn = document.getElementById('confirm-btn'); if (!url) { mark.style.display = 'none'; msg.innerText = ''; confirmBtn.classList.add('disabled'); return; } const match = url.match(/[-\w]{25,}/); if (!match) { mark.innerHTML = '<i class="material-icons" style="color: var(--error-red)">cancel</i>'; mark.style.display = 'block'; msg.innerText = '구글 시트 링크를 적어주세요.'; msg.style.color = 'var(--error-red)'; confirmBtn.classList.add('disabled'); return; } validationTimeout = setTimeout(async () => { msg.innerText = '권한 확인 중...'; try { const res = await callApi('checkSheet', { targetId: match[0] }); if (res.status === 'OK') { mark.innerHTML = '<i class="material-icons" style="color: var(--success-green)">check_circle</i>'; msg.innerText = '유효한 시트입니다.'; msg.style.color = 'var(--success-green)'; confirmBtn.classList.remove('disabled'); } else { mark.innerHTML = '<i class="material-icons" style="color: var(--warning-yellow)">warning</i>'; msg.innerText = (res.status === 'NO_EDIT_ACCESS') ? '공유 설정을 링크를 가진 모든 사용자 / 편집자로 설정해주세요.' : '접근할 수 없거나 형식이 잘못되었습니다.'; msg.style.color = 'var(--warning-yellow)'; confirmBtn.classList.add('disabled'); } mark.style.display = 'block'; } catch (e) { msg.innerText = '확인 실패'; } }, 500); }
+  function validateSheetLink() { clearTimeout(validationTimeout); const url = document.getElementById('sheet-url').value.trim(); const mark = document.getElementById('valid-mark'), msg = document.getElementById('status-msg'), confirmBtn = document.getElementById('confirm-btn'); if (!url) { mark.style.display = 'none'; msg.innerText = ''; confirmBtn.classList.add('disabled'); return; } const match = url.match(/[-\w]{25,}/); if (!match) { mark.innerHTML = '<i class="material-icons" style="color: var(--error-red)">cancel</i>'; mark.style.display = 'block'; msg.innerText = '구글 시트 링크를 적어주세요.'; msg.style.color = 'var(--error-red)'; confirmBtn.classList.add('disabled'); return; } validationTimeout = setTimeout(async () => { msg.innerText = '권한 확인 중...'; try { const res = await callApi('checkSheet', { targetId: match[0] }); if (res.status === 'OK') { mark.innerHTML = '<i class="material-icons" style="color: var(--success-green)">check_circle</i>'; msg.innerText = '유효한 시트입니다.'; msg.style.color = 'var(--success-green)'; confirmBtn.classList.remove('disabled'); if (res.sheetName) document.getElementById('connected-sheet-name').innerText = res.sheetName; } else { mark.innerHTML = '<i class="material-icons" style="color: var(--warning-yellow)">warning</i>'; msg.innerText = (res.status === 'NO_EDIT_ACCESS') ? '공유 설정을 링크를 가진 모든 사용자 / 편집자로 설정해주세요.' : '접근할 수 없거나 형식이 잘못되었습니다.'; msg.style.color = 'var(--warning-yellow)'; confirmBtn.classList.add('disabled'); } mark.style.display = 'block'; } catch (e) { msg.innerText = '확인 실패'; } }, 500); }
   
   async function refreshInitialData() { 
     const savedId = localStorage.getItem(STORAGE_KEY); if (!savedId) return; 
@@ -1215,6 +1250,9 @@
         rarityMappingRaw = res.rarityMappingRaw || []; 
         clientCache = res.clientCache || {};
         nameDb = res.nameDb || {};
+        if (res.sheetName) {
+             document.getElementById('connected-sheet-name').innerText = res.sheetName;
+        }
 
         cidLookup = {};
         Object.keys(nameDb).forEach(nameKey => {
