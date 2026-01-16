@@ -285,55 +285,78 @@
     
     .region-dropdown-list li:hover { background-color: var(--bg-sub); color: var(--primary-color); font-weight: 700; }
 
-    .container { margin-top: 30px; max-width: 95% !important; }
+    /* [MODIFIED] Added min-height to prevent layout jump during transition */
+    .container { margin-top: 30px; max-width: 95% !important; min-height: 60vh; }
     
-    /* [MODIFIED] Animation & Layout Styles */
+    /* [MODIFIED] Absolute Positioning for Header Elements */
     #dynamic-header-wrapper {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-top: 60px;
-        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        position: relative;
         width: 100%;
+        height: 220px; /* Default Height for Home Mode */
+        margin-top: 20px;
+        margin-bottom: 20px;
+        transition: height 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+        z-index: 100;
     }
 
     .app-title-container {
-        display: flex; flex-direction: column; align-items: center; justify-content: center;
-        margin-bottom: 25px; text-align: center; line-height: 1;
-        transition: all 0.4s ease;
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        line-height: 1;
+        z-index: 2;
+        /* Home Position: Center Top */
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
     
     .title-ygo, .title-beta {
         transition: opacity 0.3s ease, height 0.3s ease, margin 0.3s ease;
         opacity: 1;
+        height: auto;
     }
-    .title-ygo { font-size: 1rem; font-weight: 700; color: var(--text-primary); letter-spacing: 2px; opacity: 0.8; margin-bottom: 0; z-index: 1; }
-    .synapse-logo-container { display: flex; justify-content: center; align-items: center; margin: 0; width: 100%; transition: width 0.4s ease; }
-    .synapse-logo-svg { width: 100%; max-width: 220px; height: auto; transition: max-width 0.4s ease; }
+    .title-ygo { font-size: 1rem; font-weight: 700; color: var(--text-primary); letter-spacing: 2px; opacity: 0.8; margin-bottom: 0; }
+    .synapse-logo-svg { width: 100%; max-width: 220px; height: auto; transition: max-width 0.5s ease; }
     .title-beta { font-size: 0.85rem; font-weight: 700; color: var(--error-red); letter-spacing: 3px; margin-top: 0; }
     
     .search-box { 
-        padding: 0; margin-bottom: 20px; background: transparent; box-shadow: none; 
-        display: flex; flex-direction: column; align-items: center; position: relative; 
-        width: 100%; transition: all 0.4s ease;
+        position: absolute;
+        padding: 0; 
+        background: transparent; 
+        box-shadow: none; 
+        display: flex; 
+        flex-direction: column; 
+        align-items: center; 
+        
+        /* Home Position: Below Logo */
+        top: 100px;
+        left: 50%;
+        width: 90%;
+        max-width: 700px;
+        transform: translateX(-50%);
+        transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+        z-index: 1;
     }
-    .search-header-row { width: 100%; max-width: 700px; margin: 0 auto 5px auto; display: flex; justify-content: flex-start; padding-left: 5px; transition: all 0.4s ease; }
-    .search-row { display: flex; align-items: center; justify-content: center; width: 100%; max-width: 700px; gap: 8px; transition: width 0.4s ease, max-width 0.4s ease; }
+    .search-header-row { width: 100%; display: flex; justify-content: flex-start; padding-left: 5px; margin-bottom: 5px; transition: opacity 0.3s ease; }
+    .search-row { display: flex; align-items: center; justify-content: center; width: 100%; gap: 8px; }
     
-    /* COMPACT MODE STYLES */
+    /* === COMPACT MODE STYLES (Absolute Transitions) === */
     body.mode-compact #dynamic-header-wrapper {
-        flex-direction: row;
-        align-items: center;
+        height: 70px; /* Reduced Height */
         margin-top: 0;
-        margin-bottom: 20px;
-        gap: 15px;
     }
 
+    /* Logo moves to Left Middle */
     body.mode-compact .app-title-container {
-        margin-bottom: 0;
+        top: 50%;
+        left: 0;
+        transform: translateY(-50%);
         align-items: flex-start;
-        width: auto;
-        flex-shrink: 0;
     }
 
     body.mode-compact .title-ygo, 
@@ -345,21 +368,24 @@
     }
 
     body.mode-compact .synapse-logo-svg {
-        max-width: 120px; /* Logo Shrink */
+        max-width: 160px; /* [MODIFIED] Increased size for compact mode */
     }
 
+    /* Search Box moves to Right of Logo */
     body.mode-compact .search-box {
-        margin-bottom: 0;
+        top: 50%;
+        left: 170px; /* Logo width + gap */
+        width: calc(100% - 170px);
+        max-width: none;
+        transform: translateY(-50%);
         align-items: flex-start;
-        flex-grow: 1;
     }
 
     body.mode-compact .search-header-row {
-        display: none; /* Hide 'Usage' button in compact header to save space or move it? decided to hide for clean header */
-    }
-
-    body.mode-compact .search-row {
-        max-width: 100%; 
+        opacity: 0;
+        pointer-events: none;
+        height: 0;
+        margin: 0;
     }
 
     /* Content Section Transition */
@@ -369,7 +395,7 @@
         transition: opacity 0.3s ease-in-out;
     }
     .content-section.active {
-        display: block;
+        /* Display block is handled by JS, opacity triggers fade in */
         opacity: 1;
     }
 
@@ -409,7 +435,6 @@
 
     .btn.cyan-theme { background-color: var(--primary-color) !important; font-weight: 600; color: #fff; }
     
-    /* [NEW] Disabled Style for Cyan Buttons */
     .btn.cyan-theme.disabled, .btn.cyan-theme:disabled {
         background-color: var(--disabled-bg) !important;
         color: var(--disabled-text) !important;
@@ -708,7 +733,7 @@
       </div>
   </div>
 
-  <div id="intro-area" class="content-section active">
+  <div id="intro-area" class="content-section" style="display:block; opacity:1;">
     <p>본 서비스는 실물 유희왕 카드의 체계적인 관리를 위해 제작됐습니다.<br>
     사용자가 보유한 카드의 정보는 직접 등록해야 합니다.<br>
     자세한 사용법은 <a onclick="openSettingsWithGuide()">[여기]</a>를 확인하세요.</p>
@@ -899,9 +924,6 @@
         } else {
             filterAndShowDropdown(searchInput.value); 
         }
-        // If user clicks input, switch to search mode if not already (prepare for typing)
-        // Actually best to switch on input, but if in discard mode, maybe we want to keep it until typing?
-        // User instruction: "When using search bar in discard page... contents fade out"
     };
     
     searchInput.addEventListener('click', handleFocusOrClick);
@@ -910,23 +932,14 @@
     searchInput.addEventListener('input', (e) => {
         const val = e.target.value;
         
-        // [MODIFIED] Switch Mode Logic
         if (val.trim().length > 0) {
             if (currentMode !== 'search') switchToMode('search');
-        } else {
-            // If cleared, what to do? 
-            // Usually go back to home if user manually cleared everything?
-            // Or if in discard mode and cleared, stay in discard?
-            // For now, if cleared, we show recent dropdown but keep 'search' layout (compact)
-            // or go back to home? 
-            // Let's implement: if cleared, show recent. If explicitly closed or logo clicked -> Home.
-            // But if user was in discard mode -> Typed -> Cleared -> ??
-            // Let's stick to: Typed -> Search Mode. Cleared -> still Search Mode (Compact) displaying recent.
-        }
+        } 
 
         if (!val) {
             showRecentInDropdown();
-            document.getElementById('result-area').innerHTML = ''; // Clear results
+            // Clear results visually, but keep mode if user is typing
+            document.getElementById('result-area').innerHTML = ''; 
         }
         else filterAndShowDropdown(val);
         
@@ -1023,13 +1036,9 @@
         this.style.display = 'none'; 
         searchInput.focus(); 
         showRecentInDropdown();
-        // If cleared, switch to Home? Or stay in Search mode?
-        // User behavior: Clear -> usually want to type new or go back.
-        // Let's reset result area
+        
         document.getElementById('result-area').innerHTML = '';
-        // switchToMode('home'); // Optional: reset to home if cleared? 
-        // For now, let's keep it compact if user cleared it manually, wait for logic
-        switchToMode('home'); // Let's go back to home on clear for clean UX
+        switchToMode('home'); 
     });
     
     document.addEventListener('click', function(e) {
@@ -1043,46 +1052,61 @@
     updateDisconnectBtn(); refreshInitialData();
   });
 
-  // [NEW] Mode Switching Logic
+  // [NEW] Robust Mode Switching Logic with Sequential Fading
   function switchToMode(mode) {
+      if (currentMode === mode) return; // Optimize: don't switch if same
       currentMode = mode;
+      
       const body = document.body;
-      const introArea = document.getElementById('intro-area');
-      const resultArea = document.getElementById('result-area');
-      const discardArea = document.getElementById('discard-content-area');
       const searchInput = document.getElementById('card-search');
+      
+      // 1. Determine active content ID based on mode
+      let targetContentId = '';
+      if (mode === 'home') targetContentId = 'intro-area';
+      else if (mode === 'search') targetContentId = 'result-area';
+      else if (mode === 'discard') targetContentId = 'discard-content-area';
 
-      // 1. Header Layout
+      // 2. Header Animation (Immediate)
       if (mode === 'home') {
           body.classList.remove('mode-compact');
       } else {
           body.classList.add('mode-compact');
       }
 
-      // 2. Content Visibility (Fade Effect via CSS class)
-      // Reset all first
-      introArea.classList.remove('active');
-      resultArea.classList.remove('active');
-      discardArea.classList.remove('active');
+      // 3. Content Transition Sequence: Fade Out -> Swap -> Fade In
+      const allSections = document.querySelectorAll('.content-section');
+      
+      // Step A: Fade Out current active sections
+      allSections.forEach(el => {
+          el.style.opacity = '0';
+      });
 
-      // Activate specific
-      if (mode === 'home') {
-          setTimeout(() => introArea.classList.add('active'), 300); // Delay for fade out
-          // Reset Search
-          searchInput.value = '';
-          document.getElementById('clear-btn').style.display = 'none';
-          document.getElementById('result-area').innerHTML = '';
-      } 
-      else if (mode === 'search') {
-          // Immediately show result container (content might be empty initially)
-          resultArea.classList.add('active');
-      }
-      else if (mode === 'discard') {
-          setTimeout(() => discardArea.classList.add('active'), 300);
-          // Reset Search but keep layout compact
-          searchInput.value = '';
-          document.getElementById('clear-btn').style.display = 'none';
-          document.getElementById('result-area').innerHTML = '';
+      // Step B: Wait for Fade Out (300ms), then Swap Display
+      setTimeout(() => {
+          allSections.forEach(el => {
+              if (el.id === targetContentId) {
+                  el.style.display = 'block';
+              } else {
+                  el.style.display = 'none';
+              }
+          });
+
+          // Step C: Small delay to ensure browser renders 'display:block', then Fade In
+          setTimeout(() => {
+              const targetEl = document.getElementById(targetContentId);
+              if(targetEl) targetEl.style.opacity = '1';
+          }, 50);
+
+      }, 300);
+
+      // 4. Special Resets
+      if (mode === 'home' || mode === 'discard') {
+          if(mode === 'home') {
+              searchInput.value = '';
+              document.getElementById('clear-btn').style.display = 'none';
+          }
+          // Clear previous search results visually to avoid flash
+          if(mode !== 'search') document.getElementById('result-area').innerHTML = '';
       }
   }
 
@@ -1412,7 +1436,9 @@
     if (rows.length === 0) { 
         resultArea.innerHTML = "<p class='center'>결과 없음</p>"; 
         // [MODIFIED] Ensure visibility logic handled by switchToMode, but adding class here for safety if called directly
-        resultArea.classList.add('show'); 
+        resultArea.classList.add('active');
+        resultArea.style.display = 'block';
+        setTimeout(() => resultArea.style.opacity = '1', 50);
         return; 
     }
 
@@ -1531,7 +1557,13 @@
 
     resultArea.innerHTML = newHtml;
     M.Tooltip.init(resultArea.querySelectorAll('.tooltipped'), { html: true, margin: 3 });
-    setTimeout(() => resultArea.classList.add('show'), 50);
+    // [MODIFIED] Force fade in for results if already in search mode
+    if (currentMode === 'search') {
+        setTimeout(() => {
+            resultArea.style.display = 'block';
+            setTimeout(() => resultArea.style.opacity = '1', 50);
+        }, 50);
+    }
   }
 
   function toggleNewDetail(detailId) {
