@@ -264,27 +264,49 @@
     input:checked + .slider { background-color: var(--primary-color); }
     input:checked + .slider:before { transform: translateX(18px); }
     
-    /* Region Switch CSS */
+    /* Region Switch Capsule CSS (Modified) */
     .region-switch-wrapper {
-        display: flex; align-items: center; gap: 4px;
+        display: flex; 
+        align-items: center; 
+        gap: 6px;
         background-color: var(--bg-surface);
         border: 1px solid var(--border-color);
-        padding: 2px 8px;
-        border-radius: 20px;
+        padding: 4px 12px; /* Capsule padding */
+        border-radius: 50px; /* Fully rounded capsule */
         box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        transition: width 0.2s ease;
-        height: 24px; box-sizing: border-box;
+        height: 30px; 
+        box-sizing: border-box;
+        position: relative; /* Context for absolute select */
+        cursor: pointer;
+        transition: border-color 0.2s, box-shadow 0.2s;
     }
+    
+    .region-switch-wrapper:hover {
+        border-color: var(--primary-color);
+    }
+
     .region-icon {
-        color: var(--text-muted); font-size: 0.9rem; flex-shrink: 0;
+        color: var(--text-muted); 
+        font-size: 1rem; 
+        flex-shrink: 0;
     }
+    
     .custom-header-select {
-        background-color: transparent; border: none; border-bottom: 1px solid transparent;
-        color: var(--text-primary); font-size: 0.75rem; font-weight: 700; height: 18px; padding: 0; 
-        cursor: pointer; text-align: right; appearance: none; -webkit-appearance: none;
+        background-color: transparent; 
+        border: none; 
+        color: var(--text-primary); 
+        font-size: 0.75rem; 
+        font-weight: 700; 
+        height: 100%;
+        padding: 0; 
+        cursor: pointer; 
+        text-align: left; /* Align text next to icon */
+        appearance: none; 
+        -webkit-appearance: none;
         transition: color 0.2s;
+        z-index: 2; /* Sit on top */
     }
-    .custom-header-select:hover { color: var(--primary-color); }
+    
     .custom-header-select:focus { outline: none; }
     .custom-header-select option { background-color: var(--bg-surface); color: var(--text-primary); }
 
@@ -347,7 +369,7 @@
         padding-left: 5px;
     }
 
-    /* 사용법 버튼 (이동됨) */
+    /* 사용법 버튼 (이동 및 아이콘 축소) */
     .help-trigger-btn {
         font-size: 0.75rem;
         font-weight: 600;
@@ -358,7 +380,8 @@
         height: 18px !important; 
         line-height: 1 !important;
     }
-    .help-trigger-btn i { font-size: 1.1rem; transform: translateY(-1px); }
+    /* [MODIFIED] Reduced icon size to match text */
+    .help-trigger-btn i { font-size: 0.8rem; transform: translateY(-1px); }
     .help-trigger-btn:hover { color: var(--error-red); }
 
     .search-row { 
@@ -756,109 +779,6 @@
     body.dark-mode tr.success-row { background-color: rgba(76, 175, 80, 0.2); } 
     body.dark-mode tr.fail-row { background-color: rgba(244, 67, 54, 0.2); } 
     
-    #toast-container { top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) !important; right: auto !important; bottom: auto !important; max-width: 90%; width: auto !important; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-    .toast { border-radius: 24px !important; text-align: center; justify-content: center; margin-top: 10px; background-color: #333; color: white; }
-    body.dark-mode .toast { background-color: #e0e0e0; color: #121212; }
-
-    /* Fixed Action Button removed as per instruction */
-
-    #add-card-modal, #manage-card-modal, #discard-card-modal { width: 95% !important; max-width: 1100px !important; }
-    .modal-subtitle { color: var(--text-secondary); font-size: 0.95rem; margin-top: 0; margin-bottom: 20px; display: block; line-height: 1.5; }
-    .add-modal-table { font-size: 0.82rem; width: 100%; border-collapse: collapse; }
-    
-    .another-cell-container { display: flex; align-items: center; justify-content: center; gap: 0; width: 100%; height: 100%; }
-    .another-cell-container .checkbox-label { margin-top: 5px; margin-right: -5px; z-index: 5; }
-    
-    .td-flex-container { display: flex; align-items: center; gap: 4px; width: 100%; height: 100%; }
-    .flex-select { flex: 1; min-width: 0; height: 2.2rem !important; font-size: 0.85rem; display: block !important; background-color: var(--input-bg); color: var(--text-primary); border: 1px solid var(--border-color); }
-    .flex-input { flex: 1; min-width: 0; height: 2.2rem !important; display: none; border: 1px solid var(--border-color) !important; padding: 0 5px !important; box-sizing: border-box !important; background-color: var(--input-bg); color: var(--text-primary); }
-    .card-name-fetch { color: var(--primary-dark); font-weight: 700; font-size: 0.8rem; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center; }
-    body.dark-mode .card-name-fetch { color: var(--primary-color); }
-    
-    input.manage-card-no, input.move-qty, 
-    input.new-card-no, input.new-card-qty, select.new-card-another { 
-      height: 2.2rem !important; 
-      margin: 0 !important; 
-      font-size: 0.85rem !important; 
-      text-align: center; 
-      border-bottom: 1px solid var(--text-muted) !important; 
-      text-transform: uppercase;
-      color: var(--text-primary);
-      background-color: transparent;
-    }
-    
-    input.loc-direct {
-      height: 2.2rem !important; 
-      margin: 0 !important; 
-      font-size: 0.85rem !important; 
-      text-align: center; 
-      border-bottom: 1px solid var(--text-muted) !important;
-      text-transform: none;
-      color: var(--text-primary);
-      background-color: transparent;
-    }
-
-    select.new-card-another {
-      height: 2.2rem !important; 
-      margin: 0 !important; 
-      font-size: 0.85rem !important; 
-      text-align: center; 
-      border-bottom: 1px solid var(--text-muted) !important; 
-      text-transform: none; 
-      color: var(--text-primary);
-      background-color: transparent;
-    }
-    
-    select option { background-color: var(--bg-surface); color: var(--text-primary); }
-
-    input.move-qty:disabled, select:disabled, input:disabled { color: var(--disabled-text) !important; border-bottom: 1px dotted var(--disabled-text) !important; cursor: not-allowed; }
-    
-    body.dark-mode input:disabled { 
-        color: var(--text-muted) !important;
-        -webkit-text-fill-color: var(--text-muted) !important;
-    }
-
-    body.dark-mode input[type=number]::-webkit-inner-spin-button, 
-    body.dark-mode input[type=number]::-webkit-outer-spin-button { 
-      filter: invert(1);
-    }
-
-    #add-submit-btn.disabled { background-color: var(--disabled-bg) !important; color: var(--disabled-text) !important; }
-    #confirm-btn.disabled { background-color: var(--disabled-bg) !important; color: var(--disabled-text) !important; }
-    
-    body.dark-mode #disconnect-btn.disabled { background-color: #424242 !important; color: #757575 !important; }
-
-    .adjust-btn-group { display: flex; justify-content: center; gap: 8px; align-items: center; }
-    .adjust-btn { 
-        width: 24px; height: 24px; border-radius: 50%; 
-        background-color: #bdbdbd; color: white; 
-        display: flex; align-items: center; justify-content: center; 
-        font-weight: 700; font-size: 1.2rem; line-height: 1; cursor: pointer; user-select: none;
-        transition: background-color 0.2s;
-    }
-    .adjust-btn.active { background-color: #616161; }
-    .adjust-btn.disabled { background-color: var(--disabled-bg); cursor: not-allowed; opacity: 0.5; pointer-events: none; color: var(--disabled-text); }
-    body.dark-mode .adjust-btn { background-color: #555; color: #eee; }
-    body.dark-mode .adjust-btn.active { background-color: #888; }
-
-    .result-icon-area { text-align: center; margin-top: 10px; margin-bottom: 10px; }
-    .result-icon-area i { font-size: 60px; color: var(--success-green); }
-    .result-summary { text-align: center; font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
-    .result-fail-summary { text-align: center; font-size: 0.9rem; color: var(--error-red); margin-bottom: 15px; font-weight: 500; margin-top: 0; }
-    
-    #result-summary-table-box { width: 100%; overflow-x: auto; margin-bottom: 15px; }
-    .result-detail-wrapper { display: none; margin-top: 10px; width: 100%; overflow-x: auto; }
-    .result-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: center; }
-    .result-table th { background: var(--bg-header); color: var(--text-secondary); padding: 6px; border: 1px solid var(--border-color); }
-    .result-table td { border: 1px solid var(--border-color); padding: 6px; word-break: break-all; color: var(--text-primary); }
-    
-    .toggle-result-btn { 
-        cursor: pointer; color: var(--primary-dark); font-weight: 700; 
-        text-align: center; margin: 0 auto; display: flex; align-items: center; justify-content: center; 
-        width: fit-content; margin-bottom: 10px; gap: 4px;
-    }
-    body.dark-mode .toggle-result-btn { color: var(--primary-color); }
-    
     .btn-flat-action { 
         background-color: transparent !important; 
         color: var(--text-secondary) !important; 
@@ -891,8 +811,23 @@
         padding-bottom: 30px;
         line-height: 1.6;
     }
-    #main-footer a {
+    /* [MODIFIED] Disclaimer style in footer */
+    .footer-disclaimer {
+        margin-bottom: 12px;
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+    }
+    /* [MODIFIED] Maker link style with Youtube icon color transition */
+    #main-footer a.maker-link {
         color: var(--text-muted);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: color 0.2s;
+    }
+    #main-footer a.maker-link:hover {
+        color: #f44336; /* Red color on hover */
     }
   </style>
 </head>
@@ -1032,14 +967,14 @@
   <div id="intro-area">
     <p>본 서비스는 실물 유희왕 카드의 체계적인 관리를 위해 제작됐습니다.<br>
     사용자가 보유한 카드의 정보는 직접 등록해야 합니다.<br>
-    자세한 사용법은 <a onclick="openSettingsWithGuide()">[사용법]</a>을 확인하세요.<br>
-    사용자가 입력한 모든 정보는 사용자가 등록한 구글 시트 파일에 기록되며,<br>해당 내용은 서버에 저장되지 않습니다.</p>
+    자세한 사용법은 <a onclick="openSettingsWithGuide()">[사용법]</a>을 확인하세요.</p>
   </div>
 
   <div class="result-container"><div id="result-area"></div></div>
 
   <footer id="main-footer">
-    <p>ver. 0.8.0 | Made by <a href="https://www.youtube.com/@참혈" target="_blank">참혈</a></p>
+    <p class="footer-disclaimer">사용자가 입력한 모든 정보는 사용자가 등록한 구글 시트 파일에 기록되며,<br>해당 내용은 서버에 저장되지 않습니다.</p>
+    <p>ver. 0.8.1 | Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></p>
     <p>© 2025 YGO Synapse. All rights reserved.</p>
   </footer>
 </div>
