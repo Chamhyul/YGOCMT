@@ -216,15 +216,17 @@
     input:checked + .slider { background-color: var(--primary-color); }
     input:checked + .slider:before { transform: translateX(18px); }
     
-    /* [MODIFIED] Custom Region Dropdown Styles */
+    /* [MODIFIED] Custom Region Dropdown Styles with Fixed Width */
     .region-container {
         position: relative;
         z-index: 1002;
+        width: 105px; /* Fixed width to unify capsule and dropdown */
     }
 
     .region-capsule {
         display: flex; 
-        align-items: center; 
+        align-items: center;
+        justify-content: center; /* Center align items */
         gap: 6px;
         background-color: var(--bg-surface);
         border: 1px solid var(--border-color);
@@ -238,7 +240,7 @@
     }
     
     .region-capsule.active {
-        border-radius: 12px 12px 0 0; /* Top rounded, bottom flat */
+        border-radius: 12px 12px 0 0; 
         box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         border-bottom: 1px solid transparent; 
     }
@@ -265,20 +267,19 @@
         list-style: none;
         margin: 0;
         padding: 5px 0;
-        min-width: 100%;
-        width: max-content;
+        width: 100%; /* Match container width */
         z-index: 1003;
+        text-align: center; /* Center align text */
     }
     
     body.dark-mode .region-dropdown-list { border-top: 1px solid #444; }
 
     .region-dropdown-list li {
-        padding: 8px 12px;
+        padding: 8px 0;
         font-size: 0.8rem;
         color: var(--text-primary);
         cursor: pointer;
         white-space: nowrap;
-        text-align: left;
     }
     
     .region-dropdown-list li:hover { background-color: var(--bg-sub); color: var(--primary-color); font-weight: 700; }
@@ -297,14 +298,14 @@
     .search-box { padding: 0; margin-bottom: 20px; background: transparent; box-shadow: none; display: flex; flex-direction: column; align-items: center; position: relative; }
     .search-header-row { width: 100%; max-width: 700px; margin: 0 auto 5px auto; display: flex; justify-content: flex-start; padding-left: 5px; }
 
-    /* [MODIFIED] Help Button Styles */
+    /* [MODIFIED] Help Button Icon Position & Hover Color */
     .help-trigger-btn {
         font-size: 0.75rem; font-weight: 600; color: var(--text-muted); cursor: pointer;
         display: flex; align-items: center; gap: 4px; transition: color 0.2s;
         height: 18px !important; line-height: 1 !important;
     }
-    /* Icon moved down slightly to align with text center */
-    .help-trigger-btn i { font-size: 0.8rem; transform: translateY(1px); }
+    /* Restored to -1px to align with text center */
+    .help-trigger-btn i { font-size: 0.8rem; transform: translateY(-1px); }
     /* Hover color changed to Main Color (Cyan) */
     .help-trigger-btn:hover { color: var(--primary-color); }
 
@@ -451,6 +452,10 @@
     /* [MODIFIED] Footer text spacing */
     .footer-text { margin: 2px 0; color: var(--text-muted); line-height: 1.3; }
     
+    /* [MODIFIED] Footer Disclaimer word break logic */
+    .footer-disclaimer { margin-bottom: 12px; color: var(--text-secondary); font-size: 0.85rem; }
+    .footer-disclaimer span { display: inline-block; } /* Forces break at comma if needed */
+
     /* [MODIFIED] Maker link style */
     #main-footer a.maker-link { color: var(--text-muted); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; transition: color 0.2s; }
     #main-footer a.maker-link:hover { color: #f44336; }
@@ -522,7 +527,7 @@
         <ul id="region-dropdown" class="region-dropdown-list">
             <li onclick="selectRegion('ko', '한국')">한국</li>
             <li onclick="selectRegion('ja', '일본')">일본</li>
-            <li onclick="selectRegion('ae', '영어(아시아)')">영어(아시아)</li>
+            <li onclick="selectRegion('ae', '아시아')">아시아</li>
             <li onclick="selectRegion('cn', '중국')">중국</li>
             <li onclick="selectRegion('en', '영미')">영미</li>
             <li onclick="selectRegion('de', '독일')">독일</li>
@@ -601,7 +606,10 @@
   <div class="result-container"><div id="result-area"></div></div>
 
   <footer id="main-footer">
-    <p class="footer-text">사용자가 입력한 모든 정보는 사용자가 등록한 구글 시트 파일에 기록되며, 해당 내용은 서버에 저장되지 않습니다.</p>
+    <p class="footer-disclaimer">
+        <span>사용자가 입력한 모든 정보는 사용자가 등록한 구글 시트 파일에 기록되며,</span>
+        <span>해당 내용은 서버에 저장되지 않습니다.</span>
+    </p>
     <p class="footer-text">ver. 0.8.2 | Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></p>
     <p class="footer-text">© 2025 YGO Synapse. All rights reserved.</p>
   </footer>
@@ -1103,9 +1111,9 @@
     }
   }
 
-  // [MODIFIED] New Region Logic using Custom Dropdown
+  // [MODIFIED] New Region Logic using Custom Dropdown with "Asia" update
   const regionMap = {
-      'ko': '한국', 'ja': '일본', 'ae': '영어(아시아)', 'cn': '중국', 
+      'ko': '한국', 'ja': '일본', 'ae': '아시아', 'cn': '중국', 
       'en': '영미', 'de': '독일', 'fr': '프랑스', 'it': '이탈리아', 
       'es': '스페인', 'pt': '포르투갈'
   };
