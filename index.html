@@ -288,7 +288,7 @@
     /* [MODIFIED] Added min-height to prevent layout jump during transition */
     .container { margin-top: 30px; max-width: 95% !important; min-height: 60vh; }
     
-    /* [MODIFIED] Full Absolute Animation Layout - Explicit Coordinates Only */
+    /* [MODIFIED] Header Wrapper */
     #dynamic-header-wrapper {
         position: relative;
         width: 100%;
@@ -297,28 +297,31 @@
         margin-bottom: 20px;
         transition: height 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
         z-index: 100;
-        overflow: visible; /* Ensure content isn't clipped during transition */
+        overflow: visible; 
     }
 
-    /* Logo Container: The Mover */
+    /* [MODIFIED] Logo Container with CONSTANT Transform Anchor */
     .app-title-container {
         position: absolute;
         display: flex;
         justify-content: center;
         align-items: center;
         z-index: 2;
-        /* Home Mode Coordinates */
-        top: 30px; 
-        left: calc(50vw - 110px); /* 50vw - (220px / 2) */
-        width: 220px;
-        margin: 0; /* Remove any margin interference */
-        transform: none; /* No transform used for position */
+        
+        /* Constant Anchor to prevent shaking */
+        transform: translateX(-50%);
         transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+        /* Home Mode */
+        top: 30px; 
+        left: 50%; /* Center of parent container */
+        width: 220px;
+        margin: 0;
     }
     
-    .synapse-logo-svg { width: 100%; height: auto; transition: none; /* Size handled by container */ }
+    .synapse-logo-svg { width: 100%; height: auto; transition: none; }
 
-    /* Absolute Overlay Texts to prevent layout shaking */
+    /* Absolute Overlay Texts */
     .title-ygo { 
         position: absolute; 
         top: -25px; left: 0; width: 100%; 
@@ -334,7 +337,7 @@
         transition: opacity 0.3s ease;
     }
     
-    /* Search Box: The Follower */
+    /* [MODIFIED] Search Box with % Positioning */
     .search-box { 
         position: absolute;
         padding: 0; 
@@ -345,12 +348,12 @@
         align-items: center; 
         z-index: 1;
         
-        /* Home Mode Coordinates */
+        /* Home Mode */
         top: 130px; 
-        left: 5vw;
-        width: 90vw;
+        left: 5%; /* Relative to parent width */
+        width: 90%; /* Relative to parent width */
         margin: 0;
-        transform: none; /* No transform */
+        transform: none; /* No transform for Search Box */
         transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
     
@@ -363,18 +366,19 @@
         margin: 0 auto;
     }
     
-    /* === COMPACT MODE STYLES (Explicit Coordinates) === */
+    /* === COMPACT MODE STYLES === */
     body.mode-compact #dynamic-header-wrapper {
         height: 70px; 
         margin-top: 0;
     }
 
-    /* Logo moves to Fixed Left Coordinate */
+    /* [MODIFIED] Logo moves Left by changing 'left' value only. Transform stays -50% */
     body.mode-compact .app-title-container {
         top: 15px; 
-        left: 10px; 
+        /* Center(80px) + Margin(10px) = 90px from left edge */
+        left: 90px; 
         width: 160px;
-        transform: none; /* Ensure no transform */
+        /* Transform remains translateX(-50%) inherited from base class */
     }
 
     /* Hide Texts smoothly */
@@ -384,13 +388,12 @@
         pointer-events: none;
     }
 
-    /* Search Box moves to Right Coordinate */
+    /* [MODIFIED] Search Box moves Right */
     body.mode-compact .search-box {
         top: 12px;
-        left: 180px; 
-        width: calc(100vw - 195px); /* Full width - (180px left + 15px pad) */
-        transform: none;
-        align-items: flex-start; /* Align inner content left */
+        left: 180px; /* Fixed px offset for logo space */
+        width: calc(100% - 190px); /* 100% of parent - (180px left + 10px pad) */
+        align-items: flex-start;
     }
 
     body.mode-compact .search-header-row {
@@ -769,7 +772,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.8.9</span>
+        <span class="footer-item">ver. 0.8.10</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
