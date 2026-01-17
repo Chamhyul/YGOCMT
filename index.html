@@ -346,12 +346,17 @@
         top: 130px; /* Below logo area */
         left: 5%;
         width: 90%;
-        max-width: 700px;
+        max-width: none; /* [MODIFIED] Remove max-width from container */
         transform: translateY(0);
         transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
-    .search-header-row { width: 100%; display: flex; justify-content: flex-start; padding-left: 5px; margin-bottom: 5px; transition: opacity 0.3s ease; }
-    .search-row { display: flex; align-items: center; justify-content: center; width: 100%; gap: 8px; }
+    .search-header-row { width: 100%; max-width: 700px; margin: 0 auto; display: flex; justify-content: flex-start; padding-left: 5px; margin-bottom: 5px; transition: opacity 0.3s ease; }
+    .search-row { 
+        display: flex; align-items: center; justify-content: center; width: 100%; gap: 8px; 
+        /* [MODIFIED] Max-width applied to content only */
+        max-width: 700px;
+        margin: 0 auto;
+    }
     
     /* === COMPACT MODE STYLES (Unified Coordinates) === */
     body.mode-compact #dynamic-header-wrapper {
@@ -379,13 +384,21 @@
         top: 50%;
         left: 180px; /* 10px left + 160px logo + 10px gap */
         width: calc(100% - 190px);
-        max-width: none;
         transform: translateY(-50%); /* Vertical Center only */
+        align-items: flex-start;
     }
 
     body.mode-compact .search-header-row {
         opacity: 0;
         pointer-events: none;
+        max-width: none;
+        margin: 0;
+    }
+    
+    /* [MODIFIED] Remove inner constraints in compact mode */
+    body.mode-compact .search-row {
+        max-width: 100%;
+        margin: 0;
     }
 
     /* Content Section Transition */
@@ -751,7 +764,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.8.7</span>
+        <span class="footer-item">ver. 0.8.8</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
