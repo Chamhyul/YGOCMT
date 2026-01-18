@@ -365,7 +365,6 @@
         position: absolute;
         top: 0; left: 0; width: 100%; height: 100%;
         clip-path: polygon(0 0, 100% 0, 100% 100%);
-        /* [MODIFIED] Gradient updated: 80% > 60% (center) > 0% */
         background: linear-gradient(to right, rgba(var(--primary-rgb), 0.8), rgba(var(--primary-rgb), 0.6) 50%, rgba(var(--primary-rgb), 0));
     }
 
@@ -374,7 +373,6 @@
         position: absolute;
         top: 0; left: 0; width: 100%; height: 100%;
         clip-path: polygon(0 0, 100% 100%, 0 100%);
-        /* [MODIFIED] Gradient updated: 80% > 60% (center) > 0% */
         background: linear-gradient(to left, rgba(var(--primary-rgb), 0.8), rgba(var(--primary-rgb), 0.6) 50%, rgba(var(--primary-rgb), 0));
     }
 
@@ -461,10 +459,10 @@
     body.mode-compact .search-box {
         /* [MODIFIED] Adjusted top for vertical center alignment */
         top: 22px;
-        /* [MODIFIED] Left adjusted to 105px to expand */
-        left: 105px; 
+        /* [MODIFIED] Left adjusted to 95px */
+        left: 95px; 
         /* [MODIFIED] Width expanded */
-        width: calc(100% - 115px); 
+        width: calc(100% - 105px); 
         align-items: flex-start;
     }
 
@@ -641,7 +639,7 @@
     #intro-area { text-align: center; color: var(--text-secondary); margin-top: 40px; margin-bottom: 40px; line-height: 1.8; font-size: 0.95rem; }
     #intro-area a { color: var(--primary-color); font-weight: 700; text-decoration: underline; cursor: pointer; }
     
-    /* [MODIFIED] Footer Styles for v0.9.8 */
+    /* [MODIFIED] Footer Styles for v0.9.9 */
     #main-footer { text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 50px; padding-bottom: 30px; }
     
     .footer-disclaimer { margin-bottom: 12px; color: var(--text-muted); font-size: 0.85rem; }
@@ -822,7 +820,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.9.8</span>
+        <span class="footer-item">ver. 0.9.9</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
