@@ -437,14 +437,20 @@
     body.mode-compact #dynamic-header-wrapper {
         height: 70px; 
         margin-top: 0;
+        /* [MODIFIED] Center alignment for wrapper in compact mode */
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
     }
 
     /* [MODIFIED] Logo moves Left */
     body.mode-compact .app-title-container {
         top: 27px; 
-        /* [MODIFIED] Adjusted to 30px to sit inside margin */
-        left: 30px; 
+        /* [MODIFIED] Adjusted to 0 to align with wrapper start */
+        left: 0; 
         width: auto;
+        /* [MODIFIED] Remove centering transform in compact mode */
+        transform: none;
     }
 
     /* [MODIFIED] Compact Logo: 3:2 Ratio Rectangle */
@@ -468,10 +474,10 @@
     /* [MODIFIED] Search Box moves Right and Expands */
     body.mode-compact .search-box {
         top: 22px;
-        /* [MODIFIED] Moved left to fill space */
+        /* [MODIFIED] Moved to 80px relative to wrapper */
         left: 80px; 
-        /* [MODIFIED] Width expanded to fill remaining space */
-        width: calc(100% - 90px); 
+        /* [MODIFIED] Width expanded to fill remaining wrapper space */
+        width: calc(100% - 80px); 
         align-items: flex-start;
     }
 
@@ -496,6 +502,13 @@
     }
     .content-section.active {
         opacity: 1;
+    }
+    
+    /* [MODIFIED] Result Container Centering */
+    .result-container {
+        max-width: 700px;
+        margin: 0 auto;
+        width: 100%;
     }
     
     #result-area { overflow-x: auto; width: 100%; margin-top: 30px; }
@@ -648,7 +661,7 @@
     #intro-area { text-align: center; color: var(--text-secondary); margin-top: 40px; margin-bottom: 40px; line-height: 1.8; font-size: 0.95rem; }
     #intro-area a { color: var(--primary-color); font-weight: 700; text-decoration: underline; cursor: pointer; }
     
-    /* [MODIFIED] Footer Styles for v0.9.15 */
+    /* [MODIFIED] Footer Styles for v0.9.16 */
     #main-footer { text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 50px; padding-bottom: 30px; }
     
     .footer-disclaimer { margin-bottom: 12px; color: var(--text-muted); font-size: 0.85rem; }
@@ -829,7 +842,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.9.15</span>
+        <span class="footer-item">ver. 0.9.16</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
