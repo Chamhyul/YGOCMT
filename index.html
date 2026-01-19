@@ -70,9 +70,16 @@
     }
 
     body, input, button, table, .btn, .modal-content, select { font-family: 'Pretendard', sans-serif !important; }
-    body { background-color: var(--bg-body); color: var(--text-primary); transition: background-color 0.3s, color 0.3s; }
+    
+    /* [MODIFIED] Added padding-left transition for smooth desktop/tablet resize */
+    body { 
+        background-color: var(--bg-body); 
+        color: var(--text-primary); 
+        transition: background-color 0.3s, color 0.3s, padding-left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); 
+    }
     
     /* --- Navigation Styles Start --- */
+    /* [MODIFIED] Sidebar Transitions & Transform */
     .app-sidebar {
         position: fixed;
         left: 0; top: 0; bottom: 0;
@@ -82,10 +89,15 @@
         display: flex;
         flex-direction: column;
         padding-top: 80px;
-        transition: width 0.3s ease, background-color 0.3s ease;
         box-shadow: 1px 0 0 var(--nav-border);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
+        
+        /* Smooth transition for width and slide */
+        transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), 
+                    transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), 
+                    background-color 0.3s ease;
+        transform: translateX(0); /* Default visible */
     }
 
     .nav-item {
@@ -112,10 +124,13 @@
         font-size: 0.95rem;
         font-weight: 600;
         white-space: nowrap;
+        opacity: 1;
+        transition: opacity 0.2s;
     }
 
+    /* [MODIFIED] Mobile Nav Transitions */
     .mobile-nav-container {
-        display: none;
+        display: flex; /* Always display for animation */
         position: fixed;
         bottom: 24px; 
         left: 0; 
@@ -124,24 +139,31 @@
         justify-content: center;
         align-items: flex-end;
         gap: 12px;
-        pointer-events: none;
         padding: 0 16px;
+        
+        /* Slide transition */
+        transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        transform: translateY(150%); /* Hidden by default (pushed down) */
+        pointer-events: none; /* Prevent clicks when hidden */
+    }
+
+    .nav-capsule, .nav-circle {
+        pointer-events: auto; /* Enable clicks on buttons */
+        background-color: var(--nav-bg);
+        box-shadow: var(--nav-shadow);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid var(--nav-border);
     }
 
     .nav-capsule {
         display: flex;
         align-items: center;
         justify-content: space-around;
-        background-color: var(--nav-bg);
         height: 64px;
         flex: 1;
         max-width: 320px;
         border-radius: 32px;
-        box-shadow: var(--nav-shadow);
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
-        border: 1px solid var(--nav-border);
-        pointer-events: auto;
         padding: 0 10px;
     }
 
@@ -149,15 +171,9 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background-color: var(--nav-bg);
         width: 64px;
         height: 64px;
         border-radius: 50%;
-        box-shadow: var(--nav-shadow);
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
-        border: 1px solid var(--nav-border);
-        pointer-events: auto;
         color: var(--nav-text);
         cursor: pointer;
         transition: color 0.2s, transform 0.1s;
@@ -183,20 +199,44 @@
     .mobile-nav-item:hover, .mobile-nav-item:active { color: var(--nav-text-active); }
     .mobile-nav-item i { font-size: 24px; margin-bottom: 2px; }
 
-    @media only screen and (min-width: 993px) { body { padding-left: 240px; } }
+    /* [MODIFIED] Responsive Breakpoints with Animations */
+    
+    /* Desktop (> 992px) */
+    @media only screen and (min-width: 993px) { 
+        body { padding-left: 240px; } 
+    }
+    
+    /* Tablet (601px ~ 992px) */
     @media only screen and (min-width: 601px) and (max-width: 992px) {
         body { padding-left: 72px; }
         .app-sidebar { width: 72px; }
-        .nav-text { display: none; }
+        .nav-text { opacity: 0; display: none; } /* Hide text smoothly */
         .nav-item { justify-content: center; padding: 16px 0; }
         .nav-item i { margin-right: 0; }
     }
+    
+    /* Mobile (< 600px) */
     @media only screen and (max-width: 600px) {
-        body { padding-bottom: 100px; }
-        .app-sidebar { display: none; }
-        .mobile-nav-container { display: flex; }
+        body { padding-bottom: 100px; padding-left: 0; }
+        
+        /* Slide Sidebar Out to Left */
+        .app-sidebar { 
+            transform: translateX(-100%); 
+        }
+        
+        /* Slide Tab Bar Up from Bottom */
+        .mobile-nav-container { 
+            transform: translateY(0); 
+            pointer-events: auto;
+        }
+        
         .header-right-container { top: 8px; }
-        .container { max-width: 100% !important; padding: 0 15px; }
+        
+        /* [MODIFIED] Zero Margin for Mobile */
+        .container { 
+            margin-left: 0 !important; 
+            margin-right: 0 !important; 
+        }
     }
     /* --- Navigation Styles End --- */
 
@@ -287,14 +327,17 @@
     
     .region-dropdown-list li:hover { background-color: var(--bg-sub); color: var(--primary-color); font-weight: 700; }
 
-    /* [MODIFIED] Reduced fixed margins for mobile optimization */
+    /* [MODIFIED] Container Transition */
     .container { 
         margin-top: 30px; 
-        width: auto !important; /* Ignore library % width */
-        max-width: 100% !important; /* Allow fill */
+        width: auto !important; 
+        max-width: 100% !important; 
         min-height: 60vh;
-        margin-left: 15px !important; /* [MODIFIED] 35px -> 15px */
-        margin-right: 15px !important; /* [MODIFIED] 35px -> 15px */
+        /* [MODIFIED] 15px is default (Tablet/PC), Mobile will override to 0 */
+        margin-left: 15px !important;
+        margin-right: 15px !important;
+        /* [MODIFIED] Smooth transition for margin changes */
+        transition: margin 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
     
     /* [MODIFIED] Header Wrapper */
@@ -661,7 +704,7 @@
     #intro-area { text-align: center; color: var(--text-secondary); margin-top: 40px; margin-bottom: 40px; line-height: 1.8; font-size: 0.95rem; }
     #intro-area a { color: var(--primary-color); font-weight: 700; text-decoration: underline; cursor: pointer; }
     
-    /* [MODIFIED] Footer Styles for v0.9.18 */
+    /* [MODIFIED] Footer Styles for v0.9.19 */
     #main-footer { text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 50px; padding-bottom: 30px; }
     
     .footer-disclaimer { margin-bottom: 12px; color: var(--text-muted); font-size: 0.85rem; }
@@ -842,7 +885,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.9.18</span>
+        <span class="footer-item">ver. 0.9.19</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
