@@ -287,10 +287,11 @@
     
     .region-dropdown-list li:hover { background-color: var(--bg-sub); color: var(--primary-color); font-weight: 700; }
 
-    /* [MODIFIED] Added fixed margins per instruction */
+    /* [MODIFIED] Added fixed margins and removed width limits to fix asymmetry */
     .container { 
         margin-top: 30px; 
-        max-width: 95% !important; 
+        width: auto !important; /* Ignore library % width */
+        max-width: 100% !important; /* Allow fill */
         min-height: 60vh;
         margin-left: 35px !important;
         margin-right: 35px !important;
@@ -426,9 +427,9 @@
     .search-row { 
         display: flex; align-items: center; justify-content: center; width: 100%; gap: 8px; 
         /* Home Mode Inner Layout */
-        /* [MODIFIED] Removed max-width limit and changed alignment to fix expansion issue */
-        max-width: 100% !important; 
-        margin: 0;
+        /* [MODIFIED] Re-added max-width to stop infinite growth on large screens */
+        max-width: 700px !important; 
+        margin: 0 auto;
         justify-content: flex-start;
     }
     
@@ -441,7 +442,7 @@
     /* [MODIFIED] Logo moves Left */
     body.mode-compact .app-title-container {
         top: 27px; 
-        /* [MODIFIED] Left adjusted to 30px */
+        /* [MODIFIED] Adjusted to 30px to sit inside margin */
         left: 30px; 
         width: auto;
     }
@@ -647,7 +648,7 @@
     #intro-area { text-align: center; color: var(--text-secondary); margin-top: 40px; margin-bottom: 40px; line-height: 1.8; font-size: 0.95rem; }
     #intro-area a { color: var(--primary-color); font-weight: 700; text-decoration: underline; cursor: pointer; }
     
-    /* [MODIFIED] Footer Styles for v0.9.13 */
+    /* [MODIFIED] Footer Styles for v0.9.14 */
     #main-footer { text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 50px; padding-bottom: 30px; }
     
     .footer-disclaimer { margin-bottom: 12px; color: var(--text-muted); font-size: 0.85rem; }
@@ -828,7 +829,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.9.13</span>
+        <span class="footer-item">ver. 0.9.14</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
