@@ -335,23 +335,19 @@
         height: 220px; /* Default Height */
         margin-top: 20px;
         margin-bottom: 20px;
-        transition: height 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), max-width 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+        transition: height 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
         z-index: 100;
         overflow: visible; 
-        /* [MODIFIED] Max-width transition for Compact Mode */
         max-width: 100%;
     }
 
-    /* Logo Container */
+    /* Logo Container Shared Styles */
     .app-title-container {
         position: absolute;
         display: flex;
         justify-content: center;
         align-items: center;
         z-index: 2;
-        top: 30px; 
-        left: 50%;
-        transform: translateX(-50%);
         width: 220px;
         margin: 0;
         transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -422,7 +418,7 @@
         transition: opacity 0.3s ease;
     }
     
-    /* [MODIFIED] Search Box Animation Fix - Zero-based positioning */
+    /* Search Box Shared Styles */
     .search-box { 
         position: absolute;
         padding: 0; 
@@ -432,15 +428,9 @@
         flex-direction: column; 
         align-items: center; 
         z-index: 1;
-        top: 130px; 
-        /* [FIX] Start from left: 0 and full width */
-        left: 0; 
-        width: 100%; 
         margin: 0;
-        /* [FIX] Remove transform, use linear property transition */
-        transform: none; 
         transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
-        will-change: top, left, width;
+        will-change: top, left, width, margin-left;
     }
     
     .search-header-row { width: 100%; max-width: 700px; margin: 0 auto; display: flex; justify-content: flex-start; padding-left: 5px; margin-bottom: 5px; transition: opacity 0.3s ease; }
@@ -448,38 +438,113 @@
     .search-row { 
         display: flex; align-items: center; justify-content: center; width: 100%; gap: 8px; 
         max-width: 700px !important; 
-        /* [FIX] Centered in Home Mode */
-        margin: 0 auto; 
         justify-content: flex-start;
         transition: margin 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), max-width 0.5s;
     }
     
-    /* === COMPACT MODE STYLES === */
-    body.mode-compact #dynamic-header-wrapper {
-        height: 70px; 
-        margin-top: 0;
-        max-width: 700px; /* Constrain wrapper width */
-        margin-left: auto; 
-        margin-right: auto;
+    /* === DESKTOP ANIMATION LOGIC (min-width: 701px) === */
+    /* Absolute Center Logic with Margin Offsets for Linear Movement */
+    
+    @media only screen and (min-width: 701px) {
+        /* Home Mode (Desktop) */
+        .app-title-container {
+            top: 30px; 
+            left: 50%; 
+            transform: none; /* No transform to avoid interpolation issues */
+            margin-left: -110px; /* Center of 220px */
+        }
+        
+        .search-box {
+            top: 130px;
+            left: 50%;
+            transform: none;
+            width: 700px;
+            margin-left: -350px; /* Center of 700px */
+            align-items: center;
+        }
+        
+        .search-row {
+            margin: 0 auto; /* Center input inside */
+        }
+
+        /* Compact Mode (Desktop) */
+        body.mode-compact #dynamic-header-wrapper {
+            height: 70px; 
+            margin-top: 0;
+            max-width: 700px;
+            margin-left: auto; 
+            margin-right: auto;
+        }
+
+        body.mode-compact .app-title-container {
+            top: 27px; 
+            left: 50%;
+            transform: none;
+            margin-left: -350px; /* Start of 700px box */
+        }
+
+        body.mode-compact .search-box {
+            top: 22px;
+            left: 50%;
+            transform: none;
+            width: 633px; /* 700px - 67px */
+            margin-left: -283px; /* -350px + 67px */
+            align-items: flex-start;
+        }
+        
+        body.mode-compact .search-row {
+            margin: 0; /* Align left */
+        }
     }
 
-    body.mode-compact .app-title-container {
-        top: 27px;
-        left: 0;
-        transform: none;
-        width: auto;
+    /* === MOBILE/TABLET LOGIC (max-width: 700px) === */
+    /* Left: 0 Logic for safe responsiveness */
+    
+    @media only screen and (max-width: 700px) {
+        /* Home Mode (Mobile) */
+        .app-title-container {
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-left: 0;
+        }
+        
+        .search-box {
+            top: 130px;
+            left: 0;
+            width: 100%;
+            margin-left: 0;
+            transform: none;
+        }
+        
+        /* Compact Mode (Mobile) */
+        body.mode-compact #dynamic-header-wrapper {
+            height: 70px; 
+            margin-top: 0;
+        }
+
+        body.mode-compact .app-title-container {
+            top: 27px;
+            left: 0;
+            transform: none;
+            margin-left: 0;
+        }
+
+        body.mode-compact .search-box {
+            top: 22px;
+            left: 67px;
+            width: calc(100% - 67px);
+            margin-left: 0;
+            transform: none;
+            align-items: flex-start;
+        }
+        
+        body.mode-compact .search-row {
+            margin: 0;
+        }
     }
 
-    /* [FIX] Search Box in Compact Mode - Linear Move */
-    body.mode-compact .search-box {
-        top: 22px;
-        /* Move to right of logo */
-        left: 67px; 
-        /* Shrink width */
-        width: calc(100% - 67px); 
-        align-items: flex-start;
-    }
-
+    /* Common Compact Mode Styles */
     body.mode-compact .synapse-logo-container {
         max-width: 3.9rem; 
         width: 3.9rem;
@@ -497,12 +562,6 @@
         pointer-events: none;
         height: 0;
         margin: 0;
-    }
-    
-    /* [FIX] Search Row in Compact Mode - Left Align */
-    body.mode-compact .search-row {
-        max-width: 100%;
-        margin: 0; /* Align left inside the search-box */
     }
 
     .content-section {
@@ -670,7 +729,7 @@
     #intro-area { text-align: center; color: var(--text-secondary); margin-top: 40px; margin-bottom: 40px; line-height: 1.8; font-size: 0.95rem; }
     #intro-area a { color: var(--primary-color); font-weight: 700; text-decoration: underline; cursor: pointer; }
     
-    /* [MODIFIED] Footer Styles for v0.9.22 */
+    /* [MODIFIED] Footer Styles for v0.9.23 */
     #main-footer { text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 50px; padding-bottom: 30px; }
     
     .footer-disclaimer { margin-bottom: 12px; color: var(--text-muted); font-size: 0.85rem; }
@@ -851,7 +910,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.9.22</span>
+        <span class="footer-item">ver. 0.9.23</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
