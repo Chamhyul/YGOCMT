@@ -407,9 +407,9 @@
         
         /* Home Mode */
         top: 130px; 
-        /* [MODIFIED] Expand width in default mode */
-        left: 2%; 
-        width: 96%; 
+        /* [MODIFIED] Full Expansion for Home Mode */
+        left: 1%; 
+        width: 98%; 
         margin: 0;
         transform: none; /* No transform for Search Box */
         transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -420,9 +420,10 @@
     .search-row { 
         display: flex; align-items: center; justify-content: center; width: 100%; gap: 8px; 
         /* Home Mode Inner Layout */
-        /* [MODIFIED] Removed max-width restriction for full expansion */
-        max-width: 100%; 
-        margin: 0 auto;
+        /* [MODIFIED] Removed max-width limit and changed alignment to fix expansion issue */
+        max-width: 100% !important; 
+        margin: 0;
+        justify-content: flex-start;
     }
     
     /* === COMPACT MODE STYLES === */
@@ -434,8 +435,7 @@
     /* [MODIFIED] Logo moves Left */
     body.mode-compact .app-title-container {
         top: 27px; 
-        /* [MODIFIED] Moved further left */
-        left: 10px; 
+        left: 10px; /* Kept user preference */
         width: auto;
     }
 
@@ -462,7 +462,7 @@
         top: 22px;
         /* [MODIFIED] Moved left to fill space */
         left: 80px; 
-        /* [MODIFIED] Width expanded */
+        /* [MODIFIED] Width expanded to fill remaining space */
         width: calc(100% - 90px); 
         align-items: flex-start;
     }
@@ -640,7 +640,7 @@
     #intro-area { text-align: center; color: var(--text-secondary); margin-top: 40px; margin-bottom: 40px; line-height: 1.8; font-size: 0.95rem; }
     #intro-area a { color: var(--primary-color); font-weight: 700; text-decoration: underline; cursor: pointer; }
     
-    /* [MODIFIED] Footer Styles for v0.9.11 */
+    /* [MODIFIED] Footer Styles for v0.9.12 */
     #main-footer { text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 50px; padding-bottom: 30px; }
     
     .footer-disclaimer { margin-bottom: 12px; color: var(--text-muted); font-size: 0.85rem; }
@@ -821,7 +821,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.9.11</span>
+        <span class="footer-item">ver. 0.9.12</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
