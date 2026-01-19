@@ -287,14 +287,14 @@
     
     .region-dropdown-list li:hover { background-color: var(--bg-sub); color: var(--primary-color); font-weight: 700; }
 
-    /* [MODIFIED] Added fixed margins and removed width limits to fix asymmetry */
+    /* [MODIFIED] Reduced fixed margins for mobile optimization */
     .container { 
         margin-top: 30px; 
         width: auto !important; /* Ignore library % width */
         max-width: 100% !important; /* Allow fill */
         min-height: 60vh;
-        margin-left: 35px !important;
-        margin-right: 35px !important;
+        margin-left: 15px !important; /* [MODIFIED] 35px -> 15px */
+        margin-right: 15px !important; /* [MODIFIED] 35px -> 15px */
     }
     
     /* [MODIFIED] Header Wrapper */
@@ -474,10 +474,10 @@
     /* [MODIFIED] Search Box moves Right and Expands */
     body.mode-compact .search-box {
         top: 22px;
-        /* [MODIFIED] Moved to 80px relative to wrapper */
-        left: 80px; 
+        /* [MODIFIED] Moved to 67px (next to logo) */
+        left: 67px; 
         /* [MODIFIED] Width expanded to fill remaining wrapper space */
-        width: calc(100% - 80px); 
+        width: calc(100% - 67px); 
         align-items: flex-start;
     }
 
@@ -661,7 +661,7 @@
     #intro-area { text-align: center; color: var(--text-secondary); margin-top: 40px; margin-bottom: 40px; line-height: 1.8; font-size: 0.95rem; }
     #intro-area a { color: var(--primary-color); font-weight: 700; text-decoration: underline; cursor: pointer; }
     
-    /* [MODIFIED] Footer Styles for v0.9.17 */
+    /* [MODIFIED] Footer Styles for v0.9.18 */
     #main-footer { text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 50px; padding-bottom: 30px; }
     
     .footer-disclaimer { margin-bottom: 12px; color: var(--text-muted); font-size: 0.85rem; }
@@ -842,7 +842,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.9.17</span>
+        <span class="footer-item">ver. 0.9.18</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -1193,6 +1193,11 @@
               }
           });
 
+          // [MODIFIED] Special Reset for Search Result Area (moved inside timeout for fade-out effect)
+          if ((mode === 'home' || mode === 'discard') && previousMode === 'search') {
+              document.getElementById('result-area').innerHTML = '';
+          }
+
           // Step C: Small delay to ensure browser renders 'display:block', then Fade In
           setTimeout(() => {
               const targetEl = document.getElementById(targetContentId);
@@ -1200,12 +1205,6 @@
           }, 50);
 
       }, delay);
-
-      // 4. Special Resets
-      if (mode === 'home' || mode === 'discard') {
-          // Clear previous search results visually to avoid flash
-          if(mode !== 'search') document.getElementById('result-area').innerHTML = '';
-      }
   }
 
   function checkClearBtn() {
