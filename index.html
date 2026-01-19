@@ -661,7 +661,7 @@
     #intro-area { text-align: center; color: var(--text-secondary); margin-top: 40px; margin-bottom: 40px; line-height: 1.8; font-size: 0.95rem; }
     #intro-area a { color: var(--primary-color); font-weight: 700; text-decoration: underline; cursor: pointer; }
     
-    /* [MODIFIED] Footer Styles for v0.9.16 */
+    /* [MODIFIED] Footer Styles for v0.9.17 */
     #main-footer { text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 50px; padding-bottom: 30px; }
     
     .footer-disclaimer { margin-bottom: 12px; color: var(--text-muted); font-size: 0.85rem; }
@@ -842,7 +842,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.9.16</span>
+        <span class="footer-item">ver. 0.9.17</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -1142,10 +1142,19 @@
   // [NEW] Robust Mode Switching Logic with Sequential Fading
   function switchToMode(mode) {
       if (currentMode === mode) return; 
+      const previousMode = currentMode;
       currentMode = mode;
       
       const body = document.body;
       const searchInput = document.getElementById('card-search');
+      
+      // [MODIFIED] Clear input logic
+      if (mode !== 'search') {
+          searchInput.value = '';
+          document.getElementById('clear-btn').style.display = 'none';
+          document.getElementById('custom-dropdown').style.display = 'none';
+          toggleSearchWrapper(false);
+      }
       
       // 1. Determine active content ID based on mode
       let targetContentId = '';
@@ -1168,7 +1177,13 @@
           el.style.opacity = '0';
       });
 
-      // Step B: Wait for Fade Out (300ms), then Swap Display
+      // [MODIFIED] Dynamic Delay
+      let delay = 300;
+      if (previousMode === 'home' && mode === 'search') {
+          delay = 500; // Wait for header animation
+      }
+
+      // Step B: Wait for Fade Out/Header Anim, then Swap Display
       setTimeout(() => {
           allSections.forEach(el => {
               if (el.id === targetContentId) {
@@ -1184,14 +1199,10 @@
               if(targetEl) targetEl.style.opacity = '1';
           }, 50);
 
-      }, 300);
+      }, delay);
 
       // 4. Special Resets
       if (mode === 'home' || mode === 'discard') {
-          if(mode === 'home') {
-              searchInput.value = '';
-              document.getElementById('clear-btn').style.display = 'none';
-          }
           // Clear previous search results visually to avoid flash
           if(mode !== 'search') document.getElementById('result-area').innerHTML = '';
       }
@@ -1644,13 +1655,7 @@
 
     resultArea.innerHTML = newHtml;
     M.Tooltip.init(resultArea.querySelectorAll('.tooltipped'), { html: true, margin: 3 });
-    // [MODIFIED] Force fade in for results if already in search mode
-    if (currentMode === 'search') {
-        setTimeout(() => {
-            resultArea.style.display = 'block';
-            setTimeout(() => resultArea.style.opacity = '1', 50);
-        }, 50);
-    }
+    // [MODIFIED] Removed internal visibility logic, handled by switchToMode
   }
 
   function toggleNewDetail(detailId) {
