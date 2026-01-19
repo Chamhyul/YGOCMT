@@ -1208,8 +1208,9 @@
         searchInput.focus(); 
         showRecentInDropdown();
         
+        // [MODIFIED] Do not switch back to home on clear
         document.getElementById('result-area').innerHTML = '';
-        switchToMode('home'); 
+        // switchToMode('home'); // Removed
     });
     
     document.addEventListener('click', function(e) {
