@@ -71,7 +71,6 @@
 
     body, input, button, table, .btn, .modal-content, select { font-family: 'Pretendard', sans-serif !important; }
     
-    /* [MODIFIED] Added padding-left transition for smooth desktop/tablet resize */
     body { 
         background-color: var(--bg-body); 
         color: var(--text-primary); 
@@ -79,7 +78,6 @@
     }
     
     /* --- Navigation Styles Start --- */
-    /* [MODIFIED] Sidebar Transitions & Transform */
     .app-sidebar {
         position: fixed;
         left: 0; top: 0; bottom: 0;
@@ -93,11 +91,10 @@
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
         
-        /* Smooth transition for width and slide */
         transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), 
                     transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), 
                     background-color 0.3s ease;
-        transform: translateX(0); /* Default visible */
+        transform: translateX(0); 
     }
 
     .nav-item {
@@ -128,9 +125,8 @@
         transition: opacity 0.2s;
     }
 
-    /* [MODIFIED] Mobile Nav Transitions */
     .mobile-nav-container {
-        display: flex; /* Always display for animation */
+        display: flex; 
         position: fixed;
         bottom: 24px; 
         left: 0; 
@@ -140,15 +136,13 @@
         align-items: flex-end;
         gap: 12px;
         padding: 0 16px;
-        
-        /* Slide transition */
         transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-        transform: translateY(150%); /* Hidden by default (pushed down) */
-        pointer-events: none; /* Prevent clicks when hidden */
+        transform: translateY(150%); 
+        pointer-events: none; 
     }
 
     .nav-capsule, .nav-circle {
-        pointer-events: auto; /* Enable clicks on buttons */
+        pointer-events: auto; 
         background-color: var(--nav-bg);
         box-shadow: var(--nav-shadow);
         backdrop-filter: blur(15px);
@@ -199,32 +193,29 @@
     .mobile-nav-item:hover, .mobile-nav-item:active { color: var(--nav-text-active); }
     .mobile-nav-item i { font-size: 24px; margin-bottom: 2px; }
 
-    /* [MODIFIED] Responsive Breakpoints with Animations */
+    /* Responsive Breakpoints */
     
-    /* Desktop (> 992px) */
     @media only screen and (min-width: 993px) { 
         body { padding-left: 240px; } 
     }
     
-    /* Tablet (601px ~ 992px) */
     @media only screen and (min-width: 601px) and (max-width: 992px) {
         body { padding-left: 72px; }
         .app-sidebar { width: 72px; }
-        .nav-text { opacity: 0; display: none; } /* Hide text smoothly */
+        .nav-text { opacity: 0; display: none; } 
         .nav-item { justify-content: center; padding: 16px 0; }
         .nav-item i { margin-right: 0; }
     }
     
-    /* Mobile (< 600px) */
     @media only screen and (max-width: 600px) {
         body { padding-bottom: 100px; padding-left: 0; }
         
-        /* Slide Sidebar Out to Left */
+        /* [FIX 2] Explicitly set width to 72px so it doesn't expand to 240px when hiding */
         .app-sidebar { 
+            width: 72px !important;
             transform: translateX(-100%); 
         }
         
-        /* Slide Tab Bar Up from Bottom */
         .mobile-nav-container { 
             transform: translateY(0); 
             pointer-events: auto;
@@ -232,7 +223,6 @@
         
         .header-right-container { top: 8px; }
         
-        /* [MODIFIED] Zero Margin for Mobile */
         .container { 
             margin-left: 0 !important; 
             margin-right: 0 !important; 
@@ -327,20 +317,17 @@
     
     .region-dropdown-list li:hover { background-color: var(--bg-sub); color: var(--primary-color); font-weight: 700; }
 
-    /* [MODIFIED] Container Transition */
     .container { 
         margin-top: 30px; 
         width: auto !important; 
         max-width: 100% !important; 
         min-height: 60vh;
-        /* [MODIFIED] 15px is default (Tablet/PC), Mobile will override to 0 */
         margin-left: 15px !important;
         margin-right: 15px !important;
-        /* [MODIFIED] Smooth transition for margin changes */
         transition: margin 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
     
-    /* [MODIFIED] Header Wrapper */
+    /* [FIX 1] Removed max-width to fix transition jump */
     #dynamic-header-wrapper {
         position: relative;
         width: 100%;
@@ -352,30 +339,24 @@
         overflow: visible; 
     }
 
-    /* [MODIFIED] Logo Container with CONSTANT Transform Anchor */
+    /* Logo Container */
     .app-title-container {
         position: absolute;
         display: flex;
         justify-content: center;
         align-items: center;
         z-index: 2;
-        
-        /* Constant Anchor to prevent shaking */
         transform: translateX(-50%);
         transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
-
-        /* Home Mode */
         top: 30px; 
-        left: 50%; /* Center of parent container */
+        left: 50%;
         width: 220px;
         margin: 0;
     }
     
-    /* [MODIFIED] Logo Container Layout */
     .synapse-logo-container {
         position: relative;
         display: inline-block;
-        /* [MODIFIED] transitions for smooth width change */
         max-width: 250px; 
         overflow: hidden;
         white-space: nowrap;
@@ -383,7 +364,6 @@
         vertical-align: middle;
     }
 
-    /* [MODIFIED] Text Logo Style (Clean Black/White) */
     .synapse-text-logo {
         position: relative;
         z-index: 2;
@@ -392,7 +372,6 @@
         color: #000000;
         letter-spacing: 2px;
         line-height: 1;
-        /* [MODIFIED] Added opacity transition */
         transition: color 0.3s, opacity 0.3s;
     }
     
@@ -400,7 +379,6 @@
         color: #ffffff;
     }
     
-    /* [NEW] Background Triangles Wrapper */
     .logo-bg-wrapper {
         position: absolute;
         top: 1px;
@@ -410,7 +388,6 @@
         z-index: 1;
     }
 
-    /* [NEW] Top Triangle: Top-Left, Top-Right, Bottom-Right */
     .bg-triangle-top {
         position: absolute;
         top: 0; left: 0; width: 100%; height: 100%;
@@ -418,7 +395,6 @@
         background: linear-gradient(to right, rgba(var(--primary-rgb), 0.8), rgba(var(--primary-rgb), 0.6) 50%, rgba(var(--primary-rgb), 0));
     }
 
-    /* [NEW] Bottom Triangle: Top-Left, Bottom-Right, Bottom-Left */
     .bg-triangle-bottom {
         position: absolute;
         top: 0; left: 0; width: 100%; height: 100%;
@@ -426,7 +402,6 @@
         background: linear-gradient(to left, rgba(var(--primary-rgb), 0.8), rgba(var(--primary-rgb), 0.6) 50%, rgba(var(--primary-rgb), 0));
     }
 
-    /* Absolute Overlay Texts */
     .title-ygo { 
         position: absolute; 
         top: -20px; 
@@ -444,7 +419,6 @@
         transition: opacity 0.3s ease;
     }
     
-    /* [MODIFIED] Search Box with % Positioning */
     .search-box { 
         position: absolute;
         padding: 0; 
@@ -454,14 +428,11 @@
         flex-direction: column; 
         align-items: center; 
         z-index: 1;
-        
-        /* Home Mode */
         top: 130px; 
-        /* [MODIFIED] Full Expansion for Home Mode */
         left: 1%; 
         width: 98%; 
         margin: 0;
-        transform: none; /* No transform for Search Box */
+        transform: none; 
         transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
     
@@ -469,8 +440,6 @@
     
     .search-row { 
         display: flex; align-items: center; justify-content: center; width: 100%; gap: 8px; 
-        /* Home Mode Inner Layout */
-        /* [MODIFIED] Re-added max-width to stop infinite growth on large screens */
         max-width: 700px !important; 
         margin: 0 auto;
         justify-content: flex-start;
@@ -480,48 +449,57 @@
     body.mode-compact #dynamic-header-wrapper {
         height: 70px; 
         margin-top: 0;
-        /* [MODIFIED] Center alignment for wrapper in compact mode */
-        max-width: 700px;
-        margin-left: auto;
-        margin-right: auto;
     }
 
-    /* [MODIFIED] Logo moves Left */
-    body.mode-compact .app-title-container {
-        top: 27px; 
-        /* [MODIFIED] Adjusted to 0 to align with wrapper start */
-        left: 0; 
-        width: auto;
-        /* [MODIFIED] Remove centering transform in compact mode */
-        transform: none;
+    /* [FIX 1] Manual Centering for Desktop Compact Mode to prevent jump */
+    /* When Screen is Wide (> 700px) */
+    @media only screen and (min-width: 701px) {
+        body.mode-compact .app-title-container {
+            top: 27px;
+            left: 50%; /* Keep 50% anchor */
+            margin-left: -350px; /* Shift to start of imaginary 700px box */
+            transform: none; /* Remove translateX(-50%) */
+            width: auto;
+        }
+
+        body.mode-compact .search-box {
+            top: 22px;
+            left: 50%;
+            margin-left: -283px; /* -350px + 67px offset */
+            width: 633px; /* 700px - 67px */
+            align-items: flex-start;
+        }
     }
 
-    /* [MODIFIED] Compact Logo: 3:2 Ratio Rectangle */
+    /* [FIX 1] Mobile/Tablet Compact Mode (<= 700px) */
+    @media only screen and (max-width: 700px) {
+        body.mode-compact .app-title-container {
+            top: 27px;
+            left: 0;
+            margin-left: 0;
+            transform: none;
+            width: auto;
+        }
+
+        body.mode-compact .search-box {
+            top: 22px;
+            left: 67px;
+            width: calc(100% - 67px);
+            margin-left: 0;
+            align-items: flex-start;
+        }
+    }
+
     body.mode-compact .synapse-logo-container {
         max-width: 3.9rem; 
         width: 3.9rem;
     }
 
-    /* [NEW] Hide Text in Compact Mode */
-    body.mode-compact .synapse-text-logo {
-        opacity: 0;
-    }
-
-    /* Hide Texts smoothly */
+    body.mode-compact .synapse-text-logo { opacity: 0; }
     body.mode-compact .title-ygo, 
     body.mode-compact .title-beta {
         opacity: 0;
         pointer-events: none;
-    }
-
-    /* [MODIFIED] Search Box moves Right and Expands */
-    body.mode-compact .search-box {
-        top: 22px;
-        /* [MODIFIED] Moved to 67px (next to logo) */
-        left: 67px; 
-        /* [MODIFIED] Width expanded to fill remaining wrapper space */
-        width: calc(100% - 67px); 
-        align-items: flex-start;
     }
 
     body.mode-compact .search-header-row {
@@ -531,13 +509,11 @@
         margin: 0;
     }
     
-    /* Compact Mode Inner Layout: Full Width */
     body.mode-compact .search-row {
         max-width: 100%;
         margin: 0;
     }
 
-    /* Content Section Transition */
     .content-section {
         display: none;
         opacity: 0;
@@ -547,7 +523,6 @@
         opacity: 1;
     }
     
-    /* [MODIFIED] Result Container Centering */
     .result-container {
         max-width: 700px;
         margin: 0 auto;
@@ -704,7 +679,7 @@
     #intro-area { text-align: center; color: var(--text-secondary); margin-top: 40px; margin-bottom: 40px; line-height: 1.8; font-size: 0.95rem; }
     #intro-area a { color: var(--primary-color); font-weight: 700; text-decoration: underline; cursor: pointer; }
     
-    /* [MODIFIED] Footer Styles for v0.9.19 */
+    /* [MODIFIED] Footer Styles for v0.9.20 */
     #main-footer { text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 50px; padding-bottom: 30px; }
     
     .footer-disclaimer { margin-bottom: 12px; color: var(--text-muted); font-size: 0.85rem; }
@@ -885,7 +860,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.9.19</span>
+        <span class="footer-item">ver. 0.9.20</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
