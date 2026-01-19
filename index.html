@@ -443,7 +443,6 @@
     }
     
     /* === DESKTOP ANIMATION LOGIC (min-width: 801px) === */
-    /* [MODIFIED] Breakpoint adjusted to 801px */
     @media only screen and (min-width: 801px) {
         /* Home Mode (Desktop) */
         .app-title-container {
@@ -480,11 +479,9 @@
             left: 50%;
             transform: none;
             margin-left: -350px; /* Start of 700px box */
-            /* [FIX] Force width to prevent overlap in compact mode */
             width: 3.9rem !important; 
         }
         
-        /* [FIX] Hide text titles in compact mode to free up space */
         body.mode-compact .title-ygo, 
         body.mode-compact .title-beta {
             display: none !important;
@@ -505,7 +502,6 @@
     }
 
     /* === MOBILE/TABLET LOGIC (max-width: 800px) === */
-    /* [MODIFIED] Breakpoint adjusted to 800px */
     @media only screen and (max-width: 800px) {
         /* Home Mode (Mobile) */
         .app-title-container {
@@ -534,11 +530,9 @@
             left: 0;
             transform: none;
             margin-left: 0;
-            /* [FIX] Force width */
             width: 3.9rem !important;
         }
         
-        /* [FIX] Hide text */
         body.mode-compact .title-ygo, 
         body.mode-compact .title-beta {
             display: none !important;
@@ -566,7 +560,6 @@
 
     body.mode-compact .synapse-text-logo { opacity: 0; }
     
-    /* Ensure opacity 0 logic remains for transition if needed, but display none overrides for layout */
     body.mode-compact .title-ygo, 
     body.mode-compact .title-beta {
         opacity: 0;
@@ -745,7 +738,7 @@
     #intro-area { text-align: center; color: var(--text-secondary); margin-top: 40px; margin-bottom: 40px; line-height: 1.8; font-size: 0.95rem; }
     #intro-area a { color: var(--primary-color); font-weight: 700; text-decoration: underline; cursor: pointer; }
     
-    /* [MODIFIED] Footer Styles for v0.9.27 */
+    /* [MODIFIED] Footer Styles for v0.9.28 */
     #main-footer { text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 50px; padding-bottom: 30px; }
     
     .footer-disclaimer { margin-bottom: 12px; color: var(--text-muted); font-size: 0.85rem; }
@@ -792,15 +785,15 @@
 <body>
 
 <aside class="app-sidebar">
-    <a class="nav-item">
+    <a class="nav-item" onclick="switchToMode('search')">
         <i class="material-icons">search</i>
         <span class="nav-text">검색</span>
     </a>
-    <a class="nav-item" onclick="checkAuthAndOpen('#add-card-modal')">
+    <a class="nav-item" onclick="switchToMode('add')">
         <i class="material-icons">library_add</i>
         <span class="nav-text">카드 등록</span>
     </a>
-    <a class="nav-item" onclick="checkAuthAndOpen('#manage-card-modal')">
+    <a class="nav-item" onclick="switchToMode('move')">
         <i class="material-icons">import_export</i>
         <span class="nav-text">카드 이동</span>
     </a>
@@ -820,11 +813,11 @@
             <i class="material-icons">link</i>
             <span>설정</span>
         </div>
-        <div class="mobile-nav-item" onclick="checkAuthAndOpen('#add-card-modal')">
+        <div class="mobile-nav-item" onclick="switchToMode('add')">
             <i class="material-icons">library_add</i>
             <span>등록</span>
         </div>
-        <div class="mobile-nav-item" onclick="checkAuthAndOpen('#manage-card-modal')">
+        <div class="mobile-nav-item" onclick="switchToMode('move')">
             <i class="material-icons">import_export</i>
             <span>이동</span>
         </div>
@@ -833,7 +826,7 @@
             <span>폐기</span>
         </div>
     </div>
-    <div class="nav-circle" onclick="">
+    <div class="nav-circle" onclick="switchToMode('search')">
         <i class="material-icons">search</i>
     </div>
 </div>
@@ -920,13 +913,27 @@
       <p style="color: var(--text-secondary);">폐기 기능을 준비 중입니다.</p>
   </div>
 
+  <div id="add-content-area" class="content-section" style="text-align:center; padding: 50px 0;">
+      <i class="material-icons" style="font-size: 4rem; color: var(--text-muted); margin-bottom: 20px;">library_add</i>
+      <h5 style="font-weight: 700; color: var(--text-primary);">카드 등록</h5>
+      <p style="color: var(--text-secondary); margin-bottom: 30px;">새로운 카드를 리스트에 추가합니다.</p>
+      <button class="btn cyan-theme waves-effect waves-light" onclick="checkAuthAndOpen('#add-card-modal')">기존 모달 열기</button>
+  </div>
+
+  <div id="move-content-area" class="content-section" style="text-align:center; padding: 50px 0;">
+      <i class="material-icons" style="font-size: 4rem; color: var(--text-muted); margin-bottom: 20px;">import_export</i>
+      <h5 style="font-weight: 700; color: var(--text-primary);">카드 이동</h5>
+      <p style="color: var(--text-secondary); margin-bottom: 30px;">카드의 보관 위치를 변경합니다.</p>
+      <button class="btn cyan-theme waves-effect waves-light" onclick="checkAuthAndOpen('#manage-card-modal')">기존 모달 열기</button>
+  </div>
+
   <footer id="main-footer">
     <p class="footer-disclaimer">
         <span>사용자가 입력한 모든 정보는 사용자가 등록한 구글 시트 파일에 기록되며,</span>
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.9.27</span>
+        <span class="footer-item">ver. 0.9.28</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -1246,6 +1253,8 @@
       if (mode === 'home') targetContentId = 'intro-area';
       else if (mode === 'search') targetContentId = 'result-area';
       else if (mode === 'discard') targetContentId = 'discard-content-area';
+      else if (mode === 'add') targetContentId = 'add-content-area'; // [NEW]
+      else if (mode === 'move') targetContentId = 'move-content-area'; // [NEW]
 
       // 2. Header Animation (Immediate)
       if (mode === 'home') {
