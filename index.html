@@ -599,11 +599,13 @@
         width: 100%;
     }
     
-    /* [FIX] Result Area now handles constraint directly */
+    /* [MODIFIED] Result Area Constraints - Padding instead of Margin */
     #result-area { 
         width: 100%;
         max-width: 700px;
-        margin: 30px auto 0 auto;
+        margin: 0 auto; /* No vertical margin */
+        padding-top: 30px; /* Use padding for spacing */
+        padding-bottom: 30px;
         overflow-x: auto; 
     }
 
@@ -764,7 +766,15 @@
     }
     #intro-area a { color: var(--primary-color); font-weight: 700; text-decoration: underline; cursor: pointer; }
     
-    /* [MODIFIED] Footer Styles for v0.9.33 */
+    /* [MODIFIED] Unified Content Area Styling (Margin 0, Padding only) */
+    .centered-content-area {
+        text-align: center;
+        padding-top: 50px;
+        padding-bottom: 50px;
+        margin: 0; /* Enforce 0 margin to prevent collapse issues */
+    }
+    
+    /* [MODIFIED] Footer Styles for v0.9.34 */
     #main-footer { text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 50px; padding-bottom: 30px; }
     
     .footer-disclaimer { margin-bottom: 12px; color: var(--text-muted); font-size: 0.85rem; }
@@ -936,20 +946,20 @@
           <div id="result-area"></div>
       </div>
 
-      <div id="discard-content-area" class="content-section" style="text-align:center; padding: 50px 0;">
+      <div id="discard-content-area" class="content-section centered-content-area">
           <i class="material-icons" style="font-size: 4rem; color: var(--text-muted); margin-bottom: 20px;">delete_sweep</i>
           <h5 style="font-weight: 700; color: var(--text-primary);">카드 폐기</h5>
           <p style="color: var(--text-secondary);">폐기 기능을 준비 중입니다.</p>
       </div>
 
-      <div id="add-content-area" class="content-section" style="text-align:center; padding: 50px 0;">
+      <div id="add-content-area" class="content-section centered-content-area">
           <i class="material-icons" style="font-size: 4rem; color: var(--text-muted); margin-bottom: 20px;">library_add</i>
           <h5 style="font-weight: 700; color: var(--text-primary);">카드 등록</h5>
           <p style="color: var(--text-secondary); margin-bottom: 30px;">새로운 카드를 리스트에 추가합니다.</p>
           <button class="btn cyan-theme waves-effect waves-light" onclick="checkAuthAndOpen('#add-card-modal')">기존 모달 열기</button>
       </div>
 
-      <div id="move-content-area" class="content-section" style="text-align:center; padding: 50px 0;">
+      <div id="move-content-area" class="content-section centered-content-area">
           <i class="material-icons" style="font-size: 4rem; color: var(--text-muted); margin-bottom: 20px;">import_export</i>
           <h5 style="font-weight: 700; color: var(--text-primary);">카드 이동</h5>
           <p style="color: var(--text-secondary); margin-bottom: 30px;">카드의 보관 위치를 변경합니다.</p>
@@ -963,7 +973,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.9.33</span>
+        <span class="footer-item">ver. 0.9.34</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -1409,15 +1419,16 @@
           ghost.style.right = '0';
           ghost.style.marginLeft = 'auto';
           ghost.style.marginRight = 'auto';
-          ghost.style.marginTop = '30px'; // Same as #result-area margin-top
+          ghost.style.marginTop = '0'; // Margin removed
+          ghost.style.paddingTop = '30px'; // Inherited, but key is margin 0
           ghost.style.width = '100%';
           ghost.style.maxWidth = '700px';
           ghost.style.zIndex = '5';
           ghost.style.transition = 'opacity 0.4s ease';
           
           // Make parent relative so absolute ghost positions correctly
-          contentWrapper.style.position = 'relative';
-          contentWrapper.appendChild(ghost);
+          // [FIX] Move ghost to wrapper to avoid height impact on contentWrapper
+          wrapper.appendChild(ghost);
 
           // 3. Render New Data (Updates #result-area)
           renderTable(filteredRows); 
@@ -1426,9 +1437,8 @@
           resultArea.style.opacity = '0';
           resultArea.style.transition = 'opacity 0.4s ease';
           
-          // Measure New Height
-          // Temporarily unlock height or use scrollHeight of content
-          const newHeight = contentWrapper.scrollHeight;
+          // Measure New Height - [FIX] Simple offsetHeight thanks to padding
+          const newHeight = resultArea.offsetHeight;
 
           // 5. Animate (Next Frame)
           requestAnimationFrame(() => {
@@ -1443,7 +1453,6 @@
               wrapper.style.height = ''; // Auto
               resultArea.style.opacity = '';
               resultArea.style.transition = '';
-              contentWrapper.style.position = '';
           }, 400);
 
       } else {
