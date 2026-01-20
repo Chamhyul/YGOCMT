@@ -1217,10 +1217,6 @@
         this.style.display = 'none'; 
         searchInput.focus(); 
         showRecentInDropdown();
-        
-        // [MODIFIED] Do not switch back to home on clear
-        // document.getElementById('result-area').innerHTML = '';
-        // switchToMode('home'); // Removed
     });
     
     document.addEventListener('click', function(e) {
@@ -1272,12 +1268,7 @@
       const currentEl = wrapper.querySelector('.content-section.active');
       const nextEl = document.getElementById(targetContentId);
 
-      // Special Reset for Search Result
-      /* [MODIFIED] Moved to cleanup phase
-      if ((mode === 'home' || mode === 'discard' || mode === 'add' || mode === 'move') && previousMode === 'search') {
-          document.getElementById('result-area').innerHTML = '';
-      }
-      */
+      // [FIX] MOVED: Reset logic moved to setTimeout below (inside cleanup)
 
       // 2. Lock Height for Smooth Transition
       const startHeight = wrapper.offsetHeight;
@@ -1329,7 +1320,7 @@
           nextEl.style.top = '';
           nextEl.style.left = '';
 
-          // [MOVED HERE] Special Reset for Search Result
+          // [FIX] Delayed Reset for Search Result Area
           if ((mode === 'home' || mode === 'discard' || mode === 'add' || mode === 'move') && previousMode === 'search') {
               document.getElementById('result-area').innerHTML = '';
           }
@@ -1372,7 +1363,7 @@
   function checkAuthAndOpen(modalId) { if (!localStorage.getItem(STORAGE_KEY)) { openGuideFromMain(); return; } if (modalId === '#manage-card-modal' && document.getElementById('manage-card-tbody').children.length === 0) addManageRows(1); if (modalId === '#add-card-modal' && document.getElementById('add-card-tbody').children.length === 0) addMoreRows(1); M.Modal.getInstance(document.querySelector(modalId)).open(); }
   function resetAddModal() { document.getElementById('add-card-tbody').innerHTML = ''; addMoreRows(1); }
   function resetManageModal() { document.getElementById('manage-card-tbody').innerHTML = ''; addManageRows(1); }
-  function validateSheetLink() { clearTimeout(validationTimeout); const url = document.getElementById('sheet-url').value.trim(); const mark = document.getElementById('valid-mark'), msg = document.getElementById('status-msg'), confirmBtn = document.getElementById('confirm-btn'); if (!url) { mark.style.display = 'none'; msg.innerText = ''; confirmBtn.classList.add('disabled'); return; } const match = url.match(/[-\w]{25,}/); if (!match) { mark.innerHTML = '<i class="material-icons" style="color: var(--error-red)">cancel</i>'; mark.style.display = 'block'; msg.innerText = '유효한 시트입니다.'; msg.style.color = 'var(--success-green)'; confirmBtn.classList.remove('disabled'); if (res.sheetName) document.getElementById('connected-sheet-name').innerText = `연결됨("${res.sheetName}")`; } else { mark.innerHTML = '<i class="material-icons" style="color: var(--warning-yellow)">warning</i>'; msg.innerText = (res.status === 'NO_EDIT_ACCESS') ? '공유 설정을 링크를 가진 모든 사용자 / 편집자로 설정해주세요.' : '접근할 수 없거나 형식이 잘못되었습니다.'; msg.style.color = 'var(--warning-yellow)'; confirmBtn.classList.add('disabled'); } mark.style.display = 'block'; } catch (e) { msg.innerText = '확인 실패'; } }, 500); }
+  function validateSheetLink() { clearTimeout(validationTimeout); const url = document.getElementById('sheet-url').value.trim(); const mark = document.getElementById('valid-mark'), msg = document.getElementById('status-msg'), confirmBtn = document.getElementById('confirm-btn'); if (!url) { mark.style.display = 'none'; msg.innerText = ''; confirmBtn.classList.add('disabled'); return; } const match = url.match(/[-\w]{25,}/); if (!match) { mark.innerHTML = '<i class="material-icons" style="color: var(--error-red)">cancel</i>'; mark.style.display = 'block'; msg.innerText = '구글 시트 링크를 적어주세요.'; msg.style.color = 'var(--error-red)'; confirmBtn.classList.add('disabled'); return; } validationTimeout = setTimeout(async () => { msg.innerText = '권한 확인 중...'; try { const res = await callApi('checkSheet', { targetId: match[0] }); if (res.status === 'OK') { mark.innerHTML = '<i class="material-icons" style="color: var(--success-green)">check_circle</i>'; msg.innerText = '유효한 시트입니다.'; msg.style.color = 'var(--success-green)'; confirmBtn.classList.remove('disabled'); if (res.sheetName) document.getElementById('connected-sheet-name').innerText = `연결됨("${res.sheetName}")`; } else { mark.innerHTML = '<i class="material-icons" style="color: var(--warning-yellow)">warning</i>'; msg.innerText = (res.status === 'NO_EDIT_ACCESS') ? '공유 설정을 링크를 가진 모든 사용자 / 편집자로 설정해주세요.' : '접근할 수 없거나 형식이 잘못되었습니다.'; msg.style.color = 'var(--warning-yellow)'; confirmBtn.classList.add('disabled'); } mark.style.display = 'block'; } catch (e) { msg.innerText = '확인 실패'; } }, 500); }
   async function refreshInitialData() { const savedId = localStorage.getItem(STORAGE_KEY); if (!savedId) return; showLoading(true, "데이터 동기화 중..."); try { const res = await callApi('getInitialData'); showLoading(false); isAppConfigured = res.isConfigured; if (res.isConfigured) { allNames = res.names; allProcessingTypes = res.processingTypes; allLocations = res.locations; localCardDatabase = res.allCards; rarityMap = res.rarityMap || {}; rarityMappingRaw = res.rarityMappingRaw || []; clientCache = res.clientCache || {}; nameDb = res.nameDb || {}; if (res.sheetName) document.getElementById('connected-sheet-name').innerText = `연결됨("${res.sheetName}")`; cidLookup = {}; Object.keys(nameDb).forEach(nameKey => { const entry = nameDb[nameKey]; if (entry && entry.id) { if (!cidLookup[entry.id]) cidLookup[entry.id] = new Set(); cidLookup[entry.id].add(nameKey); } }); const expandedSet = new Set(allNames); allNames.forEach(name => { const entry = nameDb[name]; if (entry && entry.id) { const siblings = cidLookup[entry.id]; if (siblings) { siblings.forEach(sName => expandedSet.add(sName)); } } }); allNames = Array.from(expandedSet).sort(); rarityLookup = {}; rarityMappingRaw.forEach((row, index) => { Object.values(row).forEach(val => { const key = String(val).trim(); if(key) { rarityLookup[key] = { data: row, index: index }; } }); }); } } catch (e) { showLoading(false); } }
   
   function startSearch() { 
