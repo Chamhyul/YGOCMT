@@ -573,7 +573,6 @@
         margin: 0;
     }
 
-    /* [NEW] Content Slider Wrapper */
     #content-slider-wrapper {
         position: relative;
         width: 100%;
@@ -582,7 +581,6 @@
         min-height: 100px;
     }
 
-    /* [MODIFIED] Content Section for Cross-fade */
     .content-section {
         display: none;
         opacity: 0;
@@ -593,7 +591,7 @@
     }
     .content-section.active {
         opacity: 1;
-        display: block; /* Ensure visible blocks are displayed */
+        display: block; 
     }
     
     .result-container {
@@ -752,7 +750,7 @@
     #intro-area { text-align: center; color: var(--text-secondary); margin-top: 40px; margin-bottom: 40px; line-height: 1.8; font-size: 0.95rem; }
     #intro-area a { color: var(--primary-color); font-weight: 700; text-decoration: underline; cursor: pointer; }
     
-    /* [MODIFIED] Footer Styles for v0.9.29 */
+    /* [MODIFIED] Footer Styles for v0.9.30 */
     #main-footer { text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 50px; padding-bottom: 30px; }
     
     .footer-disclaimer { margin-bottom: 12px; color: var(--text-muted); font-size: 0.85rem; }
@@ -949,7 +947,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.9.29</span>
+        <span class="footer-item">ver. 0.9.30</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -1337,15 +1335,6 @@
       else wrapper.classList.remove('active');
   }
 
-  // ... (Other helper functions remain unchanged) ...
-  // decomposeHangul, normalizeStr, showRecentInDropdown, filterAndShowDropdown, deleteRecentItem
-  // updateDisconnectBtn, toggleGuide, loadTheme, toggleTheme, loadRegion, toggleRegionDropdown, selectRegion
-  
-  // ... (API calls and Modal logic remain unchanged) ...
-  // callApi, checkAuthAndOpen, resetAddModal, resetManageModal, validateSheetLink, refreshInitialData, startSearch
-  // findMappingRow, getLocalizedRarity, renderTable, toggleNewDetail, toggleAnother, addManageRows... etc.
-
-  // [NOTE] Re-pasting remaining functions to ensure full file integrity
   function decomposeHangul(str) { const CHO = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ']; const JUNG = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ']; const JONG = ['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','흐','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ']; let result = ""; for (let i = 0; i < str.length; i++) { const charCode = str.charCodeAt(i); if (charCode >= 0xAC00 && charCode <= 0xD7A3) { const code = charCode - 0xAC00; const choIndex = Math.floor(code / 588); const jungIndex = Math.floor((code % 588) / 28); const jongIndex = code % 28; result += CHO[choIndex] + JUNG[jungIndex] + JONG[jongIndex]; } else { result += str.charAt(i); } } return result; }
   function normalizeStr(str) { return str.replace(/\s+/g, '').toLowerCase(); }
   function showRecentInDropdown() { const recent = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]'); const list = document.getElementById('custom-dropdown'); currentFocus = -1; Array.from(list.children).forEach(child => { if (!child.classList.contains('recent-header-item')) { child.remove(); } }); let header = list.querySelector('.recent-header-item'); if (!header) { header = document.createElement('li'); header.className = 'recent-header-item'; header.innerHTML = `<span class="recent-title">최근 검색</span><span class="clear-all-btn">전체 제거</span>`; list.prepend(header); } if (recent.length === 0) { const noResultLi = document.createElement('li'); noResultLi.className = 'no-result-item'; noResultLi.innerText = '검색 기록이 없습니다.'; list.appendChild(noResultLi); } else { recent.slice(0, 5).forEach(r => { const li = document.createElement('li'); li.className = 'recent-item-row'; li.dataset.val = r; li.innerHTML = `<span class="recent-text text-suggest">${r}</span><i class="material-icons item-delete-btn">close</i>`; list.appendChild(li); }); } list.style.display = 'block'; toggleSearchWrapper(true); }
@@ -1366,10 +1355,60 @@
   function resetManageModal() { document.getElementById('manage-card-tbody').innerHTML = ''; addManageRows(1); }
   function validateSheetLink() { clearTimeout(validationTimeout); const url = document.getElementById('sheet-url').value.trim(); const mark = document.getElementById('valid-mark'), msg = document.getElementById('status-msg'), confirmBtn = document.getElementById('confirm-btn'); if (!url) { mark.style.display = 'none'; msg.innerText = ''; confirmBtn.classList.add('disabled'); return; } const match = url.match(/[-\w]{25,}/); if (!match) { mark.innerHTML = '<i class="material-icons" style="color: var(--error-red)">cancel</i>'; mark.style.display = 'block'; msg.innerText = '구글 시트 링크를 적어주세요.'; msg.style.color = 'var(--error-red)'; confirmBtn.classList.add('disabled'); return; } validationTimeout = setTimeout(async () => { msg.innerText = '권한 확인 중...'; try { const res = await callApi('checkSheet', { targetId: match[0] }); if (res.status === 'OK') { mark.innerHTML = '<i class="material-icons" style="color: var(--success-green)">check_circle</i>'; msg.innerText = '유효한 시트입니다.'; msg.style.color = 'var(--success-green)'; confirmBtn.classList.remove('disabled'); if (res.sheetName) document.getElementById('connected-sheet-name').innerText = `연결됨("${res.sheetName}")`; } else { mark.innerHTML = '<i class="material-icons" style="color: var(--warning-yellow)">warning</i>'; msg.innerText = (res.status === 'NO_EDIT_ACCESS') ? '공유 설정을 링크를 가진 모든 사용자 / 편집자로 설정해주세요.' : '접근할 수 없거나 형식이 잘못되었습니다.'; msg.style.color = 'var(--warning-yellow)'; confirmBtn.classList.add('disabled'); } mark.style.display = 'block'; } catch (e) { msg.innerText = '확인 실패'; } }, 500); }
   async function refreshInitialData() { const savedId = localStorage.getItem(STORAGE_KEY); if (!savedId) return; showLoading(true, "데이터 동기화 중..."); try { const res = await callApi('getInitialData'); showLoading(false); isAppConfigured = res.isConfigured; if (res.isConfigured) { allNames = res.names; allProcessingTypes = res.processingTypes; allLocations = res.locations; localCardDatabase = res.allCards; rarityMap = res.rarityMap || {}; rarityMappingRaw = res.rarityMappingRaw || []; clientCache = res.clientCache || {}; nameDb = res.nameDb || {}; if (res.sheetName) document.getElementById('connected-sheet-name').innerText = `연결됨("${res.sheetName}")`; cidLookup = {}; Object.keys(nameDb).forEach(nameKey => { const entry = nameDb[nameKey]; if (entry && entry.id) { if (!cidLookup[entry.id]) cidLookup[entry.id] = new Set(); cidLookup[entry.id].add(nameKey); } }); const expandedSet = new Set(allNames); allNames.forEach(name => { const entry = nameDb[name]; if (entry && entry.id) { const siblings = cidLookup[entry.id]; if (siblings) { siblings.forEach(sName => expandedSet.add(sName)); } } }); allNames = Array.from(expandedSet).sort(); rarityLookup = {}; rarityMappingRaw.forEach((row, index) => { Object.values(row).forEach(val => { const key = String(val).trim(); if(key) { rarityLookup[key] = { data: row, index: index }; } }); }); } } catch (e) { showLoading(false); } }
-  function startSearch() { if (!localStorage.getItem(STORAGE_KEY)) { openGuideFromMain(); return; } const name = document.getElementById('card-search').value; if(!name || !isAppConfigured) return; if (currentMode !== 'search') switchToMode('search'); saveRecentSearch(name); let targetNames = new Set(); if (nameDb[name] && nameDb[name].id) { const cid = nameDb[name].id; if (cidLookup[cid]) { targetNames = cidLookup[cid]; } else { targetNames.add(name); } } else { targetNames.add(name); } const filteredRows = localCardDatabase.filter(row => targetNames.has(String(row[0]))); renderTable(filteredRows); document.getElementById('custom-dropdown').style.display = 'none'; toggleSearchWrapper(false); checkClearBtn(); }
+  
+  function startSearch() { 
+      if (!localStorage.getItem(STORAGE_KEY)) { openGuideFromMain(); return; } 
+      const name = document.getElementById('card-search').value; 
+      if(!name || !isAppConfigured) return; 
+
+      saveRecentSearch(name); 
+
+      let targetNames = new Set(); 
+      if (nameDb[name] && nameDb[name].id) { 
+          const cid = nameDb[name].id; 
+          if (cidLookup[cid]) { targetNames = cidLookup[cid]; } else { targetNames.add(name); } 
+      } else { targetNames.add(name); } 
+
+      const filteredRows = localCardDatabase.filter(row => targetNames.has(String(row[0]))); 
+      
+      // [FIX] Render table content FIRST
+      renderTable(filteredRows); 
+
+      // [FIX] Then switch mode (or update height if same mode)
+      if (currentMode !== 'search') {
+          switchToMode('search'); 
+      } else {
+          const wrapper = document.getElementById('content-slider-wrapper');
+          const resultArea = document.getElementById('result-area');
+          const newHeight = resultArea.scrollHeight;
+          wrapper.style.height = newHeight + 'px';
+      }
+
+      document.getElementById('custom-dropdown').style.display = 'none'; 
+      toggleSearchWrapper(false); 
+      checkClearBtn(); 
+      showLoading(false); 
+  }
+  
   function findMappingRow(key) { if (!rarityMappingRaw || rarityMappingRaw.length === 0) return null; return rarityMappingRaw.find(row => Object.values(row).includes(key)); }
   function getLocalizedRarity(key) { if (!key) return ""; const info = rarityLookup[key]; if (info && info.data[currentRegion]) { return info.data[currentRegion]; } return key; }
-  function renderTable(rows) { showLoading(false); const resultArea = document.getElementById('result-area'); if (rows.length === 0) { resultArea.innerHTML = "<p class='center'>결과 없음</p>"; resultArea.classList.add('active'); resultArea.style.display = 'block'; setTimeout(() => resultArea.style.opacity = '1', 50); return; } const groups = {}; rows.forEach(r => { const cardNo = String(r[1]), proc = String(r[2]), qty = parseInt(r[3]) || 0, loc = String(r[4]), another = String(r[5] || "").trim(); if (!groups[cardNo]) groups[cardNo] = { locations: {}, anotherGroups: {} }; if (!groups[cardNo].locations[loc]) groups[cardNo].locations[loc] = { total: 0, procs: {} }; groups[cardNo].locations[loc].total += qty; groups[cardNo].locations[loc].procs[proc] = (groups[cardNo].locations[loc].procs[proc] || 0) + qty; if (another) { const aKey = `${another}|${loc}`; if (!groups[cardNo].anotherGroups[aKey]) groups[cardNo].anotherGroups[aKey] = { another, loc, total: 0, procs: {} }; groups[cardNo].anotherGroups[aKey].total += qty; groups[cardNo].anotherGroups[aKey].procs[proc] = (groups[cardNo].anotherGroups[aKey].procs[proc] || 0) + qty; } }); let newHtml = ""; Object.keys(groups).forEach(cardNo => { const rowId = `row-${cardNo}`.replace(/[^a-zA-Z0-9]/g, ''); const cardRows = rows.filter(r => String(r[1]) === cardNo); const totalQty = cardRows.reduce((sum, r) => sum + (parseInt(r[3]) || 0), 0); const locSet = new Set(cardRows.map(r => String(r[4])).filter(l => l)); const distinctKeys = [...new Set(cardRows.map(r => String(r[2]).trim()).filter(k => k))]; distinctKeys.sort((a, b) => { const infoA = rarityLookup[a]; const infoB = rarityLookup[b]; const idxA = infoA ? infoA.index : 999999; const idxB = infoB ? infoB.index : 999999; return idxA - idxB || a.localeCompare(b); }); const displayNamesForSummary = [...new Set(distinctKeys.map(k => rarityMap[k] || k))]; const procStr = displayNamesForSummary.join(", "); const locStr = [...locSet].join(", "); const anotherGroups = {}; cardRows.forEach(r => { const another = String(r[5] || "").trim(); const displayAnother = another === "" ? "기본" : another; if(!anotherGroups[displayAnother]) anotherGroups[displayAnother] = []; anotherGroups[displayAnother].push(r); }); let leftTableHtml = `<table class="split-table"><thead><tr><th class="fp-col-1">일러스트</th><th class="fp-col-2">보관 위치</th><th class="fp-col-3">총 수량</th></tr></thead><tbody>`; let rightTableHtml = `<table class="split-table"><thead><tr>`; distinctKeys.forEach(key => { const info = rarityLookup[key]; let displayName = key; let tooltipContent = key; if (info) { displayName = info.data.display || key; tooltipContent = info.data[currentRegion] || key; } tooltipContent = tooltipContent.replace(/\(/g, '<br>('); rightTableHtml += `<th class="sp-col tooltipped" data-position="top" data-tooltip="${tooltipContent}">${displayName}</th>`; }); rightTableHtml += `</tr></thead><tbody>`; const anotherKeys = Object.keys(anotherGroups).sort((a, b) => { if (a === "기본") return -1; if (b === "기본") return 1; return a.localeCompare(b, undefined, { numeric: true }); }); anotherKeys.forEach(another => { const grpRows = anotherGroups[another]; const locGroups = {}; grpRows.forEach(r => { const loc = String(r[4]); const proc = String(r[2]); const qty = parseInt(r[3]) || 0; if(!locGroups[loc]) locGroups[loc] = { total: 0, procs: {} }; locGroups[loc].total += qty; locGroups[loc].procs[proc] = (locGroups[loc].procs[proc] || 0) + qty; }); const locKeys = Object.keys(locGroups); locKeys.forEach((loc, idx) => { const d = locGroups[loc]; leftTableHtml += `<tr>`; if(idx === 0) leftTableHtml += `<td rowspan="${locKeys.length}">${another}</td>`; leftTableHtml += `<td>${loc}</td><td>${d.total}</td></tr>`; rightTableHtml += `<tr>`; distinctKeys.forEach(key => { const val = d.procs[key] || 0; rightTableHtml += `<td>${val}</td>`; }); rightTableHtml += `</tr>`; }); }); leftTableHtml += `</tbody></table>`; rightTableHtml += `</tbody></table>`; newHtml += ` <div class="new-card-box"> <div class="summary-split-wrapper"> <div class="summary-left">${cardNo}</div> <div class="summary-right"> <table class="summary-table"> <tr><td class="summary-label-cell">보관 위치</td><td class="summary-label-cell">수량</td></tr> <tr><td class="summary-value-cell">${locStr}</td><td class="summary-value-cell">${totalQty}</td></tr> <tr><td class="summary-label-cell border-double-top">보유 레어도</td><td class="summary-value-cell border-double-top">${procStr}</td></tr> </table> </div> </div> <div id="detail-${rowId}" class="detail-slide-wrapper"> <div class="split-table-wrapper"> <div class="fixed-side">${leftTableHtml}</div> <div class="scroll-side">${rightTableHtml}</div> </div> </div> <button class="show-more-btn" onclick="toggleNewDetail('detail-${rowId}')"><span>자세히 보기</span><i class="material-icons tiny">keyboard_arrow_down</i></button> </div> `; }); resultArea.innerHTML = newHtml; M.Tooltip.init(resultArea.querySelectorAll('.tooltipped'), { html: true, margin: 3 }); }
+  
+  function renderTable(rows) { 
+      // showLoading(false); // [FIX] Removed
+      const resultArea = document.getElementById('result-area'); 
+      if (rows.length === 0) { 
+          resultArea.innerHTML = "<p class='center'>결과 없음</p>"; 
+          // [FIX] Removed animation triggering logic
+          return; 
+      } 
+      const groups = {}; 
+      rows.forEach(r => { const cardNo = String(r[1]), proc = String(r[2]), qty = parseInt(r[3]) || 0, loc = String(r[4]), another = String(r[5] || "").trim(); if (!groups[cardNo]) groups[cardNo] = { locations: {}, anotherGroups: {} }; if (!groups[cardNo].locations[loc]) groups[cardNo].locations[loc] = { total: 0, procs: {} }; groups[cardNo].locations[loc].total += qty; groups[cardNo].locations[loc].procs[proc] = (groups[cardNo].locations[loc].procs[proc] || 0) + qty; if (another) { const aKey = `${another}|${loc}`; if (!groups[cardNo].anotherGroups[aKey]) groups[cardNo].anotherGroups[aKey] = { another, loc, total: 0, procs: {} }; groups[cardNo].anotherGroups[aKey].total += qty; groups[cardNo].anotherGroups[aKey].procs[proc] = (groups[cardNo].anotherGroups[aKey].procs[proc] || 0) + qty; } }); 
+      let newHtml = ""; 
+      Object.keys(groups).forEach(cardNo => { const rowId = `row-${cardNo}`.replace(/[^a-zA-Z0-9]/g, ''); const cardRows = rows.filter(r => String(r[1]) === cardNo); const totalQty = cardRows.reduce((sum, r) => sum + (parseInt(r[3]) || 0), 0); const locSet = new Set(cardRows.map(r => String(r[4])).filter(l => l)); const distinctKeys = [...new Set(cardRows.map(r => String(r[2]).trim()).filter(k => k))]; distinctKeys.sort((a, b) => { const infoA = rarityLookup[a]; const infoB = rarityLookup[b]; const idxA = infoA ? infoA.index : 999999; const idxB = infoB ? infoB.index : 999999; return idxA - idxB || a.localeCompare(b); }); const displayNamesForSummary = [...new Set(distinctKeys.map(k => rarityMap[k] || k))]; const procStr = displayNamesForSummary.join(", "); const locStr = [...locSet].join(", "); const anotherGroups = {}; cardRows.forEach(r => { const another = String(r[5] || "").trim(); const displayAnother = another === "" ? "기본" : another; if(!anotherGroups[displayAnother]) anotherGroups[displayAnother] = []; anotherGroups[displayAnother].push(r); }); let leftTableHtml = `<table class="split-table"><thead><tr><th class="fp-col-1">일러스트</th><th class="fp-col-2">보관 위치</th><th class="fp-col-3">총 수량</th></tr></thead><tbody>`; let rightTableHtml = `<table class="split-table"><thead><tr>`; distinctKeys.forEach(key => { const info = rarityLookup[key]; let displayName = key; let tooltipContent = key; if (info) { displayName = info.data.display || key; tooltipContent = info.data[currentRegion] || key; } tooltipContent = tooltipContent.replace(/\(/g, '<br>('); rightTableHtml += `<th class="sp-col tooltipped" data-position="top" data-tooltip="${tooltipContent}">${displayName}</th>`; }); rightTableHtml += `</tr></thead><tbody>`; const anotherKeys = Object.keys(anotherGroups).sort((a, b) => { if (a === "기본") return -1; if (b === "기본") return 1; return a.localeCompare(b, undefined, { numeric: true }); }); anotherKeys.forEach(another => { const grpRows = anotherGroups[another]; const locGroups = {}; grpRows.forEach(r => { const loc = String(r[4]); const proc = String(r[2]); const qty = parseInt(r[3]) || 0; if(!locGroups[loc]) locGroups[loc] = { total: 0, procs: {} }; locGroups[loc].total += qty; locGroups[loc].procs[proc] = (locGroups[loc].procs[proc] || 0) + qty; }); const locKeys = Object.keys(locGroups); locKeys.forEach((loc, idx) => { const d = locGroups[loc]; leftTableHtml += `<tr>`; if(idx === 0) leftTableHtml += `<td rowspan="${locKeys.length}">${another}</td>`; leftTableHtml += `<td>${loc}</td><td>${d.total}</td></tr>`; rightTableHtml += `<tr>`; distinctKeys.forEach(key => { const val = d.procs[key] || 0; rightTableHtml += `<td>${val}</td>`; }); rightTableHtml += `</tr>`; }); }); leftTableHtml += `</tbody></table>`; rightTableHtml += `</tbody></table>`; newHtml += ` <div class="new-card-box"> <div class="summary-split-wrapper"> <div class="summary-left">${cardNo}</div> <div class="summary-right"> <table class="summary-table"> <tr><td class="summary-label-cell">보관 위치</td><td class="summary-label-cell">수량</td></tr> <tr><td class="summary-value-cell">${locStr}</td><td class="summary-value-cell">${totalQty}</td></tr> <tr><td class="summary-label-cell border-double-top">보유 레어도</td><td class="summary-value-cell border-double-top">${procStr}</td></tr> </table> </div> </div> <div id="detail-${rowId}" class="detail-slide-wrapper"> <div class="split-table-wrapper"> <div class="fixed-side">${leftTableHtml}</div> <div class="scroll-side">${rightTableHtml}</div> </div> </div> <button class="show-more-btn" onclick="toggleNewDetail('detail-${rowId}')"><span>자세히 보기</span><i class="material-icons tiny">keyboard_arrow_down</i></button> </div> `; }); 
+      resultArea.innerHTML = newHtml; 
+      M.Tooltip.init(resultArea.querySelectorAll('.tooltipped'), { html: true, margin: 3 }); 
+      // [FIX] Removed animation triggering logic
+  }
   function toggleNewDetail(detailId) { const content = document.getElementById(detailId); const btn = content.nextElementSibling; const textSpan = btn.querySelector('span'); const icon = btn.querySelector('i'); if (content.style.maxHeight) { content.style.maxHeight = null; textSpan.innerText = '자세히 보기'; icon.innerText = 'keyboard_arrow_down'; } else { content.style.maxHeight = content.scrollHeight + "px"; textSpan.innerText = '간략히 보기'; icon.innerText = 'keyboard_arrow_up'; } }
   function toggleAnother(rowId) {}
   function addManageRows(count = null) { const tbody = document.getElementById('manage-card-tbody'); let increment = count || ((tbody.children.length === 1) ? 4 : 5); let startIdx = tbody.children.length + 1; for (let i = 0; i < increment; i++) { const row = document.createElement('tr'); row.innerHTML = `<td>${startIdx + i}</td><td><span class="card-name-fetch">카드 번호를 입력해주세요.</span></td><td><input type="text" class="manage-card-no" onblur="updateManageDropdowns(this)" placeholder="번호 입력"></td><td><select class="browser-default manage-another flex-select" onchange="updateManageProcessing(this)" disabled><option value="">선택</option></select></td><td><select class="browser-default manage-proc flex-select" onchange="updateManageStorage(this)" disabled><option value="">선택</option></select></td><td><select class="browser-default manage-loc flex-select" onchange="updateManageMoveLoc(this)" disabled><option value="">선택</option></select></td><td><div class="td-flex-container"><select class="browser-default move-loc flex-select" onchange="syncDirectInputManage(this)" disabled><option value="" disabled selected>선택</option></select><input type="text" class="direct-input loc-direct flex-input" placeholder="새 위치"></div></td><td><span class="storage-qty-disp">-</span></td><td><input type="number" class="move-qty" min="1" disabled style="height:2.2rem !important; text-align:center;"></td>`; tbody.appendChild(row); } }
