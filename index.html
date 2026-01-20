@@ -149,7 +149,11 @@
         padding-left: 0;
         padding-right: 0;
         
-        background-color: var(--bg-surface); /* Changed to surface for visibility */
+        /* [MODIFIED] Match Sidebar Color */
+        background-color: var(--nav-bg); 
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        
         border-top: 1px solid var(--border-color);
         box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
         
@@ -158,7 +162,6 @@
         pointer-events: none; 
     }
     
-    /* Remove old capsule/circle styles */
     .nav-capsule, .nav-circle { display: none; }
 
     .mobile-nav-item {
@@ -166,7 +169,8 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        color: var(--text-muted); /* Inactive color */
+        /* [MODIFIED] Match Sidebar Text Color */
+        color: var(--nav-text); 
         font-size: 0.65rem;
         cursor: pointer;
         flex: 1;
@@ -178,10 +182,11 @@
     }
     
     .mobile-nav-item:active { transform: scale(0.95); }
-    .mobile-nav-item:hover { color: var(--text-secondary); }
+    /* [MODIFIED] Match Sidebar Active Color */
+    .mobile-nav-item:hover { color: var(--nav-text-active); }
     
     .mobile-nav-item.active {
-        color: var(--primary-color);
+        color: var(--nav-text-active);
         font-weight: 700;
     }
     
@@ -197,13 +202,14 @@
         body { padding-left: 72px; }
         .app-sidebar { width: 72px; }
         .nav-text { opacity: 0; display: none; } 
-        .nav-item { justify-content: center; padding: 16px 0; border-left: 0; border-right: 4px solid transparent; }
+        /* [MODIFIED] Tablet Sidebar: Left Border Only */
+        .nav-item { justify-content: center; padding: 16px 0; }
         .nav-item i { margin-right: 0; }
-        .nav-item.active { border-right: 4px solid var(--primary-color); }
+        /* Removed border-right override, utilizing default border-left */
     }
     
     @media only screen and (max-width: 600px) {
-        body { padding-bottom: 80px; padding-left: 0; } /* Adjusted padding-bottom for nav bar */
+        body { padding-bottom: 80px; padding-left: 0; } 
         
         .app-sidebar { 
             width: 72px !important;
@@ -762,7 +768,7 @@
         margin: 0; /* Enforce 0 margin to prevent collapse issues */
     }
     
-    /* [MODIFIED] Footer Styles for v0.10.0 */
+    /* [MODIFIED] Footer Styles for v0.10.1 */
     #main-footer { text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 50px; padding-bottom: 30px; }
     
     .footer-disclaimer { margin-bottom: 12px; color: var(--text-muted); font-size: 0.85rem; }
@@ -967,7 +973,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.10.0</span>
+        <span class="footer-item">ver. 0.10.1</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -1150,8 +1156,7 @@
         const val = e.target.value;
         if (!val) {
             showRecentInDropdown();
-            // In input, we don't switch mode immediately, just clear text
-            document.getElementById('result-area').innerHTML = ''; 
+            // [MODIFIED] Do NOT clear results on empty input
         }
         else filterAndShowDropdown(val);
         checkClearBtn(); 
