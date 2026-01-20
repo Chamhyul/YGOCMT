@@ -573,13 +573,27 @@
         margin: 0;
     }
 
+    /* [NEW] Content Slider Wrapper */
+    #content-slider-wrapper {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        transition: height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        min-height: 100px;
+    }
+
+    /* [MODIFIED] Content Section for Cross-fade */
     .content-section {
         display: none;
         opacity: 0;
-        transition: opacity 0.3s ease-in-out;
+        width: 100%;
+        transition: opacity 0.4s ease;
+        top: 0;
+        left: 0;
     }
     .content-section.active {
         opacity: 1;
+        display: block; /* Ensure visible blocks are displayed */
     }
     
     .result-container {
@@ -738,7 +752,7 @@
     #intro-area { text-align: center; color: var(--text-secondary); margin-top: 40px; margin-bottom: 40px; line-height: 1.8; font-size: 0.95rem; }
     #intro-area a { color: var(--primary-color); font-weight: 700; text-decoration: underline; cursor: pointer; }
     
-    /* [MODIFIED] Footer Styles for v0.9.28 */
+    /* [MODIFIED] Footer Styles for v0.9.29 */
     #main-footer { text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 50px; padding-bottom: 30px; }
     
     .footer-disclaimer { margin-bottom: 12px; color: var(--text-muted); font-size: 0.85rem; }
@@ -899,32 +913,34 @@
       </div>
   </div>
 
-  <div id="intro-area" class="content-section" style="display:block; opacity:1;">
-    <p>본 서비스는 실물 유희왕 카드의 체계적인 관리를 위해 제작됐습니다.<br>
-    사용자가 보유한 카드의 정보는 직접 등록해야 합니다.<br>
-    자세한 사용법은 <a onclick="openSettingsWithGuide()">[여기]</a>를 확인하세요.</p>
-  </div>
+  <div id="content-slider-wrapper">
+      <div id="intro-area" class="content-section active" style="display:block; opacity:1;">
+        <p>본 서비스는 실물 유희왕 카드의 체계적인 관리를 위해 제작됐습니다.<br>
+        사용자가 보유한 카드의 정보는 직접 등록해야 합니다.<br>
+        자세한 사용법은 <a onclick="openSettingsWithGuide()">[여기]</a>를 확인하세요.</p>
+      </div>
 
-  <div class="result-container"><div id="result-area" class="content-section"></div></div>
+      <div class="result-container"><div id="result-area" class="content-section"></div></div>
 
-  <div id="discard-content-area" class="content-section" style="text-align:center; padding: 50px 0;">
-      <i class="material-icons" style="font-size: 4rem; color: var(--text-muted); margin-bottom: 20px;">delete_sweep</i>
-      <h5 style="font-weight: 700; color: var(--text-primary);">카드 폐기</h5>
-      <p style="color: var(--text-secondary);">폐기 기능을 준비 중입니다.</p>
-  </div>
+      <div id="discard-content-area" class="content-section" style="text-align:center; padding: 50px 0;">
+          <i class="material-icons" style="font-size: 4rem; color: var(--text-muted); margin-bottom: 20px;">delete_sweep</i>
+          <h5 style="font-weight: 700; color: var(--text-primary);">카드 폐기</h5>
+          <p style="color: var(--text-secondary);">폐기 기능을 준비 중입니다.</p>
+      </div>
 
-  <div id="add-content-area" class="content-section" style="text-align:center; padding: 50px 0;">
-      <i class="material-icons" style="font-size: 4rem; color: var(--text-muted); margin-bottom: 20px;">library_add</i>
-      <h5 style="font-weight: 700; color: var(--text-primary);">카드 등록</h5>
-      <p style="color: var(--text-secondary); margin-bottom: 30px;">새로운 카드를 리스트에 추가합니다.</p>
-      <button class="btn cyan-theme waves-effect waves-light" onclick="checkAuthAndOpen('#add-card-modal')">기존 모달 열기</button>
-  </div>
+      <div id="add-content-area" class="content-section" style="text-align:center; padding: 50px 0;">
+          <i class="material-icons" style="font-size: 4rem; color: var(--text-muted); margin-bottom: 20px;">library_add</i>
+          <h5 style="font-weight: 700; color: var(--text-primary);">카드 등록</h5>
+          <p style="color: var(--text-secondary); margin-bottom: 30px;">새로운 카드를 리스트에 추가합니다.</p>
+          <button class="btn cyan-theme waves-effect waves-light" onclick="checkAuthAndOpen('#add-card-modal')">기존 모달 열기</button>
+      </div>
 
-  <div id="move-content-area" class="content-section" style="text-align:center; padding: 50px 0;">
-      <i class="material-icons" style="font-size: 4rem; color: var(--text-muted); margin-bottom: 20px;">import_export</i>
-      <h5 style="font-weight: 700; color: var(--text-primary);">카드 이동</h5>
-      <p style="color: var(--text-secondary); margin-bottom: 30px;">카드의 보관 위치를 변경합니다.</p>
-      <button class="btn cyan-theme waves-effect waves-light" onclick="checkAuthAndOpen('#manage-card-modal')">기존 모달 열기</button>
+      <div id="move-content-area" class="content-section" style="text-align:center; padding: 50px 0;">
+          <i class="material-icons" style="font-size: 4rem; color: var(--text-muted); margin-bottom: 20px;">import_export</i>
+          <h5 style="font-weight: 700; color: var(--text-primary);">카드 이동</h5>
+          <p style="color: var(--text-secondary); margin-bottom: 30px;">카드의 보관 위치를 변경합니다.</p>
+          <button class="btn cyan-theme waves-effect waves-light" onclick="checkAuthAndOpen('#manage-card-modal')">기존 모달 열기</button>
+      </div>
   </div>
 
   <footer id="main-footer">
@@ -933,7 +949,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.9.28</span>
+        <span class="footer-item">ver. 0.9.29</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -1055,7 +1071,7 @@
   let isContinuingRegistration = false;
   let blurTimer = null;
   let currentRegion = 'ko';
-  let currentMode = 'home'; // 'home' | 'search' | 'discard'
+  let currentMode = 'home'; // 'home' | 'search' | 'discard' | 'add' | 'move'
 
   let currentFocus = -1;
 
@@ -1111,41 +1127,30 @@
     
     searchInput.addEventListener('input', (e) => {
         const val = e.target.value;
-        
-        // [MODIFIED] Removed immediate switch to search mode on input
-        
         if (!val) {
             showRecentInDropdown();
-            // Clear results visually, but keep mode if user is typing
+            // In input, we don't switch mode immediately, just clear text
             document.getElementById('result-area').innerHTML = ''; 
         }
         else filterAndShowDropdown(val);
-        
         checkClearBtn(); 
     });
     
-    // [MODIFIED] Use 'mousedown' & Inline Logic for Clear All
     const dropdown = document.getElementById('custom-dropdown');
     dropdown.addEventListener('mousedown', function(e) {
         e.preventDefault(); 
-
         const target = e.target;
-
         if (target.classList.contains('clear-all-btn')) {
             localStorage.removeItem(RECENT_KEY);
             showRecentInDropdown();
             return;
         }
-
         if (target.classList.contains('item-delete-btn') || target.closest('.item-delete-btn')) {
             const delBtn = target.classList.contains('item-delete-btn') ? target : target.closest('.item-delete-btn');
             const li = delBtn.closest('li');
-            if (li && li.dataset.val) {
-                deleteRecentItem(li.dataset.val);
-            }
+            if (li && li.dataset.val) deleteRecentItem(li.dataset.val);
             return;
         }
-
         const li = target.closest('li');
         if (li && !li.classList.contains('recent-header-item') && !li.classList.contains('no-result-item')) {
             const val = li.dataset.val;
@@ -1160,9 +1165,7 @@
     searchInput.addEventListener('keydown', function(e) { 
         let list = document.getElementById('custom-dropdown');
         if (list.style.display === 'none') return;
-        
         let items = list.querySelectorAll('li:not(.recent-header-item):not(.no-result-item)');
-        
         if (e.keyCode == 40) { 
             currentFocus++;
             addActive(items);
@@ -1174,13 +1177,9 @@
             let targetVal = this.value; 
             if (list.style.display !== 'none' && items.length > 0) {
                 let activeIndex = currentFocus > -1 ? currentFocus : 0; 
-                if (items[activeIndex]) {
-                    targetVal = items[activeIndex].dataset.val;
-                }
+                if (items[activeIndex]) targetVal = items[activeIndex].dataset.val;
             }
-            if (targetVal) {
-                this.value = targetVal;
-            }
+            if (targetVal) this.value = targetVal;
             this.blur();
             startSearch();
         }
@@ -1196,9 +1195,7 @@
     }
 
     function removeActive(items) {
-        for (let i = 0; i < items.length; i++) {
-            items[i].classList.remove("active");
-        }
+        for (let i = 0; i < items.length; i++) items[i].classList.remove("active");
     }
     
     searchInput.addEventListener('blur', () => {
@@ -1214,10 +1211,6 @@
         this.style.display = 'none'; 
         searchInput.focus(); 
         showRecentInDropdown();
-        
-        // [MODIFIED] Do not switch back to home on clear
-        // document.getElementById('result-area').innerHTML = '';
-        // switchToMode('home'); // Removed
     });
     
     document.addEventListener('click', function(e) {
@@ -1231,7 +1224,7 @@
     updateDisconnectBtn(); refreshInitialData();
   });
 
-  // [NEW] Robust Mode Switching Logic with Sequential Fading
+  // [NEW] Robust Mode Switching with Cross-Fade & Height Animation
   function switchToMode(mode) {
       if (currentMode === mode) return; 
       const previousMode = currentMode;
@@ -1240,7 +1233,7 @@
       const body = document.body;
       const searchInput = document.getElementById('card-search');
       
-      // [MODIFIED] Clear input logic
+      // Header & Input Logic
       if (mode !== 'search') {
           searchInput.value = '';
           document.getElementById('clear-btn').style.display = 'none';
@@ -1248,57 +1241,83 @@
           toggleSearchWrapper(false);
       }
       
-      // 1. Determine active content ID based on mode
-      let targetContentId = '';
-      if (mode === 'home') targetContentId = 'intro-area';
-      else if (mode === 'search') targetContentId = 'result-area';
-      else if (mode === 'discard') targetContentId = 'discard-content-area';
-      else if (mode === 'add') targetContentId = 'add-content-area'; // [NEW]
-      else if (mode === 'move') targetContentId = 'move-content-area'; // [NEW]
-
-      // 2. Header Animation (Immediate)
+      // Header Animation
       if (mode === 'home') {
           body.classList.remove('mode-compact');
       } else {
           body.classList.add('mode-compact');
       }
 
-      // 3. Content Transition Sequence: Fade Out -> Swap -> Fade In
-      const allSections = document.querySelectorAll('.content-section');
+      // Content Transition Logic
+      const wrapper = document.getElementById('content-slider-wrapper');
       
-      // Step A: Fade Out current active sections
-      allSections.forEach(el => {
-          el.style.opacity = '0';
-      });
+      // 1. Identify Target
+      let targetContentId = '';
+      if (mode === 'home') targetContentId = 'intro-area';
+      else if (mode === 'search') targetContentId = 'result-area';
+      else if (mode === 'discard') targetContentId = 'discard-content-area';
+      else if (mode === 'add') targetContentId = 'add-content-area';
+      else if (mode === 'move') targetContentId = 'move-content-area';
 
-      // [MODIFIED] Dynamic Delay
-      let delay = 300;
-      if (previousMode === 'home' && mode === 'search') {
-          delay = 500; // Wait for header animation
+      const currentEl = wrapper.querySelector('.content-section.active');
+      const nextEl = document.getElementById(targetContentId);
+
+      // Special Reset for Search Result
+      if ((mode === 'home' || mode === 'discard' || mode === 'add' || mode === 'move') && previousMode === 'search') {
+          document.getElementById('result-area').innerHTML = '';
       }
 
-      // Step B: Wait for Fade Out/Header Anim, then Swap Display
+      // 2. Lock Height for Smooth Transition
+      const startHeight = wrapper.offsetHeight;
+      wrapper.style.height = startHeight + 'px';
+
+      // 3. Prepare Animation State
+      // Set current element to absolute so it doesn't push the new one down, but stays visible for fade out
+      if(currentEl) {
+          currentEl.style.position = 'absolute';
+          currentEl.style.top = '0';
+          currentEl.style.left = '0';
+          currentEl.style.width = '100%';
+      }
+
+      // Prepare next element (hidden but in DOM to measure)
+      nextEl.style.display = 'block';
+      nextEl.style.position = 'absolute'; // Prevent layout shift during measurement
+      nextEl.style.opacity = '0';
+      nextEl.style.top = '0';
+      nextEl.style.left = '0';
+      nextEl.style.width = '100%';
+      
+      // Force Reflow & Measure
+      const targetHeight = nextEl.scrollHeight;
+
+      // 4. Trigger Animations (Next Frame)
+      requestAnimationFrame(() => {
+          wrapper.style.height = targetHeight + 'px'; // Animate Wrapper Height
+          
+          if(currentEl) currentEl.style.opacity = '0'; // Fade Out Old
+          nextEl.style.opacity = '1'; // Fade In New
+      });
+
+      // 5. Cleanup after transition
       setTimeout(() => {
-          allSections.forEach(el => {
-              if (el.id === targetContentId) {
-                  el.style.display = 'block';
-              } else {
-                  el.style.display = 'none';
-              }
-          });
-
-          // [MODIFIED] Special Reset for Search Result Area (moved inside timeout for fade-out effect)
-          if ((mode === 'home' || mode === 'discard') && previousMode === 'search') {
-              document.getElementById('result-area').innerHTML = '';
+          wrapper.style.height = ''; // Auto height for responsiveness
+          
+          if(currentEl) {
+              currentEl.style.display = 'none';
+              currentEl.classList.remove('active');
+              currentEl.style.position = '';
+              currentEl.style.width = '';
           }
-
-          // Step C: Small delay to ensure browser renders 'display:block', then Fade In
-          setTimeout(() => {
-              const targetEl = document.getElementById(targetContentId);
-              if(targetEl) targetEl.style.opacity = '1';
-          }, 50);
-
-      }, delay);
+          
+          nextEl.classList.add('active');
+          nextEl.style.position = 'relative'; // Restore to flow
+          nextEl.style.opacity = '';
+          nextEl.style.width = '';
+          nextEl.style.top = '';
+          nextEl.style.left = '';
+          
+      }, 400); // Match transition duration (0.4s)
   }
 
   function checkClearBtn() {
@@ -1318,457 +1337,41 @@
       else wrapper.classList.remove('active');
   }
 
-  function decomposeHangul(str) {
-      const CHO = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
-      const JUNG = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
-      const JONG = ['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','흐','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
-      let result = "";
-      for (let i = 0; i < str.length; i++) {
-          const charCode = str.charCodeAt(i);
-          if (charCode >= 0xAC00 && charCode <= 0xD7A3) {
-              const code = charCode - 0xAC00;
-              const choIndex = Math.floor(code / 588);
-              const jungIndex = Math.floor((code % 588) / 28);
-              const jongIndex = code % 28;
-              result += CHO[choIndex] + JUNG[jungIndex] + JONG[jongIndex];
-          } else {
-              result += str.charAt(i);
-          }
-      }
-      return result;
-  }
-
-  function normalizeStr(str) { return str.replace(/\s+/g, '').toLowerCase(); }
-
-  function showRecentInDropdown() {
-      const recent = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]');
-      const list = document.getElementById('custom-dropdown');
-      currentFocus = -1; 
-      Array.from(list.children).forEach(child => {
-          if (!child.classList.contains('recent-header-item')) {
-              child.remove();
-          }
-      });
-      let header = list.querySelector('.recent-header-item');
-      if (!header) {
-          header = document.createElement('li');
-          header.className = 'recent-header-item';
-          header.innerHTML = `<span class="recent-title">최근 검색</span><span class="clear-all-btn">전체 제거</span>`;
-          list.prepend(header); 
-      }
-      if (recent.length === 0) {
-          const noResultLi = document.createElement('li');
-          noResultLi.className = 'no-result-item';
-          noResultLi.innerText = '검색 기록이 없습니다.';
-          list.appendChild(noResultLi);
-      } else {
-          recent.slice(0, 5).forEach(r => {
-              const li = document.createElement('li');
-              li.className = 'recent-item-row';
-              li.dataset.val = r; 
-              li.innerHTML = `<span class="recent-text text-suggest">${r}</span><i class="material-icons item-delete-btn">close</i>`;
-              list.appendChild(li);
-          });
-      }
-      list.style.display = 'block';
-      toggleSearchWrapper(true);
-  }
-
-  function filterAndShowDropdown(val) {
-      if(!isAppConfigured) return;
-      const list = document.getElementById('custom-dropdown');
-      const normalizedInput = normalizeStr(val);
-      const decomposedInput = decomposeHangul(normalizedInput); 
-      currentFocus = -1; 
-      
-      let matches = allNames.filter(name => {
-          const normName = normalizeStr(name);
-          const decompName = decomposeHangul(normName); 
-          return decompName.includes(decomposedInput);
-      });
-
-      matches.sort((a, b) => {
-          const normVal = normalizedInput;
-          const normA = normalizeStr(a);
-          const normB = normalizeStr(b);
-          if (normA === normVal) return -1;
-          if (normB === normVal) return 1;
-          const aStarts = normA.startsWith(normVal);
-          const bStarts = normB.startsWith(normVal);
-          if (aStarts && !bStarts) return -1;
-          if (!aStarts && bStarts) return 1;
-          return a.length - b.length || a.localeCompare(b);
-      });
-      
-      list.innerHTML = '';
-      if (matches.length === 0) {
-          list.innerHTML = '<li class="no-result-item">등록되지 않은 카드</li>';
-          list.style.display = 'block';
-          toggleSearchWrapper(true);
-          return;
-      }
-      matches.slice(0, 10).forEach(m => {
-          const li = document.createElement('li');
-          li.className = 'text-suggest'; 
-          li.dataset.val = m;
-          let html = "";
-          let searchIdx = 0;
-          const lowerM = m.toLowerCase();
-          const lowerVal = val.toLowerCase().replace(/\s+/g, ''); 
-          for(let i=0; i<m.length; i++) {
-              if(searchIdx < lowerVal.length && lowerM[i] === lowerVal[searchIdx]) {
-                  html += `<span class="text-match">${m[i]}</span>`;
-                  searchIdx++;
-              } else {
-                  html += m[i];
-              }
-          }
-          li.innerHTML = html;
-          list.appendChild(li);
-      });
-      list.style.display = 'block';
-      toggleSearchWrapper(true);
-  }
-
-  function deleteRecentItem(name) {
-      let recent = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]');
-      recent = recent.filter(r => r !== name);
-      localStorage.setItem(RECENT_KEY, JSON.stringify(recent));
-      showRecentInDropdown();
-  }
-
-  function updateDisconnectBtn() {
-      const btn = document.getElementById('disconnect-btn');
-      const nameSpan = document.getElementById('connected-sheet-name');
-      if (localStorage.getItem(STORAGE_KEY)) {
-          btn.classList.remove('disabled');
-      } else {
-          btn.classList.add('disabled');
-          nameSpan.innerText = '연결된 시트 없음';
-      }
-  }
-
-  function toggleGuide(forceOpen = null) { 
-      const btn = document.getElementById('guide-accordion-btn'); 
-      const box = document.getElementById('guide-box'); 
-      const isOpen = (forceOpen !== null) ? forceOpen : box.style.display === 'none'; 
-      box.style.display = isOpen ? 'block' : 'none'; 
-      if (isOpen) btn.classList.add('active'); else btn.classList.remove('active'); 
-  }
-  function openGuideFromMain() { M.Modal.getInstance(document.getElementById('settings-modal')).open(); toggleGuide(true); }
+  // ... (Other helper functions remain unchanged) ...
+  // decomposeHangul, normalizeStr, showRecentInDropdown, filterAndShowDropdown, deleteRecentItem
+  // updateDisconnectBtn, toggleGuide, loadTheme, toggleTheme, loadRegion, toggleRegionDropdown, selectRegion
   
-  function loadTheme() {
-    const savedTheme = localStorage.getItem(THEME_KEY);
-    if (savedTheme === 'dark') {
-      document.body.classList.add('dark-mode');
-      document.getElementById('checkbox-theme').checked = true;
-    }
-  }
-  function toggleTheme() {
-    if (document.getElementById('checkbox-theme').checked) {
-      document.body.classList.add('dark-mode');
-      localStorage.setItem(THEME_KEY, 'dark');
-    } else {
-      document.body.classList.remove('dark-mode');
-      localStorage.setItem(THEME_KEY, 'light');
-    }
-  }
+  // ... (API calls and Modal logic remain unchanged) ...
+  // callApi, checkAuthAndOpen, resetAddModal, resetManageModal, validateSheetLink, refreshInitialData, startSearch
+  // findMappingRow, getLocalizedRarity, renderTable, toggleNewDetail, toggleAnother, addManageRows... etc.
 
+  // [NOTE] Re-pasting remaining functions to ensure full file integrity
+  function decomposeHangul(str) { const CHO = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ']; const JUNG = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ']; const JONG = ['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','흐','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ']; let result = ""; for (let i = 0; i < str.length; i++) { const charCode = str.charCodeAt(i); if (charCode >= 0xAC00 && charCode <= 0xD7A3) { const code = charCode - 0xAC00; const choIndex = Math.floor(code / 588); const jungIndex = Math.floor((code % 588) / 28); const jongIndex = code % 28; result += CHO[choIndex] + JUNG[jungIndex] + JONG[jongIndex]; } else { result += str.charAt(i); } } return result; }
+  function normalizeStr(str) { return str.replace(/\s+/g, '').toLowerCase(); }
+  function showRecentInDropdown() { const recent = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]'); const list = document.getElementById('custom-dropdown'); currentFocus = -1; Array.from(list.children).forEach(child => { if (!child.classList.contains('recent-header-item')) { child.remove(); } }); let header = list.querySelector('.recent-header-item'); if (!header) { header = document.createElement('li'); header.className = 'recent-header-item'; header.innerHTML = `<span class="recent-title">최근 검색</span><span class="clear-all-btn">전체 제거</span>`; list.prepend(header); } if (recent.length === 0) { const noResultLi = document.createElement('li'); noResultLi.className = 'no-result-item'; noResultLi.innerText = '검색 기록이 없습니다.'; list.appendChild(noResultLi); } else { recent.slice(0, 5).forEach(r => { const li = document.createElement('li'); li.className = 'recent-item-row'; li.dataset.val = r; li.innerHTML = `<span class="recent-text text-suggest">${r}</span><i class="material-icons item-delete-btn">close</i>`; list.appendChild(li); }); } list.style.display = 'block'; toggleSearchWrapper(true); }
+  function filterAndShowDropdown(val) { if(!isAppConfigured) return; const list = document.getElementById('custom-dropdown'); const normalizedInput = normalizeStr(val); const decomposedInput = decomposeHangul(normalizedInput); currentFocus = -1; let matches = allNames.filter(name => { const normName = normalizeStr(name); const decompName = decomposeHangul(normName); return decompName.includes(decomposedInput); }); matches.sort((a, b) => { const normVal = normalizedInput; const normA = normalizeStr(a); const normB = normalizeStr(b); if (normA === normVal) return -1; if (normB === normVal) return 1; const aStarts = normA.startsWith(normVal); const bStarts = normB.startsWith(normVal); if (aStarts && !bStarts) return -1; if (!aStarts && bStarts) return 1; return a.length - b.length || a.localeCompare(b); }); list.innerHTML = ''; if (matches.length === 0) { list.innerHTML = '<li class="no-result-item">등록되지 않은 카드</li>'; list.style.display = 'block'; toggleSearchWrapper(true); return; } matches.slice(0, 10).forEach(m => { const li = document.createElement('li'); li.className = 'text-suggest'; li.dataset.val = m; let html = ""; let searchIdx = 0; const lowerM = m.toLowerCase(); const lowerVal = val.toLowerCase().replace(/\s+/g, ''); for(let i=0; i<m.length; i++) { if(searchIdx < lowerVal.length && lowerM[i] === lowerVal[searchIdx]) { html += `<span class="text-match">${m[i]}</span>`; searchIdx++; } else { html += m[i]; } } li.innerHTML = html; list.appendChild(li); }); list.style.display = 'block'; toggleSearchWrapper(true); }
+  function deleteRecentItem(name) { let recent = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]'); recent = recent.filter(r => r !== name); localStorage.setItem(RECENT_KEY, JSON.stringify(recent)); showRecentInDropdown(); }
+  function updateDisconnectBtn() { const btn = document.getElementById('disconnect-btn'); const nameSpan = document.getElementById('connected-sheet-name'); if (localStorage.getItem(STORAGE_KEY)) { btn.classList.remove('disabled'); } else { btn.classList.add('disabled'); nameSpan.innerText = '연결된 시트 없음'; } }
+  function toggleGuide(forceOpen = null) { const btn = document.getElementById('guide-accordion-btn'); const box = document.getElementById('guide-box'); const isOpen = (forceOpen !== null) ? forceOpen : box.style.display === 'none'; box.style.display = isOpen ? 'block' : 'none'; if (isOpen) btn.classList.add('active'); else btn.classList.remove('active'); }
+  function openGuideFromMain() { M.Modal.getInstance(document.getElementById('settings-modal')).open(); toggleGuide(true); }
+  function loadTheme() { const savedTheme = localStorage.getItem(THEME_KEY); if (savedTheme === 'dark') { document.body.classList.add('dark-mode'); document.getElementById('checkbox-theme').checked = true; } }
+  function toggleTheme() { if (document.getElementById('checkbox-theme').checked) { document.body.classList.add('dark-mode'); localStorage.setItem(THEME_KEY, 'dark'); } else { document.body.classList.remove('dark-mode'); localStorage.setItem(THEME_KEY, 'light'); } }
   const regionMap = { 'ko': '한국', 'ja': '일본', 'ae': '아시아', 'cn': '중국', 'en': '영미', 'de': '독일', 'fr': '프랑스', 'it': '이탈리아', 'es': '스페인', 'pt': '포르투갈' };
-
-  function loadRegion() {
-    const savedRegion = localStorage.getItem(REGION_KEY) || 'ko';
-    currentRegion = savedRegion;
-    document.getElementById('region-text').innerText = regionMap[savedRegion];
-  }
-
-  function toggleRegionDropdown(event) {
-      event.stopPropagation();
-      const list = document.getElementById('region-dropdown');
-      const capsule = document.getElementById('region-capsule');
-      if (list.style.display === 'block') {
-          list.style.display = 'none';
-          capsule.classList.remove('active');
-      } else {
-          list.style.display = 'block';
-          capsule.classList.add('active');
-      }
-  }
-
-  function selectRegion(code, text) {
-      currentRegion = code;
-      localStorage.setItem(REGION_KEY, code);
-      document.getElementById('region-text').innerText = text;
-      document.getElementById('region-dropdown').style.display = 'none';
-      document.getElementById('region-capsule').classList.remove('active');
-  }
-
-  async function callApi(action, params = {}, postData = null) {
-    const url = new URL(SCRIPT_URL); url.searchParams.append("action", action);
-    const savedId = localStorage.getItem(STORAGE_KEY); if (savedId) url.searchParams.append("ssId", savedId);
-    for (const key in params) { url.searchParams.append(key, params[key]); }
-    const options = { method: postData ? 'POST' : 'GET' }; if (postData) options.body = JSON.stringify(postData);
-    const response = await fetch(url, options); return await response.json();
-  }
-  function checkAuthAndOpen(modalId) {
-    if (!localStorage.getItem(STORAGE_KEY)) { openGuideFromMain(); return; }
-    if (modalId === '#manage-card-modal' && document.getElementById('manage-card-tbody').children.length === 0) addManageRows(1);
-    if (modalId === '#add-card-modal' && document.getElementById('add-card-tbody').children.length === 0) addMoreRows(1);
-    M.Modal.getInstance(document.querySelector(modalId)).open();
-  }
+  function loadRegion() { const savedRegion = localStorage.getItem(REGION_KEY) || 'ko'; currentRegion = savedRegion; document.getElementById('region-text').innerText = regionMap[savedRegion]; }
+  function toggleRegionDropdown(event) { event.stopPropagation(); const list = document.getElementById('region-dropdown'); const capsule = document.getElementById('region-capsule'); if (list.style.display === 'block') { list.style.display = 'none'; capsule.classList.remove('active'); } else { list.style.display = 'block'; capsule.classList.add('active'); } }
+  function selectRegion(code, text) { currentRegion = code; localStorage.setItem(REGION_KEY, code); document.getElementById('region-text').innerText = text; document.getElementById('region-dropdown').style.display = 'none'; document.getElementById('region-capsule').classList.remove('active'); }
+  async function callApi(action, params = {}, postData = null) { const url = new URL(SCRIPT_URL); url.searchParams.append("action", action); const savedId = localStorage.getItem(STORAGE_KEY); if (savedId) url.searchParams.append("ssId", savedId); for (const key in params) { url.searchParams.append(key, params[key]); } const options = { method: postData ? 'POST' : 'GET' }; if (postData) options.body = JSON.stringify(postData); const response = await fetch(url, options); return await response.json(); }
+  function checkAuthAndOpen(modalId) { if (!localStorage.getItem(STORAGE_KEY)) { openGuideFromMain(); return; } if (modalId === '#manage-card-modal' && document.getElementById('manage-card-tbody').children.length === 0) addManageRows(1); if (modalId === '#add-card-modal' && document.getElementById('add-card-tbody').children.length === 0) addMoreRows(1); M.Modal.getInstance(document.querySelector(modalId)).open(); }
   function resetAddModal() { document.getElementById('add-card-tbody').innerHTML = ''; addMoreRows(1); }
   function resetManageModal() { document.getElementById('manage-card-tbody').innerHTML = ''; addManageRows(1); }
   function validateSheetLink() { clearTimeout(validationTimeout); const url = document.getElementById('sheet-url').value.trim(); const mark = document.getElementById('valid-mark'), msg = document.getElementById('status-msg'), confirmBtn = document.getElementById('confirm-btn'); if (!url) { mark.style.display = 'none'; msg.innerText = ''; confirmBtn.classList.add('disabled'); return; } const match = url.match(/[-\w]{25,}/); if (!match) { mark.innerHTML = '<i class="material-icons" style="color: var(--error-red)">cancel</i>'; mark.style.display = 'block'; msg.innerText = '구글 시트 링크를 적어주세요.'; msg.style.color = 'var(--error-red)'; confirmBtn.classList.add('disabled'); return; } validationTimeout = setTimeout(async () => { msg.innerText = '권한 확인 중...'; try { const res = await callApi('checkSheet', { targetId: match[0] }); if (res.status === 'OK') { mark.innerHTML = '<i class="material-icons" style="color: var(--success-green)">check_circle</i>'; msg.innerText = '유효한 시트입니다.'; msg.style.color = 'var(--success-green)'; confirmBtn.classList.remove('disabled'); if (res.sheetName) document.getElementById('connected-sheet-name').innerText = `연결됨("${res.sheetName}")`; } else { mark.innerHTML = '<i class="material-icons" style="color: var(--warning-yellow)">warning</i>'; msg.innerText = (res.status === 'NO_EDIT_ACCESS') ? '공유 설정을 링크를 가진 모든 사용자 / 편집자로 설정해주세요.' : '접근할 수 없거나 형식이 잘못되었습니다.'; msg.style.color = 'var(--warning-yellow)'; confirmBtn.classList.add('disabled'); } mark.style.display = 'block'; } catch (e) { msg.innerText = '확인 실패'; } }, 500); }
-  
-  async function refreshInitialData() { 
-    const savedId = localStorage.getItem(STORAGE_KEY); if (!savedId) return; 
-    showLoading(true, "데이터 동기화 중..."); 
-    try { 
-      const res = await callApi('getInitialData'); 
-      showLoading(false); 
-      isAppConfigured = res.isConfigured; 
-      if (res.isConfigured) { 
-        allNames = res.names; 
-        allProcessingTypes = res.processingTypes; 
-        allLocations = res.locations; 
-        localCardDatabase = res.allCards; 
-        rarityMap = res.rarityMap || {}; 
-        rarityMappingRaw = res.rarityMappingRaw || []; 
-        clientCache = res.clientCache || {};
-        nameDb = res.nameDb || {};
-        if (res.sheetName) document.getElementById('connected-sheet-name').innerText = `연결됨("${res.sheetName}")`;
-
-        cidLookup = {};
-        Object.keys(nameDb).forEach(nameKey => {
-            const entry = nameDb[nameKey];
-            if (entry && entry.id) {
-                if (!cidLookup[entry.id]) cidLookup[entry.id] = new Set();
-                cidLookup[entry.id].add(nameKey);
-            }
-        });
-
-        const expandedSet = new Set(allNames); 
-        allNames.forEach(name => {
-            const entry = nameDb[name];
-            if (entry && entry.id) {
-                const siblings = cidLookup[entry.id];
-                if (siblings) {
-                    siblings.forEach(sName => expandedSet.add(sName));
-                }
-            }
-        });
-        allNames = Array.from(expandedSet).sort();
-
-        rarityLookup = {};
-        rarityMappingRaw.forEach((row, index) => {
-            Object.values(row).forEach(val => {
-                const key = String(val).trim();
-                if(key) {
-                    rarityLookup[key] = { data: row, index: index };
-                }
-            });
-        });
-      } 
-    } catch (e) { showLoading(false); } 
-  }
-
-  function startSearch() { 
-    if (!localStorage.getItem(STORAGE_KEY)) {
-        openGuideFromMain();
-        return;
-    }
-    const name = document.getElementById('card-search').value; 
-    if(!name || !isAppConfigured) return; 
-    
-    // [MODIFIED] Ensure Search Mode
-    if (currentMode !== 'search') switchToMode('search');
-
-    saveRecentSearch(name); 
-    
-    let targetNames = new Set();
-    if (nameDb[name] && nameDb[name].id) {
-        const cid = nameDb[name].id;
-        if (cidLookup[cid]) {
-            targetNames = cidLookup[cid];
-        } else {
-            targetNames.add(name);
-        }
-    } else {
-        targetNames.add(name);
-    }
-
-    const filteredRows = localCardDatabase.filter(row => targetNames.has(String(row[0]))); 
-    
-    renderTable(filteredRows); 
-    
-    document.getElementById('custom-dropdown').style.display = 'none';
-    toggleSearchWrapper(false);
-    checkClearBtn(); 
-  }
-  
-  function findMappingRow(key) {
-      if (!rarityMappingRaw || rarityMappingRaw.length === 0) return null;
-      return rarityMappingRaw.find(row => Object.values(row).includes(key));
-  }
-
-  function getLocalizedRarity(key) {
-      if (!key) return "";
-      const info = rarityLookup[key];
-      if (info && info.data[currentRegion]) {
-          return info.data[currentRegion];
-      }
-      return key;
-  }
-
-  function renderTable(rows) {
-    showLoading(false); 
-    const resultArea = document.getElementById('result-area');
-    
-    if (rows.length === 0) { 
-        resultArea.innerHTML = "<p class='center'>결과 없음</p>"; 
-        // [MODIFIED] Ensure visibility logic handled by switchToMode, but adding class here for safety if called directly
-        resultArea.classList.add('active');
-        resultArea.style.display = 'block';
-        setTimeout(() => resultArea.style.opacity = '1', 50);
-        return; 
-    }
-
-    const groups = {};
-    rows.forEach(r => {
-      const cardNo = String(r[1]), proc = String(r[2]), qty = parseInt(r[3]) || 0, loc = String(r[4]), another = String(r[5] || "").trim();
-      if (!groups[cardNo]) groups[cardNo] = { locations: {}, anotherGroups: {} };
-      if (!groups[cardNo].locations[loc]) groups[cardNo].locations[loc] = { total: 0, procs: {} };
-      groups[cardNo].locations[loc].total += qty; groups[cardNo].locations[loc].procs[proc] = (groups[cardNo].locations[loc].procs[proc] || 0) + qty;
-      if (another) { const aKey = `${another}|${loc}`; if (!groups[cardNo].anotherGroups[aKey]) groups[cardNo].anotherGroups[aKey] = { another, loc, total: 0, procs: {} }; groups[cardNo].anotherGroups[aKey].total += qty; groups[cardNo].anotherGroups[aKey].procs[proc] = (groups[cardNo].anotherGroups[aKey].procs[proc] || 0) + qty; }
-    });
-    
-    let newHtml = "";
-    Object.keys(groups).forEach(cardNo => {
-        const rowId = `row-${cardNo}`.replace(/[^a-zA-Z0-9]/g, '');
-        const cardRows = rows.filter(r => String(r[1]) === cardNo);
-        
-        const totalQty = cardRows.reduce((sum, r) => sum + (parseInt(r[3]) || 0), 0);
-        const locSet = new Set(cardRows.map(r => String(r[4])).filter(l => l));
-        
-        const distinctKeys = [...new Set(cardRows.map(r => String(r[2]).trim()).filter(k => k))];
-
-        distinctKeys.sort((a, b) => {
-            const infoA = rarityLookup[a];
-            const infoB = rarityLookup[b];
-            const idxA = infoA ? infoA.index : 999999;
-            const idxB = infoB ? infoB.index : 999999;
-            return idxA - idxB || a.localeCompare(b);
-        });
-        
-        const displayNamesForSummary = [...new Set(distinctKeys.map(k => rarityMap[k] || k))];
-        const procStr = displayNamesForSummary.join(", ");
-        const locStr = [...locSet].join(", ");
-
-        const anotherGroups = {};
-        cardRows.forEach(r => {
-            const another = String(r[5] || "").trim();
-            const displayAnother = another === "" ? "기본" : another; 
-            if(!anotherGroups[displayAnother]) anotherGroups[displayAnother] = [];
-            anotherGroups[displayAnother].push(r);
-        });
-
-        let leftTableHtml = `<table class="split-table"><thead><tr><th class="fp-col-1">일러스트</th><th class="fp-col-2">보관 위치</th><th class="fp-col-3">총 수량</th></tr></thead><tbody>`;
-        let rightTableHtml = `<table class="split-table"><thead><tr>`;
-        
-        distinctKeys.forEach(key => {
-             const info = rarityLookup[key];
-             let displayName = key;
-             let tooltipContent = key;
-             if (info) {
-                 displayName = info.data.display || key;
-                 tooltipContent = info.data[currentRegion] || key;
-             }
-             tooltipContent = tooltipContent.replace(/\(/g, '<br>(');
-             rightTableHtml += `<th class="sp-col tooltipped" data-position="top" data-tooltip="${tooltipContent}">${displayName}</th>`;
-        });
-        rightTableHtml += `</tr></thead><tbody>`;
-
-        const anotherKeys = Object.keys(anotherGroups).sort((a, b) => {
-            if (a === "기본") return -1;
-            if (b === "기본") return 1;
-            return a.localeCompare(b, undefined, { numeric: true });
-        });
-
-        anotherKeys.forEach(another => {
-             const grpRows = anotherGroups[another];
-             const locGroups = {};
-             grpRows.forEach(r => {
-                 const loc = String(r[4]);
-                 const proc = String(r[2]);
-                 const qty = parseInt(r[3]) || 0;
-                 if(!locGroups[loc]) locGroups[loc] = { total: 0, procs: {} };
-                 locGroups[loc].total += qty;
-                 locGroups[loc].procs[proc] = (locGroups[loc].procs[proc] || 0) + qty;
-             });
-
-             const locKeys = Object.keys(locGroups);
-             locKeys.forEach((loc, idx) => {
-                 const d = locGroups[loc];
-                 leftTableHtml += `<tr>`;
-                 if(idx === 0) leftTableHtml += `<td rowspan="${locKeys.length}">${another}</td>`;
-                 leftTableHtml += `<td>${loc}</td><td>${d.total}</td></tr>`;
-                 rightTableHtml += `<tr>`;
-                 distinctKeys.forEach(key => {
-                     const val = d.procs[key] || 0;
-                     rightTableHtml += `<td>${val}</td>`;
-                 });
-                 rightTableHtml += `</tr>`;
-             });
-        });
-        leftTableHtml += `</tbody></table>`;
-        rightTableHtml += `</tbody></table>`;
-
-        newHtml += `
-            <div class="new-card-box">
-                <div class="summary-split-wrapper">
-                    <div class="summary-left">${cardNo}</div>
-                    <div class="summary-right">
-                        <table class="summary-table">
-                            <tr><td class="summary-label-cell">보관 위치</td><td class="summary-label-cell">수량</td></tr>
-                            <tr><td class="summary-value-cell">${locStr}</td><td class="summary-value-cell">${totalQty}</td></tr>
-                            <tr><td class="summary-label-cell border-double-top">보유 레어도</td><td class="summary-value-cell border-double-top">${procStr}</td></tr>
-                        </table>
-                    </div>
-                </div>
-                <div id="detail-${rowId}" class="detail-slide-wrapper">
-                    <div class="split-table-wrapper">
-                        <div class="fixed-side">${leftTableHtml}</div>
-                        <div class="scroll-side">${rightTableHtml}</div>
-                    </div>
-                </div>
-                <button class="show-more-btn" onclick="toggleNewDetail('detail-${rowId}')"><span>자세히 보기</span><i class="material-icons tiny">keyboard_arrow_down</i></button>
-            </div>
-        `;
-    });
-
-    resultArea.innerHTML = newHtml;
-    M.Tooltip.init(resultArea.querySelectorAll('.tooltipped'), { html: true, margin: 3 });
-    // [MODIFIED] Removed internal visibility logic, handled by switchToMode
-  }
-
-  function toggleNewDetail(detailId) {
-      const content = document.getElementById(detailId);
-      const btn = content.nextElementSibling; 
-      const textSpan = btn.querySelector('span');
-      const icon = btn.querySelector('i');
-      if (content.style.maxHeight) {
-          content.style.maxHeight = null;
-          textSpan.innerText = '자세히 보기';
-          icon.innerText = 'keyboard_arrow_down';
-      } else {
-          content.style.maxHeight = content.scrollHeight + "px";
-          textSpan.innerText = '간략히 보기';
-          icon.innerText = 'keyboard_arrow_up';
-      }
-  }
-
+  async function refreshInitialData() { const savedId = localStorage.getItem(STORAGE_KEY); if (!savedId) return; showLoading(true, "데이터 동기화 중..."); try { const res = await callApi('getInitialData'); showLoading(false); isAppConfigured = res.isConfigured; if (res.isConfigured) { allNames = res.names; allProcessingTypes = res.processingTypes; allLocations = res.locations; localCardDatabase = res.allCards; rarityMap = res.rarityMap || {}; rarityMappingRaw = res.rarityMappingRaw || []; clientCache = res.clientCache || {}; nameDb = res.nameDb || {}; if (res.sheetName) document.getElementById('connected-sheet-name').innerText = `연결됨("${res.sheetName}")`; cidLookup = {}; Object.keys(nameDb).forEach(nameKey => { const entry = nameDb[nameKey]; if (entry && entry.id) { if (!cidLookup[entry.id]) cidLookup[entry.id] = new Set(); cidLookup[entry.id].add(nameKey); } }); const expandedSet = new Set(allNames); allNames.forEach(name => { const entry = nameDb[name]; if (entry && entry.id) { const siblings = cidLookup[entry.id]; if (siblings) { siblings.forEach(sName => expandedSet.add(sName)); } } }); allNames = Array.from(expandedSet).sort(); rarityLookup = {}; rarityMappingRaw.forEach((row, index) => { Object.values(row).forEach(val => { const key = String(val).trim(); if(key) { rarityLookup[key] = { data: row, index: index }; } }); }); } } catch (e) { showLoading(false); } }
+  function startSearch() { if (!localStorage.getItem(STORAGE_KEY)) { openGuideFromMain(); return; } const name = document.getElementById('card-search').value; if(!name || !isAppConfigured) return; if (currentMode !== 'search') switchToMode('search'); saveRecentSearch(name); let targetNames = new Set(); if (nameDb[name] && nameDb[name].id) { const cid = nameDb[name].id; if (cidLookup[cid]) { targetNames = cidLookup[cid]; } else { targetNames.add(name); } } else { targetNames.add(name); } const filteredRows = localCardDatabase.filter(row => targetNames.has(String(row[0]))); renderTable(filteredRows); document.getElementById('custom-dropdown').style.display = 'none'; toggleSearchWrapper(false); checkClearBtn(); }
+  function findMappingRow(key) { if (!rarityMappingRaw || rarityMappingRaw.length === 0) return null; return rarityMappingRaw.find(row => Object.values(row).includes(key)); }
+  function getLocalizedRarity(key) { if (!key) return ""; const info = rarityLookup[key]; if (info && info.data[currentRegion]) { return info.data[currentRegion]; } return key; }
+  function renderTable(rows) { showLoading(false); const resultArea = document.getElementById('result-area'); if (rows.length === 0) { resultArea.innerHTML = "<p class='center'>결과 없음</p>"; resultArea.classList.add('active'); resultArea.style.display = 'block'; setTimeout(() => resultArea.style.opacity = '1', 50); return; } const groups = {}; rows.forEach(r => { const cardNo = String(r[1]), proc = String(r[2]), qty = parseInt(r[3]) || 0, loc = String(r[4]), another = String(r[5] || "").trim(); if (!groups[cardNo]) groups[cardNo] = { locations: {}, anotherGroups: {} }; if (!groups[cardNo].locations[loc]) groups[cardNo].locations[loc] = { total: 0, procs: {} }; groups[cardNo].locations[loc].total += qty; groups[cardNo].locations[loc].procs[proc] = (groups[cardNo].locations[loc].procs[proc] || 0) + qty; if (another) { const aKey = `${another}|${loc}`; if (!groups[cardNo].anotherGroups[aKey]) groups[cardNo].anotherGroups[aKey] = { another, loc, total: 0, procs: {} }; groups[cardNo].anotherGroups[aKey].total += qty; groups[cardNo].anotherGroups[aKey].procs[proc] = (groups[cardNo].anotherGroups[aKey].procs[proc] || 0) + qty; } }); let newHtml = ""; Object.keys(groups).forEach(cardNo => { const rowId = `row-${cardNo}`.replace(/[^a-zA-Z0-9]/g, ''); const cardRows = rows.filter(r => String(r[1]) === cardNo); const totalQty = cardRows.reduce((sum, r) => sum + (parseInt(r[3]) || 0), 0); const locSet = new Set(cardRows.map(r => String(r[4])).filter(l => l)); const distinctKeys = [...new Set(cardRows.map(r => String(r[2]).trim()).filter(k => k))]; distinctKeys.sort((a, b) => { const infoA = rarityLookup[a]; const infoB = rarityLookup[b]; const idxA = infoA ? infoA.index : 999999; const idxB = infoB ? infoB.index : 999999; return idxA - idxB || a.localeCompare(b); }); const displayNamesForSummary = [...new Set(distinctKeys.map(k => rarityMap[k] || k))]; const procStr = displayNamesForSummary.join(", "); const locStr = [...locSet].join(", "); const anotherGroups = {}; cardRows.forEach(r => { const another = String(r[5] || "").trim(); const displayAnother = another === "" ? "기본" : another; if(!anotherGroups[displayAnother]) anotherGroups[displayAnother] = []; anotherGroups[displayAnother].push(r); }); let leftTableHtml = `<table class="split-table"><thead><tr><th class="fp-col-1">일러스트</th><th class="fp-col-2">보관 위치</th><th class="fp-col-3">총 수량</th></tr></thead><tbody>`; let rightTableHtml = `<table class="split-table"><thead><tr>`; distinctKeys.forEach(key => { const info = rarityLookup[key]; let displayName = key; let tooltipContent = key; if (info) { displayName = info.data.display || key; tooltipContent = info.data[currentRegion] || key; } tooltipContent = tooltipContent.replace(/\(/g, '<br>('); rightTableHtml += `<th class="sp-col tooltipped" data-position="top" data-tooltip="${tooltipContent}">${displayName}</th>`; }); rightTableHtml += `</tr></thead><tbody>`; const anotherKeys = Object.keys(anotherGroups).sort((a, b) => { if (a === "기본") return -1; if (b === "기본") return 1; return a.localeCompare(b, undefined, { numeric: true }); }); anotherKeys.forEach(another => { const grpRows = anotherGroups[another]; const locGroups = {}; grpRows.forEach(r => { const loc = String(r[4]); const proc = String(r[2]); const qty = parseInt(r[3]) || 0; if(!locGroups[loc]) locGroups[loc] = { total: 0, procs: {} }; locGroups[loc].total += qty; locGroups[loc].procs[proc] = (locGroups[loc].procs[proc] || 0) + qty; }); const locKeys = Object.keys(locGroups); locKeys.forEach((loc, idx) => { const d = locGroups[loc]; leftTableHtml += `<tr>`; if(idx === 0) leftTableHtml += `<td rowspan="${locKeys.length}">${another}</td>`; leftTableHtml += `<td>${loc}</td><td>${d.total}</td></tr>`; rightTableHtml += `<tr>`; distinctKeys.forEach(key => { const val = d.procs[key] || 0; rightTableHtml += `<td>${val}</td>`; }); rightTableHtml += `</tr>`; }); }); leftTableHtml += `</tbody></table>`; rightTableHtml += `</tbody></table>`; newHtml += ` <div class="new-card-box"> <div class="summary-split-wrapper"> <div class="summary-left">${cardNo}</div> <div class="summary-right"> <table class="summary-table"> <tr><td class="summary-label-cell">보관 위치</td><td class="summary-label-cell">수량</td></tr> <tr><td class="summary-value-cell">${locStr}</td><td class="summary-value-cell">${totalQty}</td></tr> <tr><td class="summary-label-cell border-double-top">보유 레어도</td><td class="summary-value-cell border-double-top">${procStr}</td></tr> </table> </div> </div> <div id="detail-${rowId}" class="detail-slide-wrapper"> <div class="split-table-wrapper"> <div class="fixed-side">${leftTableHtml}</div> <div class="scroll-side">${rightTableHtml}</div> </div> </div> <button class="show-more-btn" onclick="toggleNewDetail('detail-${rowId}')"><span>자세히 보기</span><i class="material-icons tiny">keyboard_arrow_down</i></button> </div> `; }); resultArea.innerHTML = newHtml; M.Tooltip.init(resultArea.querySelectorAll('.tooltipped'), { html: true, margin: 3 }); }
+  function toggleNewDetail(detailId) { const content = document.getElementById(detailId); const btn = content.nextElementSibling; const textSpan = btn.querySelector('span'); const icon = btn.querySelector('i'); if (content.style.maxHeight) { content.style.maxHeight = null; textSpan.innerText = '자세히 보기'; icon.innerText = 'keyboard_arrow_down'; } else { content.style.maxHeight = content.scrollHeight + "px"; textSpan.innerText = '간략히 보기'; icon.innerText = 'keyboard_arrow_up'; } }
   function toggleAnother(rowId) {}
-
   function addManageRows(count = null) { const tbody = document.getElementById('manage-card-tbody'); let increment = count || ((tbody.children.length === 1) ? 4 : 5); let startIdx = tbody.children.length + 1; for (let i = 0; i < increment; i++) { const row = document.createElement('tr'); row.innerHTML = `<td>${startIdx + i}</td><td><span class="card-name-fetch">카드 번호를 입력해주세요.</span></td><td><input type="text" class="manage-card-no" onblur="updateManageDropdowns(this)" placeholder="번호 입력"></td><td><select class="browser-default manage-another flex-select" onchange="updateManageProcessing(this)" disabled><option value="">선택</option></select></td><td><select class="browser-default manage-proc flex-select" onchange="updateManageStorage(this)" disabled><option value="">선택</option></select></td><td><select class="browser-default manage-loc flex-select" onchange="updateManageMoveLoc(this)" disabled><option value="">선택</option></select></td><td><div class="td-flex-container"><select class="browser-default move-loc flex-select" onchange="syncDirectInputManage(this)" disabled><option value="" disabled selected>선택</option></select><input type="text" class="direct-input loc-direct flex-input" placeholder="새 위치"></div></td><td><span class="storage-qty-disp">-</span></td><td><input type="number" class="move-qty" min="1" disabled style="height:2.2rem !important; text-align:center;"></td>`; tbody.appendChild(row); } }
   function updateManageDropdowns(inputEl) { const row = inputEl.closest('tr'); const cardNo = inputEl.value.trim().toUpperCase(); inputEl.value = cardNo; const nameSpan = row.querySelector('.card-name-fetch'); resetManageRow(row, 'another'); if (!cardNo) { nameSpan.innerText = "카드 번호를 입력해주세요."; return; } const matches = localCardDatabase.filter(r => String(r[1]).toUpperCase() === cardNo); if (matches.length > 0) { nameSpan.innerText = matches[0][0]; const anotherSel = row.querySelector('.manage-another'); const anothers = [...new Set(matches.map(r => r[5] || ""))]; if (anothers.length === 1 && anothers[0] === "") { anotherSel.innerHTML = `<option value="" selected>기본</option>`; anotherSel.value = ""; anotherSel.disabled = true; updateManageProcessing(anotherSel); } else { anotherSel.innerHTML = `<option value="__placeholder__" disabled selected>선택</option>` + (anothers.includes("") ? `<option value="">기본</option>` : '') + anothers.filter(a => a !== "").map(a => `<option value="${a}">${a}</option>`).join(''); anotherSel.disabled = false; } } else { nameSpan.innerText = "보유하지 않은 카드"; } }
   function updateManageProcessing(anotherEl) { const row = anotherEl.closest('tr'); if (anotherEl.value === "__placeholder__") return; resetManageRow(row, 'proc'); const cardNo = row.querySelector('.manage-card-no').value.trim().toUpperCase(); const another = anotherEl.value; const matches = localCardDatabase.filter(r => String(r[1]).toUpperCase() === cardNo && String(r[5] || "").trim() === String(another).trim()); const procSel = row.querySelector('.manage-proc'); const procs = [...new Set(matches.map(r => r[2]))]; procSel.innerHTML = `<option value="" disabled selected>선택</option>` + procs.map(p => `<option value="${p}">${getLocalizedRarity(p)}</option>`).join(''); procSel.disabled = false; }
@@ -1777,22 +1380,7 @@
   function syncDirectInputManage(sel) { const row = sel.closest('tr'); const input = sel.nextElementSibling; const qtyInput = row.querySelector('.move-qty'); const maxQty = parseInt(row.querySelector('.storage-qty-disp').innerText); if (sel.value === 'DIRECT') { sel.style.flex = "0 0 35%"; input.style.display = 'block'; input.style.flex = "1"; input.disabled = false; input.value = ""; input.focus(); } else { sel.style.flex = "1"; input.style.display = 'none'; input.disabled = true; input.value = sel.value; } qtyInput.disabled = false; qtyInput.max = maxQty; qtyInput.placeholder = ""; qtyInput.value = ""; }
   function resetManageRow(row, level) { const levels = ['another', 'proc', 'storage', 'move']; const startIdx = levels.indexOf(level); if (startIdx <= 0) { const el = row.querySelector('.manage-another'); el.innerHTML = '<option value="">선택</option>'; el.disabled = true; } if (startIdx <= 1) { const el = row.querySelector('.manage-proc'); el.innerHTML = '<option value="">선택</option>'; el.disabled = true; } if (startIdx <= 2) { const el = row.querySelector('.manage-loc'); el.innerHTML = '<option value="">선택</option>'; el.disabled = true; } if (startIdx <= 3) { const moveSel = row.querySelector('.move-loc'); moveSel.innerHTML = '<option value="">선택</option>'; moveSel.disabled = true; moveSel.style.flex = "1"; const directInp = row.querySelector('.loc-direct'); directInp.style.display = 'none'; directInp.value = ""; row.querySelector('.storage-qty-disp').innerText = "-"; const qtyInp = row.querySelector('.move-qty'); qtyInp.value = ""; qtyInp.disabled = true; qtyInp.placeholder = ""; } }
   async function submitManageCards() { const tbody = document.getElementById('manage-card-tbody'); const moves = []; for (let tr of tbody.children) { const cardName = tr.querySelector('.card-name-fetch').innerText; const cardNo = tr.querySelector('.manage-card-no').value.trim(); if (!cardNo || cardName === "카드 번호를 입력해주세요." || cardName === "보유하지 않은 카드") continue; const another = tr.querySelector('.manage-another').value; const proc = tr.querySelector('.manage-proc').value; const currentLoc = tr.querySelector('.manage-loc').value; const moveSel = tr.querySelector('.move-loc'); let targetLoc = moveSel.value === 'DIRECT' ? tr.querySelector('.loc-direct').value.trim() : moveSel.value; const moveQty = parseInt(tr.querySelector('.move-qty').value); const maxQty = parseInt(tr.querySelector('.storage-qty-disp').innerText); if (another !== "__placeholder__" && proc && currentLoc && targetLoc && moveQty > 0 && moveQty <= maxQty) { moves.push({ cardName, cardNo, another, proc, currentLoc, targetLoc, moveQty }); } } if (moves.length === 0) { M.toast({html: '유효한 이동 요청이 없습니다.', classes: 'red darken-2 rounded'}); return; } const btn = document.getElementById('manage-submit-btn'); btn.classList.add('disabled'); showLoading(true, "이동 처리 중..."); try { const res = await callApi('moveCards', {}, moves); M.Modal.getInstance(document.getElementById('manage-card-modal')).close(); showLoading(false); M.toast({html: '카드 이동 완료!', displayLength: 1500, classes: 'cyan darken-2'}); setTimeout(() => location.reload(), 1500); } catch (e) { showLoading(false); btn.classList.remove('disabled'); M.toast({html: '처리 중 오류 발생', classes: 'red darken-2 rounded'}); } }
-
-  function addMoreRows(count = null) {
-    const tbody = document.getElementById('add-card-tbody');
-    let startIdx = tbody.children.length + 1;
-    const currentCount = tbody.children.length;
-    let increment = 0;
-    if (count !== null) increment = count; else if (currentCount === 0) increment = 5; else { const remainder = currentCount % 5; increment = (remainder === 0) ? 5 : (5 - remainder); }
-    for (let i = 0; i < increment; i++) {
-      const row = document.createElement('tr');
-      row.innerHTML = `<td style="font-weight:600; color:#888;">${startIdx + i}</td><td><span class="card-name-fetch">카드 번호를 입력해주세요.</span></td><td><input type="text" class="new-card-no" onblur="fetchCardName(this)" placeholder="번호 입력"></td><td><div class="another-cell-container"><select class="browser-default new-card-another flex-select" disabled onchange="updateRowState(this.closest('tr'))"><option value="" selected>기본</option></select></div></td><td><select class="browser-default new-card-proc flex-select" disabled onchange="updateRowState(this.closest('tr'))"><option value="" disabled selected>선택</option>${allProcessingTypes.map(p => `<option value="${p}">${getLocalizedRarity(p)}</option>`).join('')}</select></td><td><div class="td-flex-container"><select class="browser-default new-card-loc flex-select" onchange="syncDirectInput(this)" disabled><option value="" disabled selected>선택</option>${allLocations.map(l => `<option value="${l}">${l}</option>`).join('')}<option value="DIRECT">위치 추가</option></select><input type="text" class="direct-input loc-direct flex-input" oninput="updateRowState(this.closest('tr'))" disabled></div></td><td><input type="number" class="new-card-qty" min="1" value="1" disabled onchange="checkAddButton()"></td><td><div class="adjust-btn-group"><span class="adjust-btn plus tooltipped disabled" data-position="top" data-tooltip="복사" onclick="copyRow(this)">+</span><span class="adjust-btn minus tooltipped disabled" data-position="top" data-tooltip="행 삭제" onclick="deleteRow(this)">-</span></div></td>`;
-      tbody.appendChild(row);
-    }
-    M.Tooltip.init(tbody.querySelectorAll('.tooltipped'));
-    checkAddButton(); 
-  }
-
+  function addMoreRows(count = null) { const tbody = document.getElementById('add-card-tbody'); let startIdx = tbody.children.length + 1; const currentCount = tbody.children.length; let increment = 0; if (count !== null) increment = count; else if (currentCount === 0) increment = 5; else { const remainder = currentCount % 5; increment = (remainder === 0) ? 5 : (5 - remainder); } for (let i = 0; i < increment; i++) { const row = document.createElement('tr'); row.innerHTML = `<td style="font-weight:600; color:#888;">${startIdx + i}</td><td><span class="card-name-fetch">카드 번호를 입력해주세요.</span></td><td><input type="text" class="new-card-no" onblur="fetchCardName(this)" placeholder="번호 입력"></td><td><div class="another-cell-container"><select class="browser-default new-card-another flex-select" disabled onchange="updateRowState(this.closest('tr'))"><option value="" selected>기본</option></select></div></td><td><select class="browser-default new-card-proc flex-select" disabled onchange="updateRowState(this.closest('tr'))"><option value="" disabled selected>선택</option>${allProcessingTypes.map(p => `<option value="${p}">${getLocalizedRarity(p)}</option>`).join('')}</select></td><td><div class="td-flex-container"><select class="browser-default new-card-loc flex-select" onchange="syncDirectInput(this)" disabled><option value="" disabled selected>선택</option>${allLocations.map(l => `<option value="${l}">${l}</option>`).join('')}<option value="DIRECT">위치 추가</option></select><input type="text" class="direct-input loc-direct flex-input" oninput="updateRowState(this.closest('tr'))" disabled></div></td><td><input type="number" class="new-card-qty" min="1" value="1" disabled onchange="checkAddButton()"></td><td><div class="adjust-btn-group"><span class="adjust-btn plus tooltipped disabled" data-position="top" data-tooltip="복사" onclick="copyRow(this)">+</span><span class="adjust-btn minus tooltipped disabled" data-position="top" data-tooltip="행 삭제" onclick="deleteRow(this)">-</span></div></td>`; tbody.appendChild(row); } M.Tooltip.init(tbody.querySelectorAll('.tooltipped')); checkAddButton(); }
   function syncDirectInput(sel) { const input = sel.nextElementSibling; const row = sel.closest('tr'); if (sel.value === 'DIRECT') { sel.style.flex = "0 0 35%"; input.style.display = 'block'; input.style.flex = "1"; input.disabled = false; input.value = ""; input.focus(); } else { sel.style.flex = "1"; input.style.display = 'none'; input.disabled = true; input.value = sel.value; } updateRowState(row); }
   function updateRowState(row) { const name = row.querySelector('.card-name-fetch').innerText; const anotherSel = row.querySelector('.new-card-another'); const procSel = row.querySelector('.new-card-proc'); const locSel = row.querySelector('.new-card-loc'); const locDirect = row.querySelector('.loc-direct'); const qtyInput = row.querySelector('.new-card-qty'); const isNameValid = !name.includes("입력해주세요") && !name.includes("오류") && !name.includes("조회 중") && !name.includes("확인하세요"); let isAnotherSelected = false; if(anotherSel.selectedOptions.length > 0) { if (!anotherSel.selectedOptions[0].disabled) isAnotherSelected = true; } else { if(anotherSel.value !== "" && anotherSel.value !== null) isAnotherSelected = true; else if(anotherSel.value === "" && !anotherSel.disabled) isAnotherSelected = true; } if (isNameValid && isAnotherSelected) { procSel.disabled = false; } else { procSel.disabled = true; procSel.value = ""; } if (!procSel.disabled && procSel.value) { locSel.disabled = false; } else { locSel.disabled = true; locSel.value = ""; locDirect.style.display = 'none'; locSel.style.flex = "1"; } let isLocValid = false; if (!locSel.disabled) { if (locSel.value === 'DIRECT') { isLocValid = locDirect.value.trim().length > 0; } else { isLocValid = locSel.value !== "" && locSel.value !== null; } } if (isLocValid) { qtyInput.disabled = false; } else { qtyInput.disabled = true; } checkAddButton(); }
   function setCardNameHtml(span, name) { if (nameDb[name]) { const { id, locale } = nameDb[name]; const url = `https://www.db.yugioh-card.com${id}&request_locale=${locale}`; span.innerHTML = `<a href="${url}" target="_blank" style="color:inherit; text-decoration:underline; cursor:pointer;">${name}</a>`; } else { span.innerText = name; } }
