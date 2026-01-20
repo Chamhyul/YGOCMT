@@ -752,11 +752,19 @@
     .btn-flat-action { background-color: transparent !important; color: var(--text-secondary) !important; font-weight: 600; box-shadow: none !important; border: 1px solid var(--border-color); }
     .btn-flat-action:hover { background-color: var(--bg-header) !important; }
 
-    /* New Intro and Footer Styles */
-    #intro-area { text-align: center; color: var(--text-secondary); margin-top: 40px; margin-bottom: 40px; line-height: 1.8; font-size: 0.95rem; }
+    /* [MODIFIED] Intro Area Styling to use Padding instead of Margin */
+    #intro-area { 
+        text-align: center; 
+        color: var(--text-secondary); 
+        padding-top: 40px; 
+        padding-bottom: 40px; 
+        margin: 0; 
+        line-height: 1.8; 
+        font-size: 0.95rem; 
+    }
     #intro-area a { color: var(--primary-color); font-weight: 700; text-decoration: underline; cursor: pointer; }
     
-    /* [MODIFIED] Footer Styles for v0.9.32 */
+    /* [MODIFIED] Footer Styles for v0.9.33 */
     #main-footer { text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 50px; padding-bottom: 30px; }
     
     .footer-disclaimer { margin-bottom: 12px; color: var(--text-muted); font-size: 0.85rem; }
@@ -955,7 +963,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.9.32</span>
+        <span class="footer-item">ver. 0.9.33</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -1381,18 +1389,67 @@
 
       const filteredRows = localCardDatabase.filter(row => targetNames.has(String(row[0]))); 
       
-      // [FIX] Render table content FIRST
-      renderTable(filteredRows); 
-
-      // [FIX] Then switch mode (or update height if same mode)
-      if (currentMode !== 'search') {
-          switchToMode('search'); 
-      } else {
+      // [NEW] Logic for Cross-Fade within Search Mode
+      if (currentMode === 'search') {
           const wrapper = document.getElementById('content-slider-wrapper');
-          // [FIX] Measure correct wrapper ID
-          const resultAreaWrapper = document.getElementById('result-content-wrapper');
-          const newHeight = resultAreaWrapper.scrollHeight;
-          wrapper.style.height = newHeight + 'px';
+          const contentWrapper = document.getElementById('result-content-wrapper'); // .content-section
+          const resultArea = document.getElementById('result-area'); // The Table
+
+          // 1. Lock Height (Animation Start)
+          const oldHeight = wrapper.offsetHeight;
+          wrapper.style.height = oldHeight + 'px';
+
+          // 2. Create Ghost (Clone of current table)
+          const ghost = resultArea.cloneNode(true);
+          ghost.id = 'result-ghost';
+          ghost.style.position = 'absolute';
+          ghost.style.top = '0';
+          // Match margins of resultArea to align perfectly
+          ghost.style.left = '0';
+          ghost.style.right = '0';
+          ghost.style.marginLeft = 'auto';
+          ghost.style.marginRight = 'auto';
+          ghost.style.marginTop = '30px'; // Same as #result-area margin-top
+          ghost.style.width = '100%';
+          ghost.style.maxWidth = '700px';
+          ghost.style.zIndex = '5';
+          ghost.style.transition = 'opacity 0.4s ease';
+          
+          // Make parent relative so absolute ghost positions correctly
+          contentWrapper.style.position = 'relative';
+          contentWrapper.appendChild(ghost);
+
+          // 3. Render New Data (Updates #result-area)
+          renderTable(filteredRows); 
+
+          // 4. Prepare New State
+          resultArea.style.opacity = '0';
+          resultArea.style.transition = 'opacity 0.4s ease';
+          
+          // Measure New Height
+          // Temporarily unlock height or use scrollHeight of content
+          const newHeight = contentWrapper.scrollHeight;
+
+          // 5. Animate (Next Frame)
+          requestAnimationFrame(() => {
+              wrapper.style.height = newHeight + 'px';
+              ghost.style.opacity = '0';
+              resultArea.style.opacity = '1';
+          });
+
+          // 6. Cleanup after 400ms
+          setTimeout(() => {
+              if(ghost.parentNode) ghost.parentNode.removeChild(ghost);
+              wrapper.style.height = ''; // Auto
+              resultArea.style.opacity = '';
+              resultArea.style.transition = '';
+              contentWrapper.style.position = '';
+          }, 400);
+
+      } else {
+          // Normal Switch (Not from search mode)
+          renderTable(filteredRows); 
+          switchToMode('search'); 
       }
 
       document.getElementById('custom-dropdown').style.display = 'none'; 
