@@ -18,7 +18,9 @@
       --text-secondary: #666666;
       --text-muted: #9e9e9e;
       --primary-color: #009688;
-      --primary-rgb: 0, 150, 136; /* RGB for gradient opacity */
+      --primary-rgb: 0, 150, 136;
+      /* [NEW] Primary Light Color */
+      --primary-light: #b2dfdb; 
       --primary-dark: #00796b;
       --border-color: #ddd;
       --error-red: #f44336;
@@ -31,7 +33,6 @@
       --disabled-text: #9e9e9e;
       --overlay-bg: rgba(255, 255, 255, 0.85);
       
-      /* Navigation Colors (Default: Light Mode - Grey) */
       --nav-bg: #cfcfcf; 
       --nav-text: #424242;
       --nav-text-active: #009688;
@@ -48,7 +49,9 @@
       --text-secondary: #b0b0b0;
       --text-muted: #757575;
       --primary-color: #4db6ac;
-      --primary-rgb: 77, 182, 172; /* RGB for gradient opacity in Dark Mode */
+      --primary-rgb: 77, 182, 172;
+      /* [NEW] Primary Light Color (Dark Mode) */
+      --primary-light: #004d40;
       --primary-dark: #26a69a;
       --border-color: #424242;
       --error-red: #ef5350;
@@ -61,7 +64,6 @@
       --disabled-text: #757575;
       --overlay-bg: rgba(0, 0, 0, 0.6);
 
-      /* Navigation Colors (Dark Mode - Black) */
       --nav-bg: rgba(0, 0, 0, 0.85);
       --nav-text: #9e9e9e;
       --nav-text-active: #4db6ac;
@@ -78,647 +80,280 @@
         padding-left: 0;
     }
     
-    /* --- Navigation Styles Start --- */
-    .app-sidebar {
-        position: fixed;
-        left: 0; top: 0; bottom: 0;
-        width: 240px;
-        background-color: var(--nav-bg);
-        z-index: 900;
+    /* [NEW] Page Entry Table Styles */
+    .page-entry-table {
+        width: 100%;
+        max-width: 700px;
+        margin: 0 auto 20px auto;
+        border-collapse: separate;
+        border-spacing: 0 10px; /* Space between entries */
+    }
+
+    .page-entry-table tbody {
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .page-entry-table td {
+        padding: 4px 8px;
+        border: none;
+        vertical-align: middle;
+        height: 42px;
+    }
+
+    /* Odd Entry (Primary Color) */
+    .page-entry.odd {
+        background-color: var(--primary-color);
+        color: #ffffff;
+    }
+    .page-entry.odd input, .page-entry.odd select {
+        color: #ffffff;
+        background-color: rgba(255, 255, 255, 0.2) !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    }
+    .page-entry.odd input::placeholder { color: rgba(255, 255, 255, 0.6); }
+    .page-entry.odd .card-name-disp { font-weight: 700; color: #ffffff; }
+
+    /* Even Entry (Primary Light Color) */
+    .page-entry.even {
+        background-color: var(--primary-light);
+        color: var(--text-primary); /* Dark text on light bg in Light Mode */
+    }
+    body.dark-mode .page-entry.even {
+        color: #ffffff; /* White text on dark bg in Dark Mode */
+    }
+    .page-entry.even input, .page-entry.even select {
+        background-color: var(--bg-surface) !important;
+        border: 1px solid var(--border-color) !important;
+        color: var(--text-primary);
+    }
+    .page-entry.even .card-name-disp { font-weight: 700; }
+
+    /* Common Entry Styles */
+    .page-entry input, .page-entry select {
+        border-radius: 4px !important;
+        height: 32px !important;
+        margin: 0 !important;
+        font-size: 0.9rem !important;
+        padding: 0 8px !important;
+        box-shadow: none !important;
+    }
+    
+    .page-entry .no-cell {
+        width: 40px;
+        text-align: center;
+        font-weight: 800;
+        font-size: 1.1rem;
+        border-right: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .add-row-btn-cell {
+        text-align: center;
+        padding: 0 !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    .add-page-row-btn {
+        width: 100%;
+        padding: 12px;
+        background-color: var(--bg-sub);
+        border: 1px dashed var(--border-color);
+        color: var(--text-muted);
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        border-radius: 8px;
+    }
+    .add-page-row-btn:hover {
+        background-color: var(--bg-surface);
+        color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    /* Page Button Container */
+    .page-btn-container {
+        max-width: 700px;
+        margin: 0 auto;
         display: flex;
-        flex-direction: column;
-        padding-top: 80px;
-        box-shadow: 1px 0 0 var(--nav-border);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        
-        transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), 
-                    transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), 
-                    background-color 0.3s ease;
+        justify-content: flex-end;
+        gap: 10px;
+        padding-bottom: 40px;
+    }
+
+    /* Navigation & Layout (Existing) */
+    .app-sidebar {
+        position: fixed; left: 0; top: 0; bottom: 0; width: 240px;
+        background-color: var(--nav-bg); z-index: 900; display: flex; flex-direction: column;
+        padding-top: 80px; box-shadow: 1px 0 0 var(--nav-border);
+        backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+        transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), background-color 0.3s ease;
         transform: translateX(0); 
     }
+    .nav-item { display: flex; align-items: center; padding: 16px 24px; color: var(--nav-text); cursor: pointer; transition: background-color 0.2s, color 0.2s; text-decoration: none; border-left: 4px solid transparent; }
+    .nav-item:hover { background-color: rgba(128,128,128,0.1); color: var(--nav-text-active); }
+    .nav-item.active { color: var(--nav-text-active); background-color: rgba(128,128,128,0.15); border-left: 4px solid var(--primary-color); font-weight: 700; }
+    .nav-item i { margin-right: 16px; font-size: 24px; }
+    .nav-text { font-size: 0.95rem; font-weight: 600; white-space: nowrap; opacity: 1; transition: opacity 0.2s; }
 
-    .nav-item {
-        display: flex;
-        align-items: center;
-        padding: 16px 24px;
-        color: var(--nav-text);
-        cursor: pointer;
-        transition: background-color 0.2s, color 0.2s;
-        text-decoration: none;
-        border-left: 4px solid transparent; 
-    }
-
-    .nav-item:hover {
-        background-color: rgba(128,128,128,0.1);
-        color: var(--nav-text-active);
-    }
-    
-    .nav-item.active {
-        color: var(--nav-text-active);
-        background-color: rgba(128,128,128,0.15);
-        border-left: 4px solid var(--primary-color);
-        font-weight: 700;
-    }
-
-    .nav-item i {
-        margin-right: 16px;
-        font-size: 24px;
-    }
-
-    .nav-text {
-        font-size: 0.95rem;
-        font-weight: 600;
-        white-space: nowrap;
-        opacity: 1;
-        transition: opacity 0.2s;
-    }
-
-    /* Bottom Navigation Bar */
-    .mobile-nav-container {
-        display: flex; 
-        position: fixed;
-        bottom: 0; 
-        left: 0; 
-        right: 0;
-        width: 100%;
-        height: 60px;
-        z-index: 1050;
-        justify-content: space-around;
-        align-items: center;
-        padding-bottom: env(safe-area-inset-bottom);
-        padding-left: 0;
-        padding-right: 0;
-        
-        background-color: var(--nav-bg); 
-        border-top: 1px solid var(--nav-border); 
-        box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        
-        transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-        transform: translateY(100%); 
-        pointer-events: none; 
-    }
-    
+    .mobile-nav-container { display: flex; position: fixed; bottom: 0; left: 0; right: 0; width: 100%; height: 60px; z-index: 1050; justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom); background-color: var(--nav-bg); border-top: 1px solid var(--nav-border); box-shadow: 0 -2px 10px rgba(0,0,0,0.05); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); transform: translateY(100%); pointer-events: none; }
     .nav-capsule, .nav-circle { display: none; }
-
-    .mobile-nav-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        color: var(--nav-text); 
-        font-size: 0.65rem;
-        cursor: pointer;
-        flex: 1;
-        height: 100%;
-        transition: color 0.2s, transform 0.1s;
-        font-weight: 500;
-        min-width: 48px;
-        padding: 6px 0;
-    }
-    
+    .mobile-nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--nav-text); font-size: 0.65rem; cursor: pointer; flex: 1; height: 100%; transition: color 0.2s, transform 0.1s; font-weight: 500; min-width: 48px; padding: 6px 0; }
     .mobile-nav-item:active { transform: scale(0.95); }
     .mobile-nav-item:hover { color: var(--nav-text-active); }
-    
-    .mobile-nav-item.active {
-        color: var(--nav-text-active);
-        font-weight: 700;
-    }
-    
+    .mobile-nav-item.active { color: var(--nav-text-active); font-weight: 700; }
     .mobile-nav-item i { font-size: 24px; margin-bottom: 3px; }
 
-    /* Responsive Breakpoints */
-    @media only screen and (min-width: 993px) { 
-        body { padding-left: 240px; } 
-    }
-    
-    @media only screen and (min-width: 601px) and (max-width: 992px) {
-        body { padding-left: 72px; }
-        .app-sidebar { width: 72px; }
-        .nav-text { opacity: 0; display: none; } 
-        .nav-item { justify-content: center; padding: 16px 0; border-left: 4px solid transparent; border-right: 0; }
-        .nav-item i { margin-right: 0; }
-        .nav-item.active { border-left: 4px solid var(--primary-color); border-right: 0; }
-    }
-    
-    @media only screen and (max-width: 600px) {
-        body { padding-bottom: 80px; padding-left: 0; } 
-        
-        .app-sidebar { 
-            width: 72px !important;
-            transform: translateX(-100%);
-            overflow: hidden; 
-        }
-        
-        .nav-text { display: none !important; }
-        
-        .mobile-nav-container { 
-            transform: translateY(0); 
-            pointer-events: auto;
-        }
-        
-        .header-right-container { top: 8px; }
-        
-        .container { 
-            margin-left: 0 !important; 
-            margin-right: 0 !important; 
-        }
-    }
-    /* --- Navigation Styles End --- */
+    @media only screen and (min-width: 993px) { body { padding-left: 240px; } }
+    @media only screen and (min-width: 601px) and (max-width: 992px) { body { padding-left: 72px; } .app-sidebar { width: 72px; } .nav-text { opacity: 0; display: none; } .nav-item { justify-content: center; padding: 16px 0; border-left: 4px solid transparent; border-right: 0; } .nav-item i { margin-right: 0; } .nav-item.active { border-left: 4px solid var(--primary-color); border-right: 0; } }
+    @media only screen and (max-width: 600px) { body { padding-bottom: 80px; padding-left: 0; } .app-sidebar { width: 72px !important; transform: translateX(-100%); overflow: hidden; } .nav-text { display: none !important; } .mobile-nav-container { transform: translateY(0); pointer-events: auto; } .header-right-container { top: 8px; } .container { margin-left: 0 !important; margin-right: 0 !important; } }
 
-    .header-right-container {
-        position: absolute; top: 8px; right: 12px;
-        display: flex; align-items: center; 
-        gap: 10px; 
-        z-index: 1100;
-    }
-
+    .header-right-container { position: absolute; top: 8px; right: 12px; display: flex; align-items: center; gap: 10px; z-index: 1100; }
     .theme-switch-wrapper { display: flex; align-items: center; gap: 8px; height: 18px !important; }
     #theme-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; line-height: 1 !important; }
-    
     .theme-switch { display: inline-block; position: relative; margin-bottom: 0; height: 18px !important; width: 36px !important; line-height: 1 !important; vertical-align: middle; }
     .theme-switch input { display: none; }
-    
     .slider { background-color: #ccc; position: absolute; cursor: pointer; top: 0; left: 0; width: 36px; height: 18px; transition: .4s; border-radius: 34px; }
     .slider:before { background-color: white; content: ""; position: absolute; height: 14px; width: 14px; left: 2px; bottom: 2px; transition: .4s; border-radius: 50%; }
     input:checked + .slider { background-color: var(--primary-color); }
     input:checked + .slider:before { transform: translateX(18px); }
-    
-    .region-container {
-        position: relative;
-        z-index: 1002;
-        width: 88px;
-    }
-
-    .region-capsule {
-        display: flex; 
-        align-items: center;
-        gap: 0;
-        background-color: var(--bg-surface);
-        border: 1px solid var(--border-color);
-        padding: 4px 6px;
-        border-radius: 24px;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        height: 30px; 
-        box-sizing: border-box;
-        cursor: pointer;
-        transition: border-radius 0.1s, box-shadow 0.2s;
-    }
-    
-    .region-capsule.active {
-        border-radius: 12px 12px 0 0; 
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        border-bottom: 1px solid transparent; 
-    }
-
+    .region-container { position: relative; z-index: 1002; width: 88px; }
+    .region-capsule { display: flex; align-items: center; gap: 0; background-color: var(--bg-surface); border: 1px solid var(--border-color); padding: 4px 6px; border-radius: 24px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); height: 30px; box-sizing: border-box; cursor: pointer; transition: border-radius 0.1s, box-shadow 0.2s; }
+    .region-capsule.active { border-radius: 12px 12px 0 0; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-bottom: 1px solid transparent; }
     .region-icon { color: var(--text-muted); font-size: 1rem; flex-shrink: 0; }
-    
-    .region-text {
-        color: var(--text-primary); 
-        font-size: 0.75rem; 
-        font-weight: 700; 
-        white-space: nowrap;
-        user-select: none;
-        flex: 1;
-        text-align: center;
-        margin-right: 3px;
-    }
-
-    .region-dropdown-list {
-        display: none;
-        position: absolute;
-        top: 100%; right: 0; left: 0;
-        background-color: var(--bg-surface);
-        border: 1px solid var(--border-color);
-        border-top: 1px solid #eee;
-        border-radius: 0 0 12px 12px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        list-style: none;
-        margin: 0;
-        padding: 5px 0;
-        width: 100%;
-        z-index: 1003;
-        text-align: center;
-    }
-    
+    .region-text { color: var(--text-primary); font-size: 0.75rem; font-weight: 700; white-space: nowrap; user-select: none; flex: 1; text-align: center; margin-right: 3px; }
+    .region-dropdown-list { display: none; position: absolute; top: 100%; right: 0; left: 0; background-color: var(--bg-surface); border: 1px solid var(--border-color); border-top: 1px solid #eee; border-radius: 0 0 12px 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); list-style: none; margin: 0; padding: 5px 0; width: 100%; z-index: 1003; text-align: center; }
     body.dark-mode .region-dropdown-list { border-top: 1px solid #444; }
-
-    .region-dropdown-list li {
-        padding: 8px 0;
-        font-size: 0.8rem;
-        color: var(--text-primary);
-        cursor: pointer;
-        white-space: nowrap;
-    }
-    
+    .region-dropdown-list li { padding: 8px 0; font-size: 0.8rem; color: var(--text-primary); cursor: pointer; white-space: nowrap; }
     .region-dropdown-list li:hover { background-color: var(--bg-sub); color: var(--primary-color); font-weight: 700; }
 
-    .container { 
-        margin-top: 30px; 
-        width: auto !important; 
-        max-width: 100% !important; 
-        min-height: 60vh;
-        margin-left: 15px !important;
-        margin-right: 15px !important;
-        transition: margin 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-    }
-    
-    #dynamic-header-wrapper {
-        position: relative;
-        width: 100%;
-        height: 220px; 
-        margin-top: 20px;
-        margin-bottom: 20px;
-        transition: height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-        z-index: 100;
-        overflow: visible; 
-        max-width: 100%;
-    }
-
-    /* Logo Container - Pure Coordinate System (Golden Formula) */
-    .app-title-container {
-        position: absolute;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 2;
-        width: 220px;
-        
-        top: 30px;
-        /* Always Center: 50% - Half Width (110px) */
-        left: calc(50% - 110px); 
-        margin: 0; 
-        transform: none; /* Removed transform */
-        
-        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-    }
-    
-    .synapse-logo-container {
-        position: relative;
-        display: inline-block;
-        max-width: 250px; 
-        overflow: hidden;
-        white-space: nowrap;
-        transition: max-width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-        vertical-align: middle;
-    }
-
-    .synapse-text-logo {
-        position: relative;
-        z-index: 2;
-        font-size: 2.6rem;
-        font-weight: 900;
-        color: #000000;
-        letter-spacing: 2px;
-        line-height: 1;
-        transition: color 0.3s, opacity 0.3s;
-    }
-    
+    .container { margin-top: 30px; width: auto !important; max-width: 100% !important; min-height: 60vh; margin-left: 15px !important; margin-right: 15px !important; transition: margin 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
+    #dynamic-header-wrapper { position: relative; width: 100%; height: 220px; margin-top: 20px; margin-bottom: 20px; transition: height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); z-index: 100; overflow: visible; max-width: 100%; }
+    .app-title-container { position: absolute; display: flex; justify-content: center; align-items: center; z-index: 2; width: 220px; top: 30px; left: calc(50% - 110px); margin: 0; transform: none; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
+    .synapse-logo-container { position: relative; display: inline-block; max-width: 250px; overflow: hidden; white-space: nowrap; transition: max-width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); vertical-align: middle; }
+    .synapse-text-logo { position: relative; z-index: 2; font-size: 2.6rem; font-weight: 900; color: #000000; letter-spacing: 2px; line-height: 1; transition: color 0.3s, opacity 0.3s; }
     body.dark-mode .synapse-text-logo { color: #ffffff; }
-    
-    .logo-bg-wrapper {
-        position: absolute;
-        top: 1px; bottom: 1px; left: 0; right: 0; z-index: 1;
-    }
-
-    .bg-triangle-top {
-        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-        clip-path: polygon(0 0, 100% 0, 100% 100%);
-        background: linear-gradient(to right, rgba(var(--primary-rgb), 0.8), rgba(var(--primary-rgb), 0.6) 50%, rgba(var(--primary-rgb), 0));
-    }
-
-    .bg-triangle-bottom {
-        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-        clip-path: polygon(0 0, 100% 100%, 0 100%);
-        background: linear-gradient(to left, rgba(var(--primary-rgb), 0.8), rgba(var(--primary-rgb), 0.6) 50%, rgba(var(--primary-rgb), 0));
-    }
-
-    .title-ygo { 
-        position: absolute; top: -20px; left: 0; width: 100%; text-align: center; 
-        font-size: 1rem; font-weight: 700; color: var(--text-primary); letter-spacing: 2px; opacity: 0.8;
-        transition: opacity 0.3s ease;
-    }
-    .title-beta { 
-        position: absolute; bottom: -25px; left: 0; width: 100%; text-align: center; 
-        font-size: 0.85rem; font-weight: 700; color: var(--error-red); letter-spacing: 3px; 
-        transition: opacity 0.3s ease;
-    }
-    
-    /* Search Box - Pure Coordinate System (Golden Formula) */
-    .search-box { 
-        position: absolute;
-        padding: 0; 
-        background: transparent; 
-        box-shadow: none; 
-        display: flex; 
-        flex-direction: column; 
-        align-items: center; 
-        z-index: 1;
-        
-        top: 130px;
-        /* Responsive Width: Fill 95% but cap at 700px */
-        width: min(95%, 700px); 
-        /* Universal Centering */
-        left: max(2.5%, calc(50% - 350px)); 
-        margin: 0;
-        transform: none; /* Removed transform */
-        
-        transition: top 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), 
-                    width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), 
-                    left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-        
-        will-change: top, width, left;
-    }
-    
+    .logo-bg-wrapper { position: absolute; top: 1px; bottom: 1px; left: 0; right: 0; z-index: 1; }
+    .bg-triangle-top { position: absolute; top: 0; left: 0; width: 100%; height: 100%; clip-path: polygon(0 0, 100% 0, 100% 100%); background: linear-gradient(to right, rgba(var(--primary-rgb), 0.8), rgba(var(--primary-rgb), 0.6) 50%, rgba(var(--primary-rgb), 0)); }
+    .bg-triangle-bottom { position: absolute; top: 0; left: 0; width: 100%; height: 100%; clip-path: polygon(0 0, 100% 100%, 0 100%); background: linear-gradient(to left, rgba(var(--primary-rgb), 0.8), rgba(var(--primary-rgb), 0.6) 50%, rgba(var(--primary-rgb), 0)); }
+    .title-ygo { position: absolute; top: -20px; left: 0; width: 100%; text-align: center; font-size: 1rem; font-weight: 700; color: var(--text-primary); letter-spacing: 2px; opacity: 0.8; transition: opacity 0.3s ease; }
+    .title-beta { position: absolute; bottom: -25px; left: 0; width: 100%; text-align: center; font-size: 0.85rem; font-weight: 700; color: var(--error-red); letter-spacing: 3px; transition: opacity 0.3s ease; }
+    .search-box { position: absolute; padding: 0; background: transparent; box-shadow: none; display: flex; flex-direction: column; align-items: center; z-index: 1; top: 130px; width: min(95%, 700px); left: max(2.5%, calc(50% - 350px)); margin: 0; transform: none; transition: top 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); will-change: top, width, left; }
+    @media only screen and (min-width: 801px) { .search-box { width: 700px; margin-left: -350px; } }
     .search-header-row { width: 100%; max-width: 700px; margin: 0 auto; display: flex; justify-content: flex-start; padding-left: 5px; margin-bottom: 5px; transition: opacity 0.3s ease; }
+    .search-row { display: flex; align-items: center; justify-content: center; width: 100%; gap: 8px; max-width: 700px !important; justify-content: flex-start; transition: max-width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
     
-    .search-row { 
-        display: flex; align-items: center; justify-content: center; width: 100%; gap: 8px; 
-        max-width: 700px !important; 
-        justify-content: flex-start;
-        transition: max-width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-    }
-    
-    /* === COMPACT MODE (GLOBAL) === */
-    body.mode-compact #dynamic-header-wrapper {
-        height: 70px; 
-        margin-top: 0;
-        max-width: 700px;
-        margin-left: auto; 
-        margin-right: auto;
-    }
-
-    body.mode-compact .app-title-container {
-        top: 27px; 
-        width: 3.9rem !important;
-        /* Explicit Fixed Position */
-        left: 10px; 
-        margin: 0; 
-    }
-    
-    body.mode-compact .title-ygo, 
-    body.mode-compact .title-beta {
-        display: none !important;
-    }
-
-    body.mode-compact .search-box {
-        top: 22px;
-        /* Explicit Fixed Position relative to Logo */
-        left: 80px;
-        margin: 0;
-        /* Calculate remaining width: 100% - left_offset(80px) - right_padding(10px) */
-        width: min(calc(100% - 90px), 630px);
-        max-width: 630px; 
-        align-items: flex-start;
-    }
-    
-    body.mode-compact .search-row {
-        margin: 0;
-    }
-
-    body.mode-compact .synapse-logo-container {
-        max-width: 3.9rem; 
-        width: 3.9rem;
-    }
-
+    body.mode-compact #dynamic-header-wrapper { height: 70px; margin-top: 0; max-width: 700px; margin-left: auto; margin-right: auto; }
+    body.mode-compact .app-title-container { top: 27px; width: 3.9rem !important; left: 10px; margin: 0; }
+    body.mode-compact .title-ygo, body.mode-compact .title-beta { display: none !important; }
+    body.mode-compact .search-box { top: 22px; left: 80px; margin: 0; width: min(calc(100% - 90px), 630px); max-width: 630px; align-items: flex-start; }
+    body.mode-compact .search-row { margin: 0; }
+    body.mode-compact .synapse-logo-container { max-width: 3.9rem; width: 3.9rem; }
     body.mode-compact .synapse-text-logo { opacity: 0; }
-    
-    body.mode-compact .search-header-row {
-        opacity: 0;
-        pointer-events: none;
-        height: 0;
-        margin: 0;
-    }
+    body.mode-compact .search-header-row { opacity: 0; pointer-events: none; height: 0; margin: 0; }
 
-    #content-slider-wrapper {
-        position: relative;
-        width: 100%;
-        overflow: hidden;
-        transition: height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-        min-height: 100px;
-    }
-
-    .content-section {
-        display: none;
-        opacity: 0;
-        width: 100%;
-        transition: opacity 0.4s ease;
-        top: 0;
-        left: 0;
-    }
-    .content-section.active {
-        opacity: 1;
-        display: block; 
-    }
-    
-    #result-content-wrapper {
-        width: 100%;
-    }
-    
-    #result-area { 
-        width: 100%;
-        max-width: 700px;
-        margin: 0 auto; 
-        padding-top: 30px; 
-        padding-bottom: 30px;
-        overflow-x: auto; 
-    }
-    
+    #content-slider-wrapper { position: relative; width: 100%; overflow: hidden; transition: height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); min-height: 100px; }
+    .content-section { display: none; opacity: 0; width: 100%; transition: opacity 0.4s ease; top: 0; left: 0; }
+    .content-section.active { opacity: 1; display: block; }
+    #result-content-wrapper { width: 100%; }
+    #result-area { width: 100%; max-width: 700px; margin: 0 auto; padding-top: 30px; padding-bottom: 30px; overflow-x: auto; }
     #result-area th { background: var(--primary-color); color: white; border-color: var(--primary-dark); }
-
-    /* Existing Styles ... */
-    .help-trigger-btn {
-        font-size: 0.75rem; font-weight: 600; color: var(--text-muted); cursor: pointer;
-        display: flex; align-items: center; gap: 4px; transition: color 0.2s;
-        height: 18px !important; line-height: 1 !important;
-    }
+    .help-trigger-btn { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 4px; transition: color 0.2s; height: 18px !important; line-height: 1 !important; }
     .help-trigger-btn i { font-size: 0.8rem; transform: translateY(-1px); }
     .help-trigger-btn:hover { color: var(--primary-color); }
-
-    .search-input-wrapper { 
-        flex: 1; position: relative; background: var(--bg-surface); border: 1px solid var(--border-color);
-        border-radius: 24px; padding: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        transition: border-radius 0.2s ease, box-shadow 0.2s ease; z-index: 1001;
-    }
+    .search-input-wrapper { flex: 1; position: relative; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 24px; padding: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: border-radius 0.2s ease, box-shadow 0.2s ease; z-index: 1001; }
     .search-input-wrapper.active { border-radius: 24px 24px 0 0; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-bottom: 1px solid transparent; }
-
     #search-btn { border-radius: 50px !important; width: 80px; height: 45px; padding: 0; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-
-    input#card-search { 
-        text-align: left !important; font-size: 1.1rem; padding-left: 20px !important; padding-right: 40px !important;
-        box-sizing: border-box; color: var(--text-primary); border-bottom: none !important; box-shadow: none !important;
-        height: 46px !important; margin: 0 !important; width: 100%; display: block;
-    }
+    input#card-search { text-align: left !important; font-size: 1.1rem; padding-left: 20px !important; padding-right: 40px !important; box-sizing: border-box; color: var(--text-primary); border-bottom: none !important; box-shadow: none !important; height: 46px !important; margin: 0 !important; width: 100%; display: block; }
     input#card-search::placeholder { color: var(--text-muted); }
     body.dark-mode ::placeholder { color: #757575 !important; }
-    
-    .clear-search-btn { 
-        position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; 
-        color: rgba(0,0,0,0.25); display: none; z-index: 5; transition: color 0.2s;
-    }
+    .clear-search-btn { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: rgba(0,0,0,0.25); display: none; z-index: 5; transition: color 0.2s; }
     .clear-search-btn:hover { color: rgba(0,0,0,0.6); }
     body.dark-mode .clear-search-btn { color: rgba(255,255,255,0.25); }
     body.dark-mode .clear-search-btn:hover { color: rgba(255,255,255,0.7); }
-
     .btn.cyan-theme { background-color: var(--primary-color) !important; font-weight: 600; color: #fff; }
-    
-    .btn.cyan-theme.disabled, .btn.cyan-theme:disabled {
-        background-color: var(--disabled-bg) !important;
-        color: var(--disabled-text) !important;
-    }
-    
-    .custom-dropdown {
-      position: absolute; top: 100%; left: -1px; right: -1px; 
-      background-color: var(--bg-surface); border: 1px solid var(--border-color); border-top: 1px solid #eee; 
-      border-radius: 0 0 24px 24px; z-index: 1000; max-height: 250px; overflow-y: auto; display: none;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin: 0; padding: 5px 0 10px 0; list-style: none;
-    }
+    .btn.cyan-theme.disabled, .btn.cyan-theme:disabled { background-color: var(--disabled-bg) !important; color: var(--disabled-text) !important; }
+    .custom-dropdown { position: absolute; top: 100%; left: -1px; right: -1px; background-color: var(--bg-surface); border: 1px solid var(--border-color); border-top: 1px solid #eee; border-radius: 0 0 24px 24px; z-index: 1000; max-height: 250px; overflow-y: auto; display: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin: 0; padding: 5px 0 10px 0; list-style: none; }
     body.dark-mode .custom-dropdown { border-top: 1px solid #444; }
-
-    .custom-dropdown li {
-      padding: 8px 20px; cursor: pointer; border-bottom: none; font-size: 0.95rem; color: var(--text-primary);
-      display: block; white-space: normal; transition: background-color 0.1s;
-    }
+    .custom-dropdown li { padding: 8px 20px; cursor: pointer; border-bottom: none; font-size: 0.95rem; color: var(--text-primary); display: block; white-space: normal; transition: background-color 0.1s; }
     .custom-dropdown li:hover, .custom-dropdown li.active { background-color: var(--bg-sub); }
     .custom-dropdown li.text-suggest { color: var(--primary-color) !important; font-weight: 700 !important; }
     .custom-dropdown li .text-match { color: var(--text-primary) !important; font-weight: 400 !important; }
     .custom-dropdown li.no-result-item { font-style: italic; color: var(--text-muted) !important; cursor: default; pointer-events: none; font-weight: 400 !important; text-align: center; padding: 15px; }
-
     .dropdown-header { display: flex !important; align-items: center; justify-content: space-between !important; padding: 8px 15px !important; background-color: var(--bg-header) !important; cursor: default !important; }
     .dropdown-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; }
     .delete-icon { cursor: pointer; color: var(--text-muted); font-size: 1.1rem; transition: color 0.2s; }
     .delete-icon:hover { color: var(--error-red); }
-
     .recent-header-item { display: flex !important; align-items: center; justify-content: space-between !important; padding: 8px 20px !important; cursor: default !important; margin-bottom: 5px; }
     .recent-header-item:hover { background-color: transparent !important; }
     .recent-title { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
     .clear-all-btn { font-size: 0.8rem; color: var(--text-muted); cursor: pointer; text-decoration: underline; }
     .clear-all-btn:hover { color: var(--error-red); }
-
     .recent-item-row { display: flex !important; align-items: center; justify-content: space-between !important; }
     .recent-text { flex: 1; }
     .item-delete-btn { color: var(--text-muted); font-size: 1rem; padding: 4px; cursor: pointer; display: flex; align-items: center; }
     .item-delete-btn:hover { color: var(--error-red); }
-
     .url-input-container { position: relative; display: flex; align-items: center; margin-top: 20px; margin-bottom: 5px; }
     .url-input-container input { margin-bottom: 0 !important; padding-right: 40px !important; color: var(--text-primary); border-bottom: 1px solid var(--text-muted) !important; }
     .valid-icon { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: none; }
     .status-msg { font-size: 0.85rem; font-weight: 600; margin-bottom: 20px; min-height: 1.2rem; }
-    
     .guide-btn { cursor: pointer; color: var(--primary-dark); font-size: 1rem; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 4px; }
     .guide-btn i { transition: transform 0.2s; } 
     .guide-btn.active i { transform: rotate(90deg); }
     .guide-content { background: var(--bg-sub); padding: 18px; border-radius: 8px; font-size: 0.95rem; border: 1px solid var(--border-color); display: none; margin-bottom: 15px; color: var(--text-primary); }
     body.dark-mode .guide-content { color: #b0b0b0; }
-
     table { background: var(--bg-surface); font-size: 0.85rem; table-layout: fixed; width: 100%; border-collapse: collapse; color: var(--text-primary); }
     th { background: var(--bg-header); color: var(--text-secondary); font-weight: 700; padding: 10px 4px; text-align: center; border: 1px solid var(--border-color); font-size: 0.8rem; word-break: break-all; }
     td { border: 1px solid var(--border-color); text-align: center; padding: 6px 4px; position: relative; word-break: break-all; color: var(--text-primary); }
-    
     .col-card-no { width: 180px; } .col-loc { width: 110px; } .col-total { width: 60px; } .col-proc { width: 70px; } 
     .expand-btn { cursor: pointer; color: var(--primary-color); position: absolute; right: 4px; top: 50%; transform: translateY(-50%); font-size: 1.3rem; }
-    
     .sub-row { width: 100%; max-width: 800px; display: flex; justify-content: flex-start; align-items: flex-start; margin-top: 5px; min-height: 20px; } 
-    
     .modal { border-radius: 12px; width: 95% !important; max-width: 600px !important; background-color: var(--bg-surface); color: var(--text-primary); }
     .modal .modal-content { background-color: var(--bg-surface); }
     .modal .modal-footer { background-color: var(--bg-surface); border-top: 1px solid var(--border-color); }
     #settings-modal .modal-footer { border-top: none !important; }
     #add-result-modal { width: 95% !important; max-width: 1000px !important; }
-    
     #loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--overlay-bg); z-index: 11000; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
     body.dark-mode #loading-text { color: var(--primary-color) !important; }
-    
     .new-card-box { margin-bottom: 20px; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; background: var(--bg-surface); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-
     .summary-split-wrapper { display: flex; width: 100%; }
     .summary-left { width: 40%; background-color: var(--primary-color); color: white; font-weight: 700; font-size: 1rem; display: flex; align-items: center; justify-content: center; border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); text-align: center; padding: 10px; }
     .summary-right { width: 60%; }
-    
     .summary-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
     .summary-table td { border: 1px solid var(--border-color); border-left: none; padding: 10px; text-align: center; color: var(--text-primary); }
     .summary-table tr:first-child td { border-top: none; }
-    
     .border-double-top { border-top: 3px double var(--border-color) !important; background-clip: padding-box; position: relative; z-index: 1; }
     .summary-label-cell { background-color: var(--bg-sub); color: var(--text-secondary); font-weight: 600; width: 50%; }
     .summary-value-cell { width: 50%; font-weight: 500; }
-    
     .show-more-btn { width: 100%; background-color: var(--bg-sub); color: var(--primary-dark); font-weight: 600; padding: 8px 0; border: none; border-top: 1px solid var(--border-color); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; transition: background-color 0.2s; }
     .show-more-btn:hover { background-color: var(--border-color); }
     body.dark-mode .show-more-btn { color: var(--primary-color); }
-    
     .detail-slide-wrapper { max-height: 0; overflow-y: hidden; overflow-x: auto; transition: max-height 0.4s ease-in-out; border-top: none; }
-
     .split-table-wrapper { display: flex; width: 100%; border-top: 1px solid var(--border-color); }
     .fixed-side { width: 40%; flex-shrink: 0; border-right: 1px solid var(--border-color); background-color: var(--bg-surface); z-index: 2; }
     .scroll-side { width: 60%; overflow-x: auto; }
-    
     .split-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
     .split-table th { background-color: var(--bg-sub); color: var(--text-secondary); font-weight: 600; padding: 8px 4px; font-size: 0.85rem; border-top: none !important; border-left: none !important; border-bottom: 1px solid var(--border-color); border-right: 1px solid var(--border-color); white-space: nowrap; height: 35px; box-sizing: border-box; }
     .split-table td { padding: 8px 4px; font-size: 0.85rem; border-top: none !important; border-left: none !important; border-bottom: 1px solid var(--border-color); border-right: 1px solid var(--border-color); white-space: nowrap; height: 35px; box-sizing: border-box; text-align: center; color: var(--text-primary); }
     .split-table th:last-child, .split-table td:last-child { border-right: none; }
-
     .btn-flat-action { background-color: transparent !important; color: var(--text-secondary) !important; font-weight: 600; box-shadow: none !important; border: 1px solid var(--border-color); }
     .btn-flat-action:hover { background-color: var(--bg-header) !important; }
-
-    #intro-area { 
-        text-align: center; 
-        color: var(--text-secondary); 
-        padding-top: 40px; 
-        padding-bottom: 40px; 
-        margin: 0; 
-        line-height: 1.8; 
-        font-size: 0.95rem; 
-    }
+    #intro-area { text-align: center; color: var(--text-secondary); padding-top: 40px; padding-bottom: 40px; margin: 0; line-height: 1.8; font-size: 0.95rem; }
     #intro-area a { color: var(--primary-color); font-weight: 700; text-decoration: underline; cursor: pointer; }
-    
-    .centered-content-area {
-        text-align: center;
-        padding-top: 50px;
-        padding-bottom: 50px;
-        margin: 0; 
-    }
-    
+    .centered-content-area { text-align: center; padding-top: 50px; padding-bottom: 50px; margin: 0; }
     #main-footer { text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 50px; padding-bottom: 30px; }
-    
     .footer-disclaimer { margin-bottom: 12px; color: var(--text-muted); font-size: 0.85rem; }
     .footer-disclaimer span { display: inline-block; } 
-
-    .footer-info-box {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        align-items: center;
-        line-height: 1.5;
-    }
-    
+    .footer-info-box { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; line-height: 1.5; }
     .footer-item { white-space: nowrap; }
     .footer-separator { margin: 0 8px; user-select: none; opacity: 0.5; }
-    
     #main-footer a.maker-link { color: var(--text-muted); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; transition: color 0.2s; font-weight: 600; }
     #main-footer a.maker-link:hover { color: #f44336; }
-
-    @media only screen and (max-width: 600px) {
-        .footer-separator.mobile-hide { display: none; }
-        .footer-item.copyright { width: 100%; margin-top: 4px; }
-    }
-
-    .sheet-name-display {
-        display: inline-block;
-        max-width: 150px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        vertical-align: middle;
-        color: var(--text-muted);
-        font-size: 0.8rem;
-        margin-left: 8px;
-    }
-    @media only screen and (max-width: 600px) {
-        .sheet-name-display { max-width: 100px; }
-    }
+    @media only screen and (max-width: 600px) { .footer-separator.mobile-hide { display: none; } .footer-item.copyright { width: 100%; margin-top: 4px; } }
+    .sheet-name-display { display: inline-block; max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; color: var(--text-muted); font-size: 0.8rem; margin-left: 8px; }
+    @media only screen and (max-width: 600px) { .sheet-name-display { max-width: 100px; } }
   </style>
 </head>
 <body>
@@ -857,8 +492,23 @@
       <div id="add-content-area" class="content-section centered-content-area">
           <i class="material-icons" style="font-size: 4rem; color: var(--text-muted); margin-bottom: 20px;">library_add</i>
           <h5 style="font-weight: 700; color: var(--text-primary);">카드 등록</h5>
-          <p style="color: var(--text-secondary); margin-bottom: 30px;">새로운 카드를 리스트에 추가합니다.</p>
-          <button class="btn cyan-theme waves-effect waves-light" onclick="checkAuthAndOpen('#add-card-modal')">기존 모달 열기</button>
+          
+          <table id="page-add-table" class="page-entry-table">
+              <tfoot id="page-add-tfoot">
+                  <tr>
+                      <td colspan="4" class="add-row-btn-cell">
+                          <button class="add-page-row-btn" onclick="addPageEntry()">
+                              <i class="material-icons" style="vertical-align:middle; font-size:1.2rem;">add</i> 추가 등록
+                          </button>
+                      </td>
+                  </tr>
+              </tfoot>
+          </table>
+
+          <div class="page-btn-container">
+              <button class="btn grey lighten-2 waves-effect waves-dark" style="color:#424242; font-weight:600;" onclick="checkAuthAndOpen('#add-card-modal')">기존 모달 열기</button>
+              <button class="btn cyan-theme waves-effect waves-light" onclick="submitPageEntries()">등록</button>
+          </div>
       </div>
 
       <div id="move-content-area" class="content-section centered-content-area">
@@ -882,7 +532,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.10.9</span>
+        <span class="footer-item">ver. 0.10.10</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -1013,8 +663,10 @@
     loadRegion();
     checkClearBtn(); 
     
-    // [NEW] Set initial active state
     updateActiveNav('home');
+    
+    // [NEW] Initialize Page Add Table
+    initPageAdd();
 
     const modals = document.querySelectorAll('.modal');
     modals.forEach(modal => {
@@ -1065,7 +717,6 @@
         const val = e.target.value;
         if (!val) {
             showRecentInDropdown();
-            // [MODIFIED] Do NOT clear result area on input clear
         }
         else filterAndShowDropdown(val);
         checkClearBtn(); 
@@ -1159,41 +810,35 @@
     updateDisconnectBtn(); refreshInitialData();
   });
 
-  // [NEW] Function to update active nav items
   function updateActiveNav(mode) {
       document.querySelectorAll('.nav-item, .mobile-nav-item').forEach(el => el.classList.remove('active'));
       const targets = document.querySelectorAll(`[data-mode="${mode}"]`);
       targets.forEach(el => el.classList.add('active'));
   }
 
-  // [NEW] Transition Timer for Interrupt Logic
   let transitionTimer = null;
 
-  // [NEW] Robust Mode Switching with Cross-Fade & Height Animation
   function switchToMode(mode) {
       if (currentMode === mode) return; 
       const previousMode = currentMode;
       currentMode = mode;
       
-      // Update Nav Active State
       updateActiveNav(mode);
       
       const body = document.body;
       const searchInput = document.getElementById('card-search');
       
-      // Header & Input Logic
       if (mode !== 'search') {
           searchInput.value = '';
           document.getElementById('clear-btn').style.display = 'none';
           document.getElementById('custom-dropdown').style.display = 'none';
           toggleSearchWrapper(false);
-          // [NEW] Compact Mode Placeholder
+          // [NEW] Compact Mode Placeholder "카드 검색"
           searchInput.placeholder = "카드 검색";
       } else {
           searchInput.placeholder = "";
       }
       
-      // Header Animation
       if (mode === 'home') {
           body.classList.remove('mode-compact');
       } else {
@@ -1202,15 +847,12 @@
 
       const wrapper = document.getElementById('content-slider-wrapper');
       
-      // [FIX] Interrupt existing animation logic
       if (transitionTimer) {
           clearTimeout(transitionTimer);
           transitionTimer = null;
           
-          // [FIX] Freeze height to prevent jump
           wrapper.style.height = wrapper.offsetHeight + 'px';
 
-          // Force Reset All Sections to prevent overlapping
           const sections = wrapper.querySelectorAll('.content-section');
           sections.forEach(sec => {
               sec.style.display = 'none';
@@ -1222,12 +864,10 @@
               sec.classList.remove('active');
           });
           
-          // Remove Ghost if exists
           const ghost = document.getElementById('result-ghost');
           if(ghost && ghost.parentNode) ghost.parentNode.removeChild(ghost);
       }
 
-      // 1. Identify Target
       let targetContentId = '';
       if (mode === 'home') targetContentId = 'intro-area';
       else if (mode === 'search') targetContentId = 'result-content-wrapper'; 
@@ -1239,13 +879,10 @@
       const currentEl = wrapper.querySelector('.content-section.active');
       const nextEl = document.getElementById(targetContentId);
 
-      // 2. Lock Height for Smooth Transition
-      // Only set if not already set (by interrupt logic)
       if (!wrapper.style.height) {
            wrapper.style.height = wrapper.offsetHeight + 'px';
       }
 
-      // 3. Prepare Animation State
       if(currentEl) {
           currentEl.style.position = 'absolute';
           currentEl.style.top = '0';
@@ -1253,7 +890,6 @@
           currentEl.style.width = '100%';
       }
 
-      // Prepare next element
       nextEl.style.display = 'block';
       nextEl.style.position = 'absolute'; 
       nextEl.style.opacity = '0';
@@ -1261,20 +897,17 @@
       nextEl.style.left = '0';
       nextEl.style.width = '100%';
       
-      // Force Reflow & Measure
       const targetHeight = nextEl.scrollHeight;
 
-      // 4. Trigger Animations (Next Frame)
       requestAnimationFrame(() => {
-          wrapper.style.height = targetHeight + 'px'; // Animate Wrapper Height
+          wrapper.style.height = targetHeight + 'px'; 
           
-          if(currentEl) currentEl.style.opacity = '0'; // Fade Out Old
-          nextEl.style.opacity = '1'; // Fade In New
+          if(currentEl) currentEl.style.opacity = '0'; 
+          nextEl.style.opacity = '1'; 
       });
 
-      // 5. Cleanup after transition
       transitionTimer = setTimeout(() => {
-          wrapper.style.height = ''; // Auto height
+          wrapper.style.height = ''; 
           
           if(currentEl) {
               currentEl.style.display = 'none';
@@ -1284,24 +917,22 @@
           }
           
           nextEl.classList.add('active');
-          nextEl.style.position = 'relative'; // Restore to flow
+          nextEl.style.position = 'relative'; 
           nextEl.style.opacity = '';
           nextEl.style.width = '';
           nextEl.style.top = '';
           nextEl.style.left = '';
 
-          // [FIX] Remove Ghost if exists (Search -> Home scenario)
           const ghost = document.getElementById('result-ghost');
           if(ghost && ghost.parentNode) ghost.parentNode.removeChild(ghost);
 
-          // [FIX] Delayed Reset for Search Result Area
           if ((mode === 'home' || mode === 'discard' || mode === 'add' || mode === 'move' || mode === 'settings') && previousMode === 'search') {
               document.getElementById('result-area').innerHTML = '';
           }
           
           transitionTimer = null;
           
-      }, 400); // Match transition duration (0.4s)
+      }, 400); 
   }
 
   function checkClearBtn() {
@@ -1319,6 +950,234 @@
       const wrapper = document.getElementById('search-wrapper');
       if(isOpen) wrapper.classList.add('active');
       else wrapper.classList.remove('active');
+  }
+
+  // [NEW] Page Entry Logic
+  function initPageAdd() {
+      addPageEntry();
+  }
+
+  function addPageEntry() {
+      const table = document.getElementById('page-add-table');
+      const tfoot = document.getElementById('page-add-tfoot');
+      
+      const entries = table.querySelectorAll('tbody.page-entry');
+      const nextNum = entries.length + 1;
+      const isOdd = nextNum % 2 !== 0;
+      const rowClass = isOdd ? 'odd' : 'even';
+      
+      const tbody = document.createElement('tbody');
+      tbody.className = `page-entry ${rowClass}`;
+      
+      tbody.innerHTML = `
+        <tr>
+            <td rowspan="2" class="no-cell">${nextNum}</td>
+            <td colspan="2" style="padding:0;"><span class="card-name-disp" style="display:block; padding:4px 8px; width:100%;">카드 번호 입력</span></td>
+            <td style="padding:0; width:35%;"><div class="another-cell-container"><select class="browser-default page-card-another" disabled><option value="" selected>일러스트</option></select></div></td>
+        </tr>
+        <tr>
+            <td style="padding:0; width:33%;"><select class="browser-default page-card-proc" disabled><option value="" disabled selected>레어도</option>${allProcessingTypes.map(p => `<option value="${p}">${getLocalizedRarity(p)}</option>`).join('')}</select></td>
+            <td style="padding:0; width:33%;"><div class="td-flex-container"><select class="browser-default page-card-loc" onchange="handlePageLocationChange(this)" disabled><option value="" disabled selected>보관 위치</option>${allLocations.map(l => `<option value="${l}">${l}</option>`).join('')}<option value="DIRECT">위치 추가</option></select><input type="text" class="direct-input loc-direct" style="display:none;" placeholder="직접 입력"></div></td>
+            <td style="padding:0; width:33%;"><input type="number" class="page-card-qty" min="1" disabled placeholder="수량"></td>
+        </tr>
+        <input type="hidden" class="page-card-no-val"> 
+      `;
+      
+      // Inject Card No Input into first row second cell dynamically to handle layout
+      // Actually, Row 1 Cells: No (Rowspan), Name, CardNo, Another
+      // Revised Row 1: No(rowspan), Name(Auto), CardNo(Input), Another(Select)
+      // Wait, the prompt asked for: No | Name | Card No | Illust
+      
+      // Let's correct the HTML structure based on prompt:
+      // Row 1: No (rowspan=2), Name, Card No, Illust
+      // Row 2: Rarity, Location, Qty
+      
+      tbody.innerHTML = `
+        <tr>
+            <td rowspan="2" class="no-cell">${nextNum}</td>
+            <td style="width:30%; padding:4px 8px;"><span class="card-name-disp" style="font-size:0.9rem; line-height:1.2; display:block;">카드 번호 입력</span></td>
+            <td style="width:35%; padding:0;"><input type="text" class="page-card-no" placeholder="카드 번호" oninput="handleCardNoInput(this)" onblur="fetchCardNameForPage(this)" onkeydown="if(event.key==='Enter') fetchCardNameForPage(this)"></td>
+            <td style="width:25%; padding:0;"><select class="browser-default page-card-another" disabled><option value="" selected>일러스트</option></select></td>
+        </tr>
+        <tr>
+            <td style="padding:0;"><select class="browser-default page-card-proc" disabled><option value="" disabled selected>레어도</option>${allProcessingTypes.map(p => `<option value="${p}">${getLocalizedRarity(p)}</option>`).join('')}</select></td>
+            <td style="padding:0;"><div class="td-flex-container"><select class="browser-default page-card-loc" onchange="handlePageLocationChange(this)" disabled><option value="" disabled selected>보관 위치</option>${allLocations.map(l => `<option value="${l}">${l}</option>`).join('')}<option value="DIRECT">직접 추가</option></select><input type="text" class="direct-input loc-direct" style="display:none;" placeholder="입력"></div></td>
+            <td style="padding:0;"><input type="number" class="page-card-qty" min="1" disabled placeholder="수량" onfocus="if(this.value=='0')this.value=''" onblur="if(this.value=='')this.value='0'"></td>
+        </tr>
+      `;
+
+      table.insertBefore(tbody, tfoot);
+  }
+
+  function handleCardNoInput(input) {
+      const start = input.selectionStart;
+      input.value = input.value.toUpperCase();
+      input.setSelectionRange(start, start);
+  }
+
+  function handlePageLocationChange(sel) {
+      const row = sel.closest('tr');
+      const directInput = row.querySelector('.loc-direct');
+      const qtyInput = row.querySelector('.page-card-qty');
+      
+      if (sel.value === 'DIRECT') {
+          sel.style.flex = "0 0 40%";
+          directInput.style.display = "block";
+          directInput.style.flex = "1";
+          directInput.focus();
+      } else {
+          sel.style.flex = "1";
+          directInput.style.display = "none";
+          directInput.value = "";
+      }
+      
+      if (sel.value) {
+          qtyInput.disabled = false;
+          if (!qtyInput.value) qtyInput.value = "1";
+      } else {
+          qtyInput.disabled = true;
+          qtyInput.value = "";
+          qtyInput.placeholder = "수량";
+      }
+  }
+
+  async function fetchCardNameForPage(input) {
+      const tbody = input.closest('tbody');
+      const cardNo = input.value.trim();
+      const nameSpan = tbody.querySelector('.card-name-disp');
+      const anotherSel = tbody.querySelector('.page-card-another');
+      const procSel = tbody.querySelector('.page-card-proc');
+      const locSel = tbody.querySelector('.page-card-loc');
+      const qtyInput = tbody.querySelector('.page-card-qty');
+
+      // Reset
+      procSel.disabled = true; procSel.value = "";
+      locSel.disabled = true; locSel.value = "";
+      qtyInput.disabled = true; qtyInput.value = "";
+      anotherSel.disabled = true; anotherSel.innerHTML = '<option value="" selected>일러스트</option>';
+
+      if (!cardNo) {
+          nameSpan.innerText = "카드 번호 입력";
+          return;
+      }
+
+      // Check Cache
+      if (clientCache[cardNo]) {
+          const cached = clientCache[cardNo];
+          nameSpan.innerText = cached.name;
+          applyPageCardData(cached, tbody);
+          return;
+      }
+
+      nameSpan.innerText = "조회 중...";
+      try {
+          const res = await callApi('getCardNameFromDb', { cardNo });
+          if (res.name.includes("오류") || res.name.includes("확인하세요")) {
+              nameSpan.innerText = res.name;
+          } else {
+              clientCache[cardNo] = { name: res.name, anotherCount: res.anotherCount, rarities: res.rarities };
+              nameSpan.innerText = res.name;
+              applyPageCardData(res, tbody);
+          }
+      } catch (e) {
+          nameSpan.innerText = "접속 오류";
+      }
+  }
+
+  function applyPageCardData(data, tbody) {
+      const anotherSel = tbody.querySelector('.page-card-another');
+      const procSel = tbody.querySelector('.page-card-proc');
+      const locSel = tbody.querySelector('.page-card-loc');
+
+      // Another
+      const count = data.anotherCount || 1;
+      let optionsHtml = '';
+      if (count > 1) {
+          optionsHtml += `<option value="" disabled selected>일러스트</option>`;
+          optionsHtml += `<option value="">기본</option>`;
+          for(let i=2; i<=count; i++) {
+              let suffix = "th"; if(i===2) suffix="nd"; if(i===3) suffix="rd";
+              optionsHtml += `<option value="${i}${suffix}">${i}${suffix}</option>`;
+          }
+          anotherSel.disabled = false;
+      } else {
+          optionsHtml += `<option value="" selected>기본</option>`;
+          anotherSel.disabled = true;
+      }
+      anotherSel.innerHTML = optionsHtml;
+
+      // Rarity
+      if (!data.isFallback && data.rarities && data.rarities.length > 0) {
+          procSel.innerHTML = `<option value="" disabled selected>레어도</option>` + data.rarities.map(r => `<option value="${r}">${getLocalizedRarity(r)}</option>`).join('');
+      } else {
+          procSel.innerHTML = `<option value="" disabled selected>레어도</option>` + allProcessingTypes.map(p => `<option value="${p}">${getLocalizedRarity(p)}</option>`).join('');
+      }
+      procSel.disabled = false;
+      locSel.disabled = false;
+  }
+
+  async function submitPageEntries() {
+      const table = document.getElementById('page-add-table');
+      const entries = table.querySelectorAll('tbody.page-entry');
+      const validRows = [];
+      const detailLog = [];
+      let successCount = 0; 
+      let successQty = 0;
+
+      for (let tbody of entries) {
+          const no = tbody.querySelector('.no-cell').innerText;
+          const cardNo = tbody.querySelector('.page-card-no').value.trim();
+          let name = tbody.querySelector('.card-name-disp').innerText;
+          
+          if (!cardNo) continue; // Skip empty
+
+          let another = tbody.querySelector('.page-card-another').value;
+          let proc = tbody.querySelector('.page-card-proc').value;
+          let loc = tbody.querySelector('.page-card-loc').value;
+          if (loc === 'DIRECT') loc = tbody.querySelector('.loc-direct').value.trim();
+          
+          const qtyVal = tbody.querySelector('.page-card-qty').value;
+          const qty = parseInt(qtyVal);
+
+          let failReason = null;
+          if (name.includes("입력") || name.includes("오류") || name.includes("확인")) {
+              failReason = "invalid_no"; name = "유효하지 않은 카드";
+          } else if (!proc) failReason = "no_proc";
+          else if (!loc) failReason = "no_loc";
+          else if (!qty || qty < 1) failReason = "invalid_qty";
+
+          if (failReason) {
+              detailLog.push({ no, name, cardNo, another, proc: proc||"미선택", loc: loc||"미선택", qty: qty||0, status: 'fail', failReason });
+          } else {
+              validRows.push([name, cardNo, proc, qty, loc, another]);
+              detailLog.push({ no, name, cardNo, another, proc, loc, qty, status: 'success' });
+              successCount++;
+              successQty += qty;
+          }
+      }
+
+      if (validRows.length > 0) {
+          showLoading(true, "등록 중...");
+          try {
+              await callApi('addCards', {}, validRows);
+              showLoading(false);
+              showResultModal(successCount, successQty, detailLog);
+              
+              // Clear successful entries
+              // Re-render table? Or just clear inputs.
+              // Let's clear inputs of successful ones
+              let hasFailures = false;
+              // Reset Logic is complex, maybe just show result and let user see.
+              // The result modal has "Confirm" which reloads page.
+          } catch (e) {
+              showLoading(false);
+              M.toast({html: '서버 통신 오류', classes: 'red darken-2'});
+          }
+      } else if (detailLog.length > 0) {
+          showResultModal(0, 0, detailLog); // Show errors
+      } else {
+          M.toast({html: '등록할 데이터가 없습니다.', classes: 'warning-yellow black-text'});
+      }
   }
 
   function decomposeHangul(str) { const CHO = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ']; const JUNG = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ']; const JONG = ['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','흐','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ']; let result = ""; for (let i = 0; i < str.length; i++) { const charCode = str.charCodeAt(i); if (charCode >= 0xAC00 && charCode <= 0xD7A3) { const code = charCode - 0xAC00; const choIndex = Math.floor(code / 588); const jungIndex = Math.floor((code % 588) / 28); const jongIndex = code % 28; result += CHO[choIndex] + JUNG[jungIndex] + JONG[jongIndex]; } else { result += str.charAt(i); } } return result; }
@@ -1341,99 +1200,14 @@
   function resetManageModal() { document.getElementById('manage-card-tbody').innerHTML = ''; addManageRows(1); }
   function validateSheetLink() { clearTimeout(validationTimeout); const url = document.getElementById('sheet-url').value.trim(); const mark = document.getElementById('valid-mark'), msg = document.getElementById('status-msg'), confirmBtn = document.getElementById('confirm-btn'); if (!url) { mark.style.display = 'none'; msg.innerText = ''; confirmBtn.classList.add('disabled'); return; } const match = url.match(/[-\w]{25,}/); if (!match) { mark.innerHTML = '<i class="material-icons" style="color: var(--error-red)">cancel</i>'; mark.style.display = 'block'; msg.innerText = '구글 시트 링크를 적어주세요.'; msg.style.color = 'var(--error-red)'; confirmBtn.classList.add('disabled'); return; } validationTimeout = setTimeout(async () => { msg.innerText = '권한 확인 중...'; try { const res = await callApi('checkSheet', { targetId: match[0] }); if (res.status === 'OK') { mark.innerHTML = '<i class="material-icons" style="color: var(--success-green)">check_circle</i>'; msg.innerText = '유효한 시트입니다.'; msg.style.color = 'var(--success-green)'; confirmBtn.classList.remove('disabled'); if (res.sheetName) document.getElementById('connected-sheet-name').innerText = `연결됨("${res.sheetName}")`; } else { mark.innerHTML = '<i class="material-icons" style="color: var(--warning-yellow)">warning</i>'; msg.innerText = (res.status === 'NO_EDIT_ACCESS') ? '공유 설정을 링크를 가진 모든 사용자 / 편집자로 설정해주세요.' : '접근할 수 없거나 형식이 잘못되었습니다.'; msg.style.color = 'var(--warning-yellow)'; confirmBtn.classList.add('disabled'); } mark.style.display = 'block'; } catch (e) { msg.innerText = '확인 실패'; } }, 500); }
   async function refreshInitialData() { const savedId = localStorage.getItem(STORAGE_KEY); if (!savedId) return; showLoading(true, "데이터 동기화 중..."); try { const res = await callApi('getInitialData'); showLoading(false); isAppConfigured = res.isConfigured; if (res.isConfigured) { allNames = res.names; allProcessingTypes = res.processingTypes; allLocations = res.locations; localCardDatabase = res.allCards; rarityMap = res.rarityMap || {}; rarityMappingRaw = res.rarityMappingRaw || []; clientCache = res.clientCache || {}; nameDb = res.nameDb || {}; if (res.sheetName) document.getElementById('connected-sheet-name').innerText = `연결됨("${res.sheetName}")`; cidLookup = {}; Object.keys(nameDb).forEach(nameKey => { const entry = nameDb[nameKey]; if (entry && entry.id) { if (!cidLookup[entry.id]) cidLookup[entry.id] = new Set(); cidLookup[entry.id].add(nameKey); } }); const expandedSet = new Set(allNames); allNames.forEach(name => { const entry = nameDb[name]; if (entry && entry.id) { const siblings = cidLookup[entry.id]; if (siblings) { siblings.forEach(sName => expandedSet.add(sName)); } } }); allNames = Array.from(expandedSet).sort(); rarityLookup = {}; rarityMappingRaw.forEach((row, index) => { Object.values(row).forEach(val => { const key = String(val).trim(); if(key) { rarityLookup[key] = { data: row, index: index }; } }); }); } } catch (e) { showLoading(false); } }
-  
-  function startSearch() { 
-      if (!localStorage.getItem(STORAGE_KEY)) { openGuideFromMain(); return; } 
-      const name = document.getElementById('card-search').value; 
-      if(!name || !isAppConfigured) return; 
-
-      saveRecentSearch(name); 
-
-      let targetNames = new Set(); 
-      if (nameDb[name] && nameDb[name].id) { 
-          const cid = nameDb[name].id; 
-          if (cidLookup[cid]) { targetNames = cidLookup[cid]; } else { targetNames.add(name); } 
-      } else { targetNames.add(name); } 
-
-      const filteredRows = localCardDatabase.filter(row => targetNames.has(String(row[0]))); 
-      
-      // [NEW] Logic for Cross-Fade within Search Mode
-      if (currentMode === 'search') {
-          const wrapper = document.getElementById('content-slider-wrapper');
-          const contentWrapper = document.getElementById('result-content-wrapper'); // .content-section
-          const resultArea = document.getElementById('result-area'); // The Table
-
-          // 1. Lock Height (Animation Start)
-          const oldHeight = wrapper.offsetHeight;
-          wrapper.style.height = oldHeight + 'px';
-
-          // 2. Create Ghost (Clone of current table)
-          const ghost = resultArea.cloneNode(true);
-          ghost.id = 'result-ghost';
-          ghost.style.position = 'absolute';
-          ghost.style.top = '0';
-          // Match margins of resultArea to align perfectly
-          ghost.style.left = '0';
-          ghost.style.right = '0';
-          ghost.style.marginLeft = 'auto';
-          ghost.style.marginRight = 'auto';
-          ghost.style.marginTop = '0'; // Margin removed
-          ghost.style.paddingTop = '30px'; // Inherited, but key is margin 0
-          ghost.style.width = '100%';
-          ghost.style.maxWidth = '700px';
-          ghost.style.zIndex = '5';
-          ghost.style.transition = 'opacity 0.4s ease';
-          
-          // Make parent relative so absolute ghost positions correctly
-          // [FIX] Move ghost to wrapper to avoid height impact on contentWrapper
-          wrapper.appendChild(ghost);
-
-          // 3. Render New Data (Updates #result-area)
-          renderTable(filteredRows); 
-
-          // 4. Prepare New State
-          resultArea.style.opacity = '0';
-          resultArea.style.transition = 'opacity 0.4s ease';
-          
-          // Measure New Height - [FIX] Simple offsetHeight thanks to padding
-          const newHeight = resultArea.offsetHeight;
-
-          // 5. Animate (Next Frame)
-          requestAnimationFrame(() => {
-              wrapper.style.height = newHeight + 'px';
-              ghost.style.opacity = '0';
-              resultArea.style.opacity = '1';
-          });
-
-          // 6. Cleanup after 400ms
-          setTimeout(() => {
-              if(ghost.parentNode) ghost.parentNode.removeChild(ghost);
-              wrapper.style.height = ''; // Auto
-              resultArea.style.opacity = '';
-              resultArea.style.transition = '';
-          }, 400);
-
-      } else {
-          // Normal Switch (Not from search mode)
-          renderTable(filteredRows); 
-          switchToMode('search'); 
-      }
-
-      document.getElementById('custom-dropdown').style.display = 'none'; 
-      toggleSearchWrapper(false); 
-      checkClearBtn(); 
-      showLoading(false); 
-  }
-  
   function findMappingRow(key) { if (!rarityMappingRaw || rarityMappingRaw.length === 0) return null; return rarityMappingRaw.find(row => Object.values(row).includes(key)); }
   function getLocalizedRarity(key) { if (!key) return ""; const info = rarityLookup[key]; if (info && info.data[currentRegion]) { return info.data[currentRegion]; } return key; }
   
+  // (Rest of the functions: renderTable, toggleNewDetail, etc. - No changes needed)
   function renderTable(rows) { 
-      // showLoading(false); // [FIX] Removed
       const resultArea = document.getElementById('result-area'); 
       if (rows.length === 0) { 
           resultArea.innerHTML = "<p class='center'>결과 없음</p>"; 
-          // [FIX] Removed animation triggering logic
           return; 
       } 
       const groups = {}; 
@@ -1442,7 +1216,6 @@
       Object.keys(groups).forEach(cardNo => { const rowId = `row-${cardNo}`.replace(/[^a-zA-Z0-9]/g, ''); const cardRows = rows.filter(r => String(r[1]) === cardNo); const totalQty = cardRows.reduce((sum, r) => sum + (parseInt(r[3]) || 0), 0); const locSet = new Set(cardRows.map(r => String(r[4])).filter(l => l)); const distinctKeys = [...new Set(cardRows.map(r => String(r[2]).trim()).filter(k => k))]; distinctKeys.sort((a, b) => { const infoA = rarityLookup[a]; const infoB = rarityLookup[b]; const idxA = infoA ? infoA.index : 999999; const idxB = infoB ? infoB.index : 999999; return idxA - idxB || a.localeCompare(b); }); const displayNamesForSummary = [...new Set(distinctKeys.map(k => rarityMap[k] || k))]; const procStr = displayNamesForSummary.join(", "); const locStr = [...locSet].join(", "); const anotherGroups = {}; cardRows.forEach(r => { const another = String(r[5] || "").trim(); const displayAnother = another === "" ? "기본" : another; if(!anotherGroups[displayAnother]) anotherGroups[displayAnother] = []; anotherGroups[displayAnother].push(r); }); let leftTableHtml = `<table class="split-table"><thead><tr><th class="fp-col-1">일러스트</th><th class="fp-col-2">보관 위치</th><th class="fp-col-3">총 수량</th></tr></thead><tbody>`; let rightTableHtml = `<table class="split-table"><thead><tr>`; distinctKeys.forEach(key => { const info = rarityLookup[key]; let displayName = key; let tooltipContent = key; if (info) { displayName = info.data.display || key; tooltipContent = info.data[currentRegion] || key; } tooltipContent = tooltipContent.replace(/\(/g, '<br>('); rightTableHtml += `<th class="sp-col tooltipped" data-position="top" data-tooltip="${tooltipContent}">${displayName}</th>`; }); rightTableHtml += `</tr></thead><tbody>`; const anotherKeys = Object.keys(anotherGroups).sort((a, b) => { if (a === "기본") return -1; if (b === "기본") return 1; return a.localeCompare(b, undefined, { numeric: true }); }); anotherKeys.forEach(another => { const grpRows = anotherGroups[another]; const locGroups = {}; grpRows.forEach(r => { const loc = String(r[4]); const proc = String(r[2]); const qty = parseInt(r[3]) || 0; if(!locGroups[loc]) locGroups[loc] = { total: 0, procs: {} }; locGroups[loc].total += qty; locGroups[loc].procs[proc] = (locGroups[loc].procs[proc] || 0) + qty; }); const locKeys = Object.keys(locGroups); locKeys.forEach((loc, idx) => { const d = locGroups[loc]; leftTableHtml += `<tr>`; if(idx === 0) leftTableHtml += `<td rowspan="${locKeys.length}">${another}</td>`; leftTableHtml += `<td>${loc}</td><td>${d.total}</td></tr>`; rightTableHtml += `<tr>`; distinctKeys.forEach(key => { const val = d.procs[key] || 0; rightTableHtml += `<td>${val}</td>`; }); rightTableHtml += `</tr>`; }); }); leftTableHtml += `</tbody></table>`; rightTableHtml += `</tbody></table>`; newHtml += ` <div class="new-card-box"> <div class="summary-split-wrapper"> <div class="summary-left">${cardNo}</div> <div class="summary-right"> <table class="summary-table"> <tr><td class="summary-label-cell">보관 위치</td><td class="summary-label-cell">수량</td></tr> <tr><td class="summary-value-cell">${locStr}</td><td class="summary-value-cell">${totalQty}</td></tr> <tr><td class="summary-label-cell border-double-top">보유 레어도</td><td class="summary-value-cell border-double-top">${procStr}</td></tr> </table> </div> </div> <div id="detail-${rowId}" class="detail-slide-wrapper"> <div class="split-table-wrapper"> <div class="fixed-side">${leftTableHtml}</div> <div class="scroll-side">${rightTableHtml}</div> </div> </div> <button class="show-more-btn" onclick="toggleNewDetail('detail-${rowId}')"><span>자세히 보기</span><i class="material-icons tiny">keyboard_arrow_down</i></button> </div> `; }); 
       resultArea.innerHTML = newHtml; 
       M.Tooltip.init(resultArea.querySelectorAll('.tooltipped'), { html: true, margin: 3 }); 
-      // [FIX] Removed animation triggering logic
   }
   function toggleNewDetail(detailId) { const content = document.getElementById(detailId); const btn = content.nextElementSibling; const textSpan = btn.querySelector('span'); const icon = btn.querySelector('i'); if (content.style.maxHeight) { content.style.maxHeight = null; textSpan.innerText = '자세히 보기'; icon.innerText = 'keyboard_arrow_down'; } else { content.style.maxHeight = content.scrollHeight + "px"; textSpan.innerText = '간략히 보기'; icon.innerText = 'keyboard_arrow_up'; } }
   function toggleAnother(rowId) {}
