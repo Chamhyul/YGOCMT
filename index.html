@@ -420,17 +420,24 @@
         top: 130px;
         /* Responsive Width: Fill 95% but cap at 700px */
         width: min(95%, 700px); 
-        /* Universal Centering: If width is 700px, calc(50% - 350px). If width is 95%, margin is 2.5%. Max picks the correct start point automatically. */
+        /* Universal Centering */
         left: max(2.5%, calc(50% - 350px)); 
         margin: 0;
         transform: none; /* Removed transform */
         
-        /* Only animating properties that change linearly */
         transition: top 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), 
                     width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), 
                     left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
         
         will-change: top, width, left;
+    }
+    
+    /* Home Mode (Desktop Override) */
+    @media only screen and (min-width: 801px) {
+        .search-box {
+            width: 700px;
+            margin-left: -350px; 
+        }
     }
     
     .search-header-row { width: 100%; max-width: 700px; margin: 0 auto; display: flex; justify-content: flex-start; padding-left: 5px; margin-bottom: 5px; transition: opacity 0.3s ease; }
@@ -439,7 +446,6 @@
         display: flex; align-items: center; justify-content: center; width: 100%; gap: 8px; 
         max-width: 700px !important; 
         justify-content: flex-start;
-        /* Removing margin transition as margin is now 0 */
         transition: max-width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
     
@@ -470,7 +476,6 @@
         /* Explicit Fixed Position relative to Logo */
         left: 80px;
         margin: 0;
-        /* Calculate remaining width: 100% - left_offset(80px) - right_padding(10px) */
         width: min(calc(100% - 90px), 630px);
         max-width: 630px; 
         align-items: flex-start;
@@ -884,7 +889,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.10.8</span>
+        <span class="footer-item">ver. 0.10.9</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -1209,6 +1214,10 @@
           clearTimeout(transitionTimer);
           transitionTimer = null;
           
+          // 1. Freeze Height IMMEDIATELY to prevent footer jump
+          // We use the computed style height or offsetHeight
+          wrapper.style.height = wrapper.offsetHeight + 'px';
+          
           // Force Reset All Sections to prevent overlapping
           const sections = wrapper.querySelectorAll('.content-section');
           sections.forEach(sec => {
@@ -1225,7 +1234,6 @@
           const ghost = document.getElementById('result-ghost');
           if(ghost && ghost.parentNode) ghost.parentNode.removeChild(ghost);
           
-          wrapper.style.height = ''; 
       }
 
       // 1. Identify Target
@@ -1240,9 +1248,10 @@
       const currentEl = wrapper.querySelector('.content-section.active');
       const nextEl = document.getElementById(targetContentId);
 
-      // 2. Lock Height for Smooth Transition
-      const startHeight = wrapper.offsetHeight;
-      wrapper.style.height = startHeight + 'px';
+      // 2. Lock Height (Animation Start) - If not already locked by interrupt
+      if (!wrapper.style.height) {
+           wrapper.style.height = wrapper.offsetHeight + 'px';
+      }
 
       // 3. Prepare Animation State
       if(currentEl) {
