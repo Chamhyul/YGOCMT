@@ -19,7 +19,6 @@
       --text-muted: #9e9e9e;
       --primary-color: #009688;
       --primary-rgb: 0, 150, 136;
-      /* [NEW] Primary Light Color */
       --primary-light: #b2dfdb; 
       --primary-dark: #00796b;
       --border-color: #ddd;
@@ -50,8 +49,8 @@
       --text-muted: #757575;
       --primary-color: #4db6ac;
       --primary-rgb: 77, 182, 172;
-      /* [NEW] Primary Light Color (Dark Mode) */
-      --primary-light: #004d40;
+      /* [FIX] Dark Mode Primary Light - Brighter than Primary */
+      --primary-light: #80cbc4; 
       --primary-dark: #26a69a;
       --border-color: #424242;
       --error-red: #ef5350;
@@ -80,13 +79,13 @@
         padding-left: 0;
     }
     
-    /* [NEW] Page Entry Table Styles */
+    /* Page Entry Table Styles */
     .page-entry-table {
         width: 100%;
         max-width: 700px;
         margin: 0 auto 20px auto;
         border-collapse: separate;
-        border-spacing: 0 10px; /* Space between entries */
+        border-spacing: 0 10px;
     }
 
     .page-entry-table tbody {
@@ -118,10 +117,10 @@
     /* Even Entry (Primary Light Color) */
     .page-entry.even {
         background-color: var(--primary-light);
-        color: var(--text-primary); /* Dark text on light bg in Light Mode */
+        color: var(--text-primary); 
     }
     body.dark-mode .page-entry.even {
-        color: #ffffff; /* White text on dark bg in Dark Mode */
+        color: #121212; /* Ensure readability on bright teal in dark mode */
     }
     .page-entry.even input, .page-entry.even select {
         background-color: var(--bg-surface) !important;
@@ -130,7 +129,7 @@
     }
     .page-entry.even .card-name-disp { font-weight: 700; }
 
-    /* Common Entry Styles */
+    /* Common Entry Styles & [FIX] Input Width */
     .page-entry input, .page-entry select {
         border-radius: 4px !important;
         height: 32px !important;
@@ -138,6 +137,8 @@
         font-size: 0.9rem !important;
         padding: 0 8px !important;
         box-shadow: none !important;
+        width: 100%; /* [FIX] Fill cell width */
+        box-sizing: border-box; /* [FIX] Include padding in width */
     }
     
     .page-entry .no-cell {
@@ -231,7 +232,9 @@
 
     .container { margin-top: 30px; width: auto !important; max-width: 100% !important; min-height: 60vh; margin-left: 15px !important; margin-right: 15px !important; transition: margin 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
     #dynamic-header-wrapper { position: relative; width: 100%; height: 220px; margin-top: 20px; margin-bottom: 20px; transition: height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); z-index: 100; overflow: visible; max-width: 100%; }
-    .app-title-container { position: absolute; display: flex; justify-content: center; align-items: center; z-index: 2; width: 220px; top: 30px; left: calc(50% - 110px); margin: 0; transform: none; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
+    
+    /* [FIX] Pure Coordinate System (Golden Formula) - REPAIRED */
+    .app-title-container { position: absolute; display: flex; justify-content: center; align-items: center; z-index: 2; width: 220px; top: 30px; left: calc(50% - 110px); margin: 0 !important; transform: none; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
     .synapse-logo-container { position: relative; display: inline-block; max-width: 250px; overflow: hidden; white-space: nowrap; transition: max-width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); vertical-align: middle; }
     .synapse-text-logo { position: relative; z-index: 2; font-size: 2.6rem; font-weight: 900; color: #000000; letter-spacing: 2px; line-height: 1; transition: color 0.3s, opacity 0.3s; }
     body.dark-mode .synapse-text-logo { color: #ffffff; }
@@ -240,15 +243,18 @@
     .bg-triangle-bottom { position: absolute; top: 0; left: 0; width: 100%; height: 100%; clip-path: polygon(0 0, 100% 100%, 0 100%); background: linear-gradient(to left, rgba(var(--primary-rgb), 0.8), rgba(var(--primary-rgb), 0.6) 50%, rgba(var(--primary-rgb), 0)); }
     .title-ygo { position: absolute; top: -20px; left: 0; width: 100%; text-align: center; font-size: 1rem; font-weight: 700; color: var(--text-primary); letter-spacing: 2px; opacity: 0.8; transition: opacity 0.3s ease; }
     .title-beta { position: absolute; bottom: -25px; left: 0; width: 100%; text-align: center; font-size: 0.85rem; font-weight: 700; color: var(--error-red); letter-spacing: 3px; transition: opacity 0.3s ease; }
-    .search-box { position: absolute; padding: 0; background: transparent; box-shadow: none; display: flex; flex-direction: column; align-items: center; z-index: 1; top: 130px; width: min(95%, 700px); left: max(2.5%, calc(50% - 350px)); margin: 0; transform: none; transition: top 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); will-change: top, width, left; }
-    @media only screen and (min-width: 801px) { .search-box { width: 700px; margin-left: -350px; } }
+    
+    /* [FIX] Search Box - No @media query interference */
+    .search-box { position: absolute; padding: 0; background: transparent; box-shadow: none; display: flex; flex-direction: column; align-items: center; z-index: 1; top: 130px; width: min(95%, 700px); left: max(2.5%, calc(50% - 350px)); margin: 0 !important; transform: none; transition: top 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); will-change: top, width, left; }
+    /* REMOVED: @media only screen and (min-width: 801px) block */
+    
     .search-header-row { width: 100%; max-width: 700px; margin: 0 auto; display: flex; justify-content: flex-start; padding-left: 5px; margin-bottom: 5px; transition: opacity 0.3s ease; }
     .search-row { display: flex; align-items: center; justify-content: center; width: 100%; gap: 8px; max-width: 700px !important; justify-content: flex-start; transition: max-width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
     
     body.mode-compact #dynamic-header-wrapper { height: 70px; margin-top: 0; max-width: 700px; margin-left: auto; margin-right: auto; }
-    body.mode-compact .app-title-container { top: 27px; width: 3.9rem !important; left: 10px; margin: 0; }
+    body.mode-compact .app-title-container { top: 27px; width: 3.9rem !important; left: 10px; margin: 0 !important; }
     body.mode-compact .title-ygo, body.mode-compact .title-beta { display: none !important; }
-    body.mode-compact .search-box { top: 22px; left: 80px; margin: 0; width: min(calc(100% - 90px), 630px); max-width: 630px; align-items: flex-start; }
+    body.mode-compact .search-box { top: 22px; left: 80px; margin: 0 !important; width: min(calc(100% - 90px), 630px); max-width: 630px; align-items: flex-start; }
     body.mode-compact .search-row { margin: 0; }
     body.mode-compact .synapse-logo-container { max-width: 3.9rem; width: 3.9rem; }
     body.mode-compact .synapse-text-logo { opacity: 0; }
@@ -532,7 +538,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.10.10</span>
+        <span class="footer-item">ver. 0.10.11</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -665,7 +671,6 @@
     
     updateActiveNav('home');
     
-    // [NEW] Initialize Page Add Table
     initPageAdd();
 
     const modals = document.querySelectorAll('.modal');
@@ -693,7 +698,6 @@
 
     M.Tooltip.init(document.querySelectorAll('.tooltipped'));
     
-    // Search Input Logic
     const searchInput = document.getElementById('card-search');
     
     const handleFocusOrClick = () => {
@@ -833,7 +837,6 @@
           document.getElementById('clear-btn').style.display = 'none';
           document.getElementById('custom-dropdown').style.display = 'none';
           toggleSearchWrapper(false);
-          // [NEW] Compact Mode Placeholder "카드 검색"
           searchInput.placeholder = "카드 검색";
       } else {
           searchInput.placeholder = "";
@@ -952,7 +955,6 @@
       else wrapper.classList.remove('active');
   }
 
-  // [NEW] Page Entry Logic
   function initPageAdd() {
       addPageEntry();
   }
@@ -968,29 +970,6 @@
       
       const tbody = document.createElement('tbody');
       tbody.className = `page-entry ${rowClass}`;
-      
-      tbody.innerHTML = `
-        <tr>
-            <td rowspan="2" class="no-cell">${nextNum}</td>
-            <td colspan="2" style="padding:0;"><span class="card-name-disp" style="display:block; padding:4px 8px; width:100%;">카드 번호 입력</span></td>
-            <td style="padding:0; width:35%;"><div class="another-cell-container"><select class="browser-default page-card-another" disabled><option value="" selected>일러스트</option></select></div></td>
-        </tr>
-        <tr>
-            <td style="padding:0; width:33%;"><select class="browser-default page-card-proc" disabled><option value="" disabled selected>레어도</option>${allProcessingTypes.map(p => `<option value="${p}">${getLocalizedRarity(p)}</option>`).join('')}</select></td>
-            <td style="padding:0; width:33%;"><div class="td-flex-container"><select class="browser-default page-card-loc" onchange="handlePageLocationChange(this)" disabled><option value="" disabled selected>보관 위치</option>${allLocations.map(l => `<option value="${l}">${l}</option>`).join('')}<option value="DIRECT">위치 추가</option></select><input type="text" class="direct-input loc-direct" style="display:none;" placeholder="직접 입력"></div></td>
-            <td style="padding:0; width:33%;"><input type="number" class="page-card-qty" min="1" disabled placeholder="수량"></td>
-        </tr>
-        <input type="hidden" class="page-card-no-val"> 
-      `;
-      
-      // Inject Card No Input into first row second cell dynamically to handle layout
-      // Actually, Row 1 Cells: No (Rowspan), Name, CardNo, Another
-      // Revised Row 1: No(rowspan), Name(Auto), CardNo(Input), Another(Select)
-      // Wait, the prompt asked for: No | Name | Card No | Illust
-      
-      // Let's correct the HTML structure based on prompt:
-      // Row 1: No (rowspan=2), Name, Card No, Illust
-      // Row 2: Rarity, Location, Qty
       
       tbody.innerHTML = `
         <tr>
@@ -1050,7 +1029,6 @@
       const locSel = tbody.querySelector('.page-card-loc');
       const qtyInput = tbody.querySelector('.page-card-qty');
 
-      // Reset
       procSel.disabled = true; procSel.value = "";
       locSel.disabled = true; locSel.value = "";
       qtyInput.disabled = true; qtyInput.value = "";
@@ -1061,7 +1039,6 @@
           return;
       }
 
-      // Check Cache
       if (clientCache[cardNo]) {
           const cached = clientCache[cardNo];
           nameSpan.innerText = cached.name;
@@ -1089,7 +1066,6 @@
       const procSel = tbody.querySelector('.page-card-proc');
       const locSel = tbody.querySelector('.page-card-loc');
 
-      // Another
       const count = data.anotherCount || 1;
       let optionsHtml = '';
       if (count > 1) {
@@ -1106,7 +1082,6 @@
       }
       anotherSel.innerHTML = optionsHtml;
 
-      // Rarity
       if (!data.isFallback && data.rarities && data.rarities.length > 0) {
           procSel.innerHTML = `<option value="" disabled selected>레어도</option>` + data.rarities.map(r => `<option value="${r}">${getLocalizedRarity(r)}</option>`).join('');
       } else {
@@ -1129,7 +1104,7 @@
           const cardNo = tbody.querySelector('.page-card-no').value.trim();
           let name = tbody.querySelector('.card-name-disp').innerText;
           
-          if (!cardNo) continue; // Skip empty
+          if (!cardNo) continue; 
 
           let another = tbody.querySelector('.page-card-another').value;
           let proc = tbody.querySelector('.page-card-proc').value;
@@ -1162,19 +1137,12 @@
               await callApi('addCards', {}, validRows);
               showLoading(false);
               showResultModal(successCount, successQty, detailLog);
-              
-              // Clear successful entries
-              // Re-render table? Or just clear inputs.
-              // Let's clear inputs of successful ones
-              let hasFailures = false;
-              // Reset Logic is complex, maybe just show result and let user see.
-              // The result modal has "Confirm" which reloads page.
           } catch (e) {
               showLoading(false);
               M.toast({html: '서버 통신 오류', classes: 'red darken-2'});
           }
       } else if (detailLog.length > 0) {
-          showResultModal(0, 0, detailLog); // Show errors
+          showResultModal(0, 0, detailLog); 
       } else {
           M.toast({html: '등록할 데이터가 없습니다.', classes: 'warning-yellow black-text'});
       }
@@ -1200,14 +1168,99 @@
   function resetManageModal() { document.getElementById('manage-card-tbody').innerHTML = ''; addManageRows(1); }
   function validateSheetLink() { clearTimeout(validationTimeout); const url = document.getElementById('sheet-url').value.trim(); const mark = document.getElementById('valid-mark'), msg = document.getElementById('status-msg'), confirmBtn = document.getElementById('confirm-btn'); if (!url) { mark.style.display = 'none'; msg.innerText = ''; confirmBtn.classList.add('disabled'); return; } const match = url.match(/[-\w]{25,}/); if (!match) { mark.innerHTML = '<i class="material-icons" style="color: var(--error-red)">cancel</i>'; mark.style.display = 'block'; msg.innerText = '구글 시트 링크를 적어주세요.'; msg.style.color = 'var(--error-red)'; confirmBtn.classList.add('disabled'); return; } validationTimeout = setTimeout(async () => { msg.innerText = '권한 확인 중...'; try { const res = await callApi('checkSheet', { targetId: match[0] }); if (res.status === 'OK') { mark.innerHTML = '<i class="material-icons" style="color: var(--success-green)">check_circle</i>'; msg.innerText = '유효한 시트입니다.'; msg.style.color = 'var(--success-green)'; confirmBtn.classList.remove('disabled'); if (res.sheetName) document.getElementById('connected-sheet-name').innerText = `연결됨("${res.sheetName}")`; } else { mark.innerHTML = '<i class="material-icons" style="color: var(--warning-yellow)">warning</i>'; msg.innerText = (res.status === 'NO_EDIT_ACCESS') ? '공유 설정을 링크를 가진 모든 사용자 / 편집자로 설정해주세요.' : '접근할 수 없거나 형식이 잘못되었습니다.'; msg.style.color = 'var(--warning-yellow)'; confirmBtn.classList.add('disabled'); } mark.style.display = 'block'; } catch (e) { msg.innerText = '확인 실패'; } }, 500); }
   async function refreshInitialData() { const savedId = localStorage.getItem(STORAGE_KEY); if (!savedId) return; showLoading(true, "데이터 동기화 중..."); try { const res = await callApi('getInitialData'); showLoading(false); isAppConfigured = res.isConfigured; if (res.isConfigured) { allNames = res.names; allProcessingTypes = res.processingTypes; allLocations = res.locations; localCardDatabase = res.allCards; rarityMap = res.rarityMap || {}; rarityMappingRaw = res.rarityMappingRaw || []; clientCache = res.clientCache || {}; nameDb = res.nameDb || {}; if (res.sheetName) document.getElementById('connected-sheet-name').innerText = `연결됨("${res.sheetName}")`; cidLookup = {}; Object.keys(nameDb).forEach(nameKey => { const entry = nameDb[nameKey]; if (entry && entry.id) { if (!cidLookup[entry.id]) cidLookup[entry.id] = new Set(); cidLookup[entry.id].add(nameKey); } }); const expandedSet = new Set(allNames); allNames.forEach(name => { const entry = nameDb[name]; if (entry && entry.id) { const siblings = cidLookup[entry.id]; if (siblings) { siblings.forEach(sName => expandedSet.add(sName)); } } }); allNames = Array.from(expandedSet).sort(); rarityLookup = {}; rarityMappingRaw.forEach((row, index) => { Object.values(row).forEach(val => { const key = String(val).trim(); if(key) { rarityLookup[key] = { data: row, index: index }; } }); }); } } catch (e) { showLoading(false); } }
+  
+  function startSearch() { 
+      if (!localStorage.getItem(STORAGE_KEY)) { openGuideFromMain(); return; } 
+      const name = document.getElementById('card-search').value; 
+      if(!name || !isAppConfigured) return; 
+
+      saveRecentSearch(name); 
+
+      let targetNames = new Set(); 
+      if (nameDb[name] && nameDb[name].id) { 
+          const cid = nameDb[name].id; 
+          if (cidLookup[cid]) { targetNames = cidLookup[cid]; } else { targetNames.add(name); } 
+      } else { targetNames.add(name); } 
+
+      const filteredRows = localCardDatabase.filter(row => targetNames.has(String(row[0]))); 
+      
+      // [NEW] Logic for Cross-Fade within Search Mode
+      if (currentMode === 'search') {
+          const wrapper = document.getElementById('content-slider-wrapper');
+          const contentWrapper = document.getElementById('result-content-wrapper'); // .content-section
+          const resultArea = document.getElementById('result-area'); // The Table
+
+          // 1. Lock Height (Animation Start)
+          const oldHeight = wrapper.offsetHeight;
+          wrapper.style.height = oldHeight + 'px';
+
+          // 2. Create Ghost (Clone of current table)
+          const ghost = resultArea.cloneNode(true);
+          ghost.id = 'result-ghost';
+          ghost.style.position = 'absolute';
+          ghost.style.top = '0';
+          // Match margins of resultArea to align perfectly
+          ghost.style.left = '0';
+          ghost.style.right = '0';
+          ghost.style.marginLeft = 'auto';
+          ghost.style.marginRight = 'auto';
+          ghost.style.marginTop = '0'; // Margin removed
+          ghost.style.paddingTop = '30px'; // Inherited, but key is margin 0
+          ghost.style.width = '100%';
+          ghost.style.maxWidth = '700px';
+          ghost.style.zIndex = '5';
+          ghost.style.transition = 'opacity 0.4s ease';
+          
+          // Make parent relative so absolute ghost positions correctly
+          // [FIX] Move ghost to wrapper to avoid height impact on contentWrapper
+          wrapper.appendChild(ghost);
+
+          // 3. Render New Data (Updates #result-area)
+          renderTable(filteredRows); 
+
+          // 4. Prepare New State
+          resultArea.style.opacity = '0';
+          resultArea.style.transition = 'opacity 0.4s ease';
+          
+          // Measure New Height - [FIX] Simple offsetHeight thanks to padding
+          const newHeight = resultArea.offsetHeight;
+
+          // 5. Animate (Next Frame)
+          requestAnimationFrame(() => {
+              wrapper.style.height = newHeight + 'px';
+              ghost.style.opacity = '0';
+              resultArea.style.opacity = '1';
+          });
+
+          // 6. Cleanup after 400ms
+          setTimeout(() => {
+              if(ghost.parentNode) ghost.parentNode.removeChild(ghost);
+              wrapper.style.height = ''; // Auto
+              resultArea.style.opacity = '';
+              resultArea.style.transition = '';
+          }, 400);
+
+      } else {
+          // Normal Switch (Not from search mode)
+          renderTable(filteredRows); 
+          switchToMode('search'); 
+      }
+
+      document.getElementById('custom-dropdown').style.display = 'none'; 
+      toggleSearchWrapper(false); 
+      checkClearBtn(); 
+      showLoading(false); 
+  }
+  
   function findMappingRow(key) { if (!rarityMappingRaw || rarityMappingRaw.length === 0) return null; return rarityMappingRaw.find(row => Object.values(row).includes(key)); }
   function getLocalizedRarity(key) { if (!key) return ""; const info = rarityLookup[key]; if (info && info.data[currentRegion]) { return info.data[currentRegion]; } return key; }
   
-  // (Rest of the functions: renderTable, toggleNewDetail, etc. - No changes needed)
   function renderTable(rows) { 
+      // showLoading(false); // [FIX] Removed
       const resultArea = document.getElementById('result-area'); 
       if (rows.length === 0) { 
           resultArea.innerHTML = "<p class='center'>결과 없음</p>"; 
+          // [FIX] Removed animation triggering logic
           return; 
       } 
       const groups = {}; 
@@ -1216,6 +1269,7 @@
       Object.keys(groups).forEach(cardNo => { const rowId = `row-${cardNo}`.replace(/[^a-zA-Z0-9]/g, ''); const cardRows = rows.filter(r => String(r[1]) === cardNo); const totalQty = cardRows.reduce((sum, r) => sum + (parseInt(r[3]) || 0), 0); const locSet = new Set(cardRows.map(r => String(r[4])).filter(l => l)); const distinctKeys = [...new Set(cardRows.map(r => String(r[2]).trim()).filter(k => k))]; distinctKeys.sort((a, b) => { const infoA = rarityLookup[a]; const infoB = rarityLookup[b]; const idxA = infoA ? infoA.index : 999999; const idxB = infoB ? infoB.index : 999999; return idxA - idxB || a.localeCompare(b); }); const displayNamesForSummary = [...new Set(distinctKeys.map(k => rarityMap[k] || k))]; const procStr = displayNamesForSummary.join(", "); const locStr = [...locSet].join(", "); const anotherGroups = {}; cardRows.forEach(r => { const another = String(r[5] || "").trim(); const displayAnother = another === "" ? "기본" : another; if(!anotherGroups[displayAnother]) anotherGroups[displayAnother] = []; anotherGroups[displayAnother].push(r); }); let leftTableHtml = `<table class="split-table"><thead><tr><th class="fp-col-1">일러스트</th><th class="fp-col-2">보관 위치</th><th class="fp-col-3">총 수량</th></tr></thead><tbody>`; let rightTableHtml = `<table class="split-table"><thead><tr>`; distinctKeys.forEach(key => { const info = rarityLookup[key]; let displayName = key; let tooltipContent = key; if (info) { displayName = info.data.display || key; tooltipContent = info.data[currentRegion] || key; } tooltipContent = tooltipContent.replace(/\(/g, '<br>('); rightTableHtml += `<th class="sp-col tooltipped" data-position="top" data-tooltip="${tooltipContent}">${displayName}</th>`; }); rightTableHtml += `</tr></thead><tbody>`; const anotherKeys = Object.keys(anotherGroups).sort((a, b) => { if (a === "기본") return -1; if (b === "기본") return 1; return a.localeCompare(b, undefined, { numeric: true }); }); anotherKeys.forEach(another => { const grpRows = anotherGroups[another]; const locGroups = {}; grpRows.forEach(r => { const loc = String(r[4]); const proc = String(r[2]); const qty = parseInt(r[3]) || 0; if(!locGroups[loc]) locGroups[loc] = { total: 0, procs: {} }; locGroups[loc].total += qty; locGroups[loc].procs[proc] = (locGroups[loc].procs[proc] || 0) + qty; }); const locKeys = Object.keys(locGroups); locKeys.forEach((loc, idx) => { const d = locGroups[loc]; leftTableHtml += `<tr>`; if(idx === 0) leftTableHtml += `<td rowspan="${locKeys.length}">${another}</td>`; leftTableHtml += `<td>${loc}</td><td>${d.total}</td></tr>`; rightTableHtml += `<tr>`; distinctKeys.forEach(key => { const val = d.procs[key] || 0; rightTableHtml += `<td>${val}</td>`; }); rightTableHtml += `</tr>`; }); }); leftTableHtml += `</tbody></table>`; rightTableHtml += `</tbody></table>`; newHtml += ` <div class="new-card-box"> <div class="summary-split-wrapper"> <div class="summary-left">${cardNo}</div> <div class="summary-right"> <table class="summary-table"> <tr><td class="summary-label-cell">보관 위치</td><td class="summary-label-cell">수량</td></tr> <tr><td class="summary-value-cell">${locStr}</td><td class="summary-value-cell">${totalQty}</td></tr> <tr><td class="summary-label-cell border-double-top">보유 레어도</td><td class="summary-value-cell border-double-top">${procStr}</td></tr> </table> </div> </div> <div id="detail-${rowId}" class="detail-slide-wrapper"> <div class="split-table-wrapper"> <div class="fixed-side">${leftTableHtml}</div> <div class="scroll-side">${rightTableHtml}</div> </div> </div> <button class="show-more-btn" onclick="toggleNewDetail('detail-${rowId}')"><span>자세히 보기</span><i class="material-icons tiny">keyboard_arrow_down</i></button> </div> `; }); 
       resultArea.innerHTML = newHtml; 
       M.Tooltip.init(resultArea.querySelectorAll('.tooltipped'), { html: true, margin: 3 }); 
+      // [FIX] Removed animation triggering logic
   }
   function toggleNewDetail(detailId) { const content = document.getElementById(detailId); const btn = content.nextElementSibling; const textSpan = btn.querySelector('span'); const icon = btn.querySelector('i'); if (content.style.maxHeight) { content.style.maxHeight = null; textSpan.innerText = '자세히 보기'; icon.innerText = 'keyboard_arrow_down'; } else { content.style.maxHeight = content.scrollHeight + "px"; textSpan.innerText = '간략히 보기'; icon.innerText = 'keyboard_arrow_up'; } }
   function toggleAnother(rowId) {}
