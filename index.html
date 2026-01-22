@@ -73,7 +73,8 @@
       --nav-border: rgba(255, 255, 255, 0.1);
       --nav-shadow: 0 4px 20px rgba(0,0,0,0.5);
       
-      --bg-odd-row: #26a69a; 
+      /* [MODIFIED] Dark Mode Odd Row Color Adjusted */
+      --bg-odd-row: #3d756f; 
     }
 
     body, input, button, table, .btn, .modal-content, select { font-family: 'Pretendard', sans-serif !important; }
@@ -606,7 +607,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.11.10</span>
+        <span class="footer-item">ver. 0.11.11</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -747,7 +748,7 @@
             onCloseEnd: function(el) { 
                 if(el.id === 'add-card-modal') {
                     if (hasRegisteredInSession) {
-                        // [MODIFIED] Do nothing, already synced via result modal
+                        
                     }
                     else if(!el.dataset.keepData) resetAddModal();
                     else delete el.dataset.keepData; 
@@ -1068,7 +1069,6 @@
       input.setSelectionRange(start, start);
   }
 
-  // [MODIFIED] fetchCardNameForPage: Force Link Generation
   async function fetchCardNameForPage(input) {
       const topRow = input.closest('tr');
       const bottomRow = topRow.nextElementSibling; 
@@ -1097,12 +1097,14 @@
 
       if (clientCache[cardNo]) {
           const cached = clientCache[cardNo];
-          // [NEW] Generate Link with fallback
-          const linkId = (cached.linkData && cached.linkData.id) ? cached.linkData.id : "/MISSING_CID";
-          const linkLocale = (cached.linkData && cached.linkData.locale) ? cached.linkData.locale : currentRegion;
-          const url = "https://www.db.yugioh-card.com" + linkId + "&request_locale=" + linkLocale;
-          nameDiv.innerHTML = `<a href="${url}" target="_blank" class="card-link" onclick="event.stopPropagation()">${cached.name}</a>`;
-          
+          if (cached.linkData) {
+              const linkId = (cached.linkData.id) ? cached.linkData.id : "/MISSING_CID";
+              const linkLocale = (cached.linkData.locale) ? cached.linkData.locale : currentRegion;
+              const url = "https://www.db.yugioh-card.com" + linkId + "&request_locale=" + linkLocale;
+              nameDiv.innerHTML = `<a href="${url}" target="_blank" class="card-link" onclick="event.stopPropagation()">${cached.name}</a>`;
+          } else {
+              nameDiv.innerText = cached.name;
+          }
           applyPageCardDataToRows(cached, topRow, bottomRow);
           return;
       }
@@ -1117,7 +1119,7 @@
               nameDiv.innerText = res.name;
           } else {
               clientCache[cardNo] = { name: res.name, anotherCount: res.anotherCount, rarities: res.rarities, linkData: res.linkData };
-              // [NEW] Generate Link with fallback
+              
               const linkId = (res.linkData && res.linkData.id) ? res.linkData.id : "/MISSING_CID";
               const linkLocale = (res.linkData && res.linkData.locale) ? res.linkData.locale : currentRegion;
               const url = "https://www.db.yugioh-card.com" + linkId + "&request_locale=" + linkLocale;
@@ -1140,7 +1142,8 @@
       let optionsHtml = '';
       if (count > 1) {
           optionsHtml += `<option value="" disabled selected>일러스트</option>`;
-          optionsHtml += `<option value="">기본</option>`;
+          // [MODIFIED] Value set to "DEFAULT"
+          optionsHtml += `<option value="DEFAULT">기본</option>`;
           for(let i=2; i<=count; i++) {
               let suffix = "th"; if(i===2) suffix="nd"; if(i===3) suffix="rd";
               optionsHtml += `<option value="${i}${suffix}">${i}${suffix}</option>`;
@@ -1217,7 +1220,9 @@
               detailLog.push({ no, name: nameText, cardNo, another, proc: proc||"미선택", loc: loc||"미선택", qty: qty||0, status: 'fail', failReason });
               topRow.dataset.status = 'fail'; 
           } else {
-              validRows.push([nameText, cardNo, proc, qty, loc, another]);
+              // [MODIFIED] Convert "DEFAULT" back to ""
+              const submitAnother = (another === "DEFAULT") ? "" : another;
+              validRows.push([nameText, cardNo, proc, qty, loc, submitAnother]);
               detailLog.push({ no, name: nameText, cardNo, another, proc, loc, qty, status: 'success' });
               successCount++;
               successQty += qty;
