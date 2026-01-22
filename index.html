@@ -73,7 +73,6 @@
       --nav-border: rgba(255, 255, 255, 0.1);
       --nav-shadow: 0 4px 20px rgba(0,0,0,0.5);
       
-      /* [MODIFIED] Dark Mode Odd Row Color (Teal 300) */
       --bg-odd-row: #56B0AB; 
     }
 
@@ -187,7 +186,6 @@
         color: inherit;
     }
 
-    /* Card Link Style */
     .card-link {
         color: inherit;
         text-decoration: none;
@@ -413,6 +411,17 @@
     .sheet-name-display { display: inline-block; max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; color: var(--text-muted); font-size: 0.8rem; margin-left: 8px; }
     @media only screen and (max-width: 600px) { .sheet-name-display { max-width: 100px; } }
 
+    /* [MODIFIED] v0.11.14 UI Changes */
+    /* Remove icon style */
+    .content-header-icon { display: none; } 
+    
+    /* Title Spacing */
+    .content-title {
+        margin-bottom: 30px;
+        font-weight: 700;
+        color: var(--text-primary);
+    }
+
     /* Result Modal Styles */
     .result-icon-area { text-align: center; margin-top: 20px; margin-bottom: 10px; }
     .result-icon-area i { font-size: 4rem; }
@@ -426,6 +435,29 @@
     
     #result-summary-body td:first-child { width: 80%; } 
     #result-summary-body td:last-child { width: 20%; white-space: nowrap; }
+
+    /* [NEW] Auto Copy Switch Style */
+    .input-control-row {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        margin-bottom: 10px;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+        gap: 10px;
+    }
+    .switch label {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        font-weight: 600;
+    }
+    .switch label input[type=checkbox]:checked + .lever {
+        background-color: var(--primary-light);
+    }
+    .switch label input[type=checkbox]:checked + .lever:after {
+        background-color: var(--primary-color);
+    }
   </style>
 </head>
 <body>
@@ -558,15 +590,24 @@
       </div>
 
       <div id="discard-content-area" class="content-section centered-content-area">
-          <i class="material-icons" style="font-size: 4rem; color: var(--text-muted); margin-bottom: 20px;">delete_sweep</i>
-          <h5 style="font-weight: 700; color: var(--text-primary);">카드 폐기</h5>
+          <h5 class="content-title">카드 폐기</h5>
           <p style="color: var(--text-secondary);">폐기 기능을 준비 중입니다.</p>
       </div>
 
       <div id="add-content-area" class="content-section centered-content-area">
-          <i class="material-icons" style="font-size: 4rem; color: var(--text-muted); margin-bottom: 20px;">library_add</i>
-          <h5 style="font-weight: 700; color: var(--text-primary);">카드 등록</h5>
+          <h5 class="content-title">카드 등록</h5>
           
+          <div class="input-control-row">
+              <div class="switch">
+                  <label>
+                      보관 위치 자동 복사
+                      <input type="checkbox" id="auto-copy-switch" onchange="toggleAutoCopy()">
+                      <span class="lever"></span>
+                      ON
+                  </label>
+              </div>
+          </div>
+
           <table id="page-add-table" class="page-entry-table">
               <tbody id="page-add-tbody">
                   </tbody>
@@ -587,15 +628,13 @@
       </div>
 
       <div id="move-content-area" class="content-section centered-content-area">
-          <i class="material-icons" style="font-size: 4rem; color: var(--text-muted); margin-bottom: 20px;">import_export</i>
-          <h5 style="font-weight: 700; color: var(--text-primary);">카드 이동</h5>
+          <h5 class="content-title">카드 이동</h5>
           <p style="color: var(--text-secondary); margin-bottom: 30px;">카드의 보관 위치를 변경합니다.</p>
           <button class="btn cyan-theme waves-effect waves-light" onclick="checkAuthAndOpen('#manage-card-modal')">기존 모달 열기</button>
       </div>
 
       <div id="settings-content-area" class="content-section centered-content-area">
-          <i class="material-icons" style="font-size: 4rem; color: var(--text-muted); margin-bottom: 20px;">settings</i>
-          <h5 style="font-weight: 700; color: var(--text-primary);">환경 설정</h5>
+          <h5 class="content-title">환경 설정</h5>
           <p style="color: var(--text-secondary); margin-bottom: 30px;">구글 시트 연결 및 사용법을 확인합니다.</p>
           <button class="btn cyan-theme waves-effect waves-light" onclick="openSettingsWithGuide()">설정 모달 열기</button>
       </div>
@@ -607,7 +646,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.11.13</span>
+        <span class="footer-item">ver. 0.11.14</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -730,6 +769,9 @@
   let blurTimer = null;
   let currentRegion = 'ko';
   let currentMode = 'home'; 
+  
+  // [NEW] Auto Copy State
+  let isAutoCopyEnabled = false;
 
   let currentFocus = -1;
 
@@ -748,7 +790,6 @@
             onCloseEnd: function(el) { 
                 if(el.id === 'add-card-modal') {
                     if (hasRegisteredInSession) {
-                        // [MODIFIED] Do nothing, already synced via result modal
                     }
                     else if(!el.dataset.keepData) resetAddModal();
                     else delete el.dataset.keepData; 
@@ -1026,6 +1067,11 @@
       else wrapper.classList.remove('active');
   }
 
+  // [NEW] Toggle Auto Copy
+  function toggleAutoCopy() {
+      isAutoCopyEnabled = document.getElementById('auto-copy-switch').checked;
+  }
+
   function initPageAdd() {
       document.getElementById('page-add-tbody').innerHTML = '';
       addPageEntry();
@@ -1061,6 +1107,40 @@
 
       tbody.appendChild(trTop);
       tbody.appendChild(trBottom);
+      
+      // [NEW] Attach auto-copy listener
+      const locInput = trBottom.querySelector('.page-card-loc');
+      locInput.addEventListener('input', function() {
+          if (!isAutoCopyEnabled) return;
+          
+          const val = this.value;
+          const rows = document.getElementById('page-add-tbody').querySelectorAll('tr.bottom-row');
+          let startCopy = false;
+          
+          rows.forEach(row => {
+              if (row === trBottom) {
+                  startCopy = true;
+                  return; // Skip current row
+              }
+              if (startCopy) {
+                  const nextLocInput = row.querySelector('.page-card-loc');
+                  const nextQtyInput = row.querySelector('.page-card-qty');
+                  
+                  if (!nextLocInput.disabled) {
+                      nextLocInput.value = val;
+                      
+                      // Auto enable qty if location has val
+                      if (val.trim().length > 0) {
+                          nextQtyInput.disabled = false;
+                          if (!nextQtyInput.value) nextQtyInput.value = "1";
+                      } else {
+                          nextQtyInput.disabled = true;
+                          nextQtyInput.value = "";
+                      }
+                  }
+              }
+          });
+      });
   }
 
   function handleCardNoInput(input) {
@@ -1142,7 +1222,6 @@
       let optionsHtml = '';
       if (count > 1) {
           optionsHtml += `<option value="" disabled selected>일러스트</option>`;
-          // [MODIFIED] Value set to "DEFAULT"
           optionsHtml += `<option value="DEFAULT">기본</option>`;
           for(let i=2; i<=count; i++) {
               let suffix = "th"; if(i===2) suffix="nd"; if(i===3) suffix="rd";
@@ -1168,7 +1247,9 @@
 
       locInput.disabled = false; 
       
+      // [NEW] Trigger Auto Copy on initial load if applicable (unlikely on fetch, but good to have input listener ready)
       locInput.oninput = function() {
+          // Handled by addEventListener in addPageEntry now, but keep basic logic for qty enable
           const qtyInp = bottomRow.querySelector('.page-card-qty');
           if(this.value.trim().length > 0) {
               qtyInp.disabled = false;
@@ -1220,10 +1301,8 @@
               detailLog.push({ no, name: nameText, cardNo, another, proc: proc||"미선택", loc: loc||"미선택", qty: qty||0, status: 'fail', failReason });
               topRow.dataset.status = 'fail'; 
           } else {
-              // [MODIFIED] Convert "DEFAULT" back to ""
               const submitAnother = (another === "DEFAULT") ? "" : another;
               validRows.push([nameText, cardNo, proc, qty, loc, submitAnother]);
-              // Pass the raw 'another' ("DEFAULT") to detailLog for display logic in modal
               detailLog.push({ no, name: nameText, cardNo, another, proc, loc, qty, status: 'success' });
               successCount++;
               successQty += qty;
@@ -1388,8 +1467,6 @@
       M.Tooltip.init(resultArea.querySelectorAll('.tooltipped'), { html: true, margin: 3 }); 
   }
   function toggleNewDetail(detailId) { const content = document.getElementById(detailId); const btn = content.nextElementSibling; const textSpan = btn.querySelector('span'); const icon = btn.querySelector('i'); if (content.style.maxHeight) { content.style.maxHeight = null; textSpan.innerText = '자세히 보기'; icon.innerText = 'keyboard_arrow_down'; } else { content.style.maxHeight = content.scrollHeight + "px"; textSpan.innerText = '간략히 보기'; icon.innerText = 'keyboard_arrow_up'; } }
-  
-  // [MODIFIED] showResultModal (v0.11.13)
   function showResultModal(count, totalQty, detailLog, fatalError = null) { 
       const el = document.getElementById('add-result-modal');
       let modal = M.Modal.getInstance(el);
@@ -1487,7 +1564,6 @@
           const anotherStyle = (l.status === 'fail' && l.failReason === 'no_another') ? 'color:var(--error-red); font-weight:700;' : '';
           const procStyle = (l.status === 'fail' && l.failReason === 'no_proc') ? 'color:var(--error-red); font-weight:700;' : '';
           const locStyle = (l.status === 'fail' && l.failReason === 'no_loc') ? 'color:var(--error-red); font-weight:700;' : '';
-          // [MODIFIED] Quantity Style
           const qtyStyle = (l.status === 'fail' && l.failReason === 'invalid_qty') ? 'color:var(--error-red); font-weight:700;' : '';
 
           return `<tr class="${rowClass}"><td>${l.no}</td><td style="${nameStyle}">${l.name}</td><td>${l.cardNo}</td><td style="${anotherStyle}">${anotherTxt}</td><td style="${procStyle}">${procTxt}</td><td style="${locStyle}">${locTxt}</td><td style="${qtyStyle}">${qtyTxt}</td></tr>`; 
@@ -1503,7 +1579,7 @@
   }
   
   function toggleResultDetail() { const box = document.getElementById('result-detail-box'); const icon = document.getElementById('toggle-icon'); const isHidden = box.style.display === 'none'; box.style.display = isHidden ? 'block' : 'none'; icon.innerText = isHidden ? 'keyboard_arrow_up' : 'keyboard_arrow_down'; }
-  // [MODIFIED] handleContinueRegistration: Re-indexing
+  // [MODIFIED] handleContinueRegistration: Re-sync condition
   async function handleContinueRegistration() { 
       M.Modal.getInstance(document.getElementById('add-result-modal')).close(); 
       const tbody = document.getElementById('page-add-tbody'); 
@@ -1545,6 +1621,7 @@
           bottomRow.classList.add(groupClass);
       }
 
+      // [MODIFIED] Sync only if success
       if (hasSuccess) {
           await refreshInitialData();
       }
