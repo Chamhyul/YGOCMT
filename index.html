@@ -73,8 +73,8 @@
       --nav-border: rgba(255, 255, 255, 0.1);
       --nav-shadow: 0 4px 20px rgba(0,0,0,0.5);
       
-      /* [MODIFIED] Dark Mode Odd Row Color Adjusted */
-      --bg-odd-row: #3d756f; 
+      /* [MODIFIED] Dark Mode Odd Row Color (Teal 300) */
+      --bg-odd-row: #4db6ac; 
     }
 
     body, input, button, table, .btn, .modal-content, select { font-family: 'Pretendard', sans-serif !important; }
@@ -607,7 +607,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.11.11</span>
+        <span class="footer-item">ver. 0.11.12</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -1220,9 +1220,10 @@
               detailLog.push({ no, name: nameText, cardNo, another, proc: proc||"미선택", loc: loc||"미선택", qty: qty||0, status: 'fail', failReason });
               topRow.dataset.status = 'fail'; 
           } else {
-              // [MODIFIED] Convert "DEFAULT" back to ""
+              // Convert "DEFAULT" back to ""
               const submitAnother = (another === "DEFAULT") ? "" : another;
               validRows.push([nameText, cardNo, proc, qty, loc, submitAnother]);
+              // Pass the raw 'another' ("DEFAULT") to detailLog for display logic in modal
               detailLog.push({ no, name: nameText, cardNo, another, proc, loc, qty, status: 'success' });
               successCount++;
               successQty += qty;
@@ -1387,6 +1388,8 @@
       M.Tooltip.init(resultArea.querySelectorAll('.tooltipped'), { html: true, margin: 3 }); 
   }
   function toggleNewDetail(detailId) { const content = document.getElementById(detailId); const btn = content.nextElementSibling; const textSpan = btn.querySelector('span'); const icon = btn.querySelector('i'); if (content.style.maxHeight) { content.style.maxHeight = null; textSpan.innerText = '자세히 보기'; icon.innerText = 'keyboard_arrow_down'; } else { content.style.maxHeight = content.scrollHeight + "px"; textSpan.innerText = '간략히 보기'; icon.innerText = 'keyboard_arrow_up'; } }
+  
+  // [MODIFIED] showResultModal (v0.11.12)
   function showResultModal(count, totalQty, detailLog, fatalError = null) { 
       const el = document.getElementById('add-result-modal');
       let modal = M.Modal.getInstance(el);
@@ -1430,6 +1433,7 @@
       
       let summaryHtml = ""; 
       
+      // 1. Success Group
       const successLogs = detailLog.filter(l => l.status === 'success');
       if (successLogs.length > 0) { 
           const nameAgg = {}; 
@@ -1442,6 +1446,7 @@
           }
       } 
       
+      // 2. Fail Group (General)
       const failLogs = detailLog.filter(l => l.status === 'fail' && l.failReason !== 'invalid_no');
       failLogs.forEach((l) => { 
           let reason = l.name;
@@ -1450,6 +1455,7 @@
           summaryHtml += `<tr class="fail-row"><td style="color:var(--error-red);">${l.name}</td><td style="color:var(--error-red); font-size:0.8rem;">실패</td></tr>`; 
       });
 
+      // 3. Fail Group (Invalid No)
       const invalidLogs = detailLog.filter(l => l.status === 'fail' && l.failReason === 'invalid_no');
       invalidLogs.forEach((l) => {
           summaryHtml += `<tr class="fail-row"><td style="color:var(--error-red);">번호 오류</td><td style="color:var(--error-red); font-size:0.8rem;">실패</td></tr>`;
@@ -1460,13 +1466,15 @@
       
       tableBody.innerHTML = summaryHtml; 
       
+      // [MODIFIED] Detail Body Logic with "DEFAULT" -> "기본" fix
       let detailHtml = detailLog.map(l => { 
           const rowClass = l.status === 'success' ? 'success-row' : 'fail-row'; 
           
           let procTxt = l.proc;
           let locTxt = l.loc;
           let qtyTxt = l.qty;
-          let anotherTxt = l.another || "기본";
+          // [FIX] Convert "DEFAULT" or empty to "기본"
+          let anotherTxt = (l.another === "DEFAULT" || !l.another) ? "기본" : l.another;
 
           if (l.status === 'fail') {
               if (l.failReason === 'invalid_no') {
@@ -1524,6 +1532,7 @@
           addPageEntry(); 
       }
       
+      // Re-index and Re-color
       const remainingRows = tbody.querySelectorAll('tr');
       for (let i = 0; i < remainingRows.length; i += 2) {
           const topRow = remainingRows[i];
