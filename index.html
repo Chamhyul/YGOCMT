@@ -130,7 +130,8 @@
     body.dark-mode .page-entry-table input,
     body.dark-mode .page-entry-table select,
     body.dark-mode .card-name-disp,
-    body.dark-mode .page-entry-table .no-cell {
+    body.dark-mode .page-entry-table .no-cell,
+    body.dark-mode .card-link { /* Link color in dark mode */
         color: var(--text-table-dark) !important;
     }
 
@@ -183,6 +184,17 @@
         font-weight: 700;
         font-size: 0.9rem;
         color: inherit;
+    }
+
+    /* [NEW] Card Link Style */
+    .card-link {
+        color: inherit;
+        text-decoration: none;
+        cursor: pointer;
+        border-bottom: 1px dotted currentColor;
+    }
+    .card-link:hover {
+        opacity: 0.7;
     }
 
     .add-row-btn-cell {
@@ -406,13 +418,11 @@
     .result-summary, .result-fail-summary { text-align: center; }
     .toggle-result-btn { display: flex; justify-content: center; width: 100%; cursor: pointer; } 
     
-    /* [MODIFIED] v0.11.7: Table Width & Spacing */
     #result-summary-table-box { 
         max-width: 300px; 
         margin: 0 auto 20px auto; 
     }
     
-    /* [NEW] Summary Table Column Sizing */
     #result-summary-body td:first-child { width: 80%; } 
     #result-summary-body td:last-child { width: 20%; white-space: nowrap; }
   </style>
@@ -571,7 +581,6 @@
           </table>
 
           <div class="page-btn-container">
-              <button class="btn grey lighten-2 waves-effect waves-dark" style="color:#424242; font-weight:600;" onclick="checkAuthAndOpen('#add-card-modal')">기존 모달 열기</button>
               <button class="btn cyan-theme waves-effect waves-light" onclick="submitPageEntries()">등록</button>
           </div>
       </div>
@@ -597,7 +606,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.11.7</span>
+        <span class="footer-item">ver. 0.11.8</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -692,7 +701,7 @@
     <div class="toggle-result-btn" onclick="toggleResultDetail()"><span>자세히</span><i id="toggle-icon" class="material-icons" style="font-size:1.2rem; transform: translateY(1px);">keyboard_arrow_down</i></div>
     <div id="result-detail-box" class="result-detail-wrapper">
         <table class="result-table">
-            <thead><tr><th style="width:10%;">No</th><th style="width:20%;">카드 이름</th><th style="width:15%;">카드 번호</th><th style="width:15%;">어나더</th><th style="width:15%;">레어도</th><th style="width:15%;">보관 위치</th><th style="width:10%;">수량</th></tr></thead>
+            <thead><tr><th style="width:10%;">No</th><th style="width:20%;">카드 이름</th><th style="width:15%;">카드 번호</th><th style="width:15%;">일러스트</th><th style="width:15%;">레어도</th><th style="width:15%;">보관 위치</th><th style="width:10%;">수량</th></tr></thead>
             <tbody id="result-detail-body"></tbody>
         </table>
     </div>
@@ -738,7 +747,6 @@
             onCloseEnd: function(el) { 
                 if(el.id === 'add-card-modal') {
                     if (hasRegisteredInSession) {
-                        // [MODIFIED] Do nothing, already synced via result modal
                     }
                     else if(!el.dataset.keepData) resetAddModal();
                     else delete el.dataset.keepData; 
@@ -1087,7 +1095,13 @@
 
       if (clientCache[cardNo]) {
           const cached = clientCache[cardNo];
-          nameDiv.innerText = cached.name;
+          // [MODIFIED] Check for linkData
+          if (cached.linkData) {
+              const url = `https://www.db.yugioh-card.com/yugiohdb/card_search.action?ope=2&cid=${cached.linkData.id}&request_locale=${cached.linkData.locale}`;
+              nameDiv.innerHTML = `<a href="${url}" target="_blank" class="card-link" onclick="event.stopPropagation()">${cached.name}</a>`;
+          } else {
+              nameDiv.innerText = cached.name;
+          }
           applyPageCardDataToRows(cached, topRow, bottomRow);
           return;
       }
@@ -1101,8 +1115,14 @@
           if (res.name.includes("오류") || res.name.includes("확인하세요")) {
               nameDiv.innerText = res.name;
           } else {
-              clientCache[cardNo] = { name: res.name, anotherCount: res.anotherCount, rarities: res.rarities };
-              nameDiv.innerText = res.name;
+              clientCache[cardNo] = { name: res.name, anotherCount: res.anotherCount, rarities: res.rarities, linkData: res.linkData };
+              // [MODIFIED] Check for linkData
+              if (res.linkData) {
+                  const url = `https://www.db.yugioh-card.com/yugiohdb/card_search.action?ope=2&cid=${res.linkData.id}&request_locale=${res.linkData.locale}`;
+                  nameDiv.innerHTML = `<a href="${url}" target="_blank" class="card-link" onclick="event.stopPropagation()">${res.name}</a>`;
+              } else {
+                  nameDiv.innerText = res.name;
+              }
               applyPageCardDataToRows(res, topRow, bottomRow);
           }
       } catch (e) {
@@ -1139,6 +1159,11 @@
       }
       
       procSel.disabled = false;
+      // [MODIFIED] Auto-select first rarity option
+      if (procSel.options.length > 1) {
+          procSel.selectedIndex = 1;
+      }
+
       locInput.disabled = false; 
       
       locInput.oninput = function() {
@@ -1354,6 +1379,8 @@
       M.Tooltip.init(resultArea.querySelectorAll('.tooltipped'), { html: true, margin: 3 }); 
   }
   function toggleNewDetail(detailId) { const content = document.getElementById(detailId); const btn = content.nextElementSibling; const textSpan = btn.querySelector('span'); const icon = btn.querySelector('i'); if (content.style.maxHeight) { content.style.maxHeight = null; textSpan.innerText = '자세히 보기'; icon.innerText = 'keyboard_arrow_down'; } else { content.style.maxHeight = content.scrollHeight + "px"; textSpan.innerText = '간략히 보기'; icon.innerText = 'keyboard_arrow_up'; } }
+  
+  // [MODIFIED] showResultModal (v0.11.8)
   function showResultModal(count, totalQty, detailLog, fatalError = null) { 
       const el = document.getElementById('add-result-modal');
       let modal = M.Modal.getInstance(el);
@@ -1395,39 +1422,62 @@
       successText.innerHTML = mainMsg;
       failText.innerHTML = subMsg;
       
-      const successLogs = detailLog.filter(l => l.status === 'success'); 
+      // [MODIFIED] Summary Logic
       let summaryHtml = ""; 
       
+      // 1. Success Group
+      const successLogs = detailLog.filter(l => l.status === 'success');
       if (successLogs.length > 0) { 
           const nameAgg = {}; 
           successLogs.forEach(l => { 
               if(!nameAgg[l.name]) nameAgg[l.name] = 0;
               nameAgg[l.name] += l.qty;
           }); 
-          
           for(const [name, qty] of Object.entries(nameAgg)) {
               summaryHtml += `<tr class="success-row"><td>${name}</td><td>${qty}장</td></tr>`;
           }
       } 
       
-      const failLogs = detailLog.filter(l => l.status === 'fail'); 
-      if (failLogs.length > 0) { 
-          failLogs.forEach((l) => { 
-              let reason = l.name; 
-              if(l.failReason === "no_proc" || l.failReason === "no_loc") reason = `${l.failReason === "no_proc" ? "레어도" : "보관 위치"} 미선택`; 
-              else if(l.failReason === "invalid_no") reason = "존재하지 않은 카드 번호"; 
-              summaryHtml += `<tr class="fail-row"><td style="color:var(--error-red);">${reason}</td><td>-</td></tr>`; 
-          }); 
-      } 
+      // 2. Fail Group (General)
+      const failLogs = detailLog.filter(l => l.status === 'fail' && l.failReason !== 'invalid_no');
+      failLogs.forEach((l) => { 
+          let reason = l.name;
+          if(l.failReason === "no_proc" || l.failReason === "no_loc") reason = `${l.failReason === "no_proc" ? "레어도" : "보관 위치"} 미선택`;
+          summaryHtml += `<tr class="fail-row"><td style="color:var(--error-red);">${l.name}</td><td style="color:var(--error-red); font-size:0.8rem;">실패</td></tr>`; 
+      });
+
+      // 3. Fail Group (Invalid No)
+      const invalidLogs = detailLog.filter(l => l.status === 'fail' && l.failReason === 'invalid_no');
+      invalidLogs.forEach((l) => {
+          summaryHtml += `<tr class="fail-row"><td style="color:var(--error-red);">번호 오류</td><td style="color:var(--error-red); font-size:0.8rem;">실패</td></tr>`;
+      });
       
+      // Detail Header Update
       const tableHead = document.querySelector('#result-detail-box thead tr');
-      if(tableHead) tableHead.innerHTML = `<th style="width:10%;">No</th><th style="width:20%;">카드 이름</th><th style="width:15%;">카드 번호</th><th style="width:15%;">어나더</th><th style="width:15%;">레어도</th><th style="width:15%;">보관 위치</th><th style="width:10%;">수량</th>`; 
+      if(tableHead) tableHead.innerHTML = `<th style="width:10%;">No</th><th style="width:20%;">카드 이름</th><th style="width:15%;">카드 번호</th><th style="width:15%;">일러스트</th><th style="width:15%;">레어도</th><th style="width:15%;">보관 위치</th><th style="width:10%;">수량</th>`; 
       
       tableBody.innerHTML = summaryHtml; 
       
+      // [MODIFIED] Detail Body Logic
       let detailHtml = detailLog.map(l => { 
           const rowClass = l.status === 'success' ? 'success-row' : 'fail-row'; 
-          return `<tr class="${rowClass}"><td>${l.no}</td><td style="${l.status==='fail' && (l.failReason==='invalid_no' || l.failReason==='error') ? 'color:var(--error-red); font-weight:700;' : ''}">${l.name}</td><td>${l.cardNo}</td><td>${l.another || '-'}</td><td style="${l.status==='fail' && l.failReason==='no_proc' ? 'color:var(--error-red); font-weight:700;' : ''}">${l.proc}</td><td style="${l.status==='fail' && l.failReason==='no_loc' ? 'color:var(--error-red); font-weight:700;' : ''}">${l.loc}</td><td>${l.qty}</td></tr>`; 
+          
+          let procTxt = l.proc;
+          let locTxt = l.loc;
+          let qtyTxt = l.qty;
+          let anotherTxt = l.another || "기본";
+
+          if (l.status === 'fail') {
+              if (l.failReason === 'invalid_no') {
+                  procTxt = "-"; locTxt = "-"; qtyTxt = "-"; anotherTxt = "-";
+              } else if (l.failReason === 'no_proc') {
+                  procTxt = "미선택"; locTxt = "-"; qtyTxt = "-";
+              } else if (l.failReason === 'no_loc') {
+                  locTxt = "미선택"; qtyTxt = "-";
+              }
+          }
+
+          return `<tr class="${rowClass}"><td>${l.no}</td><td style="${l.status==='fail' ? 'color:var(--error-red); font-weight:700;' : ''}">${l.name}</td><td>${l.cardNo}</td><td>${anotherTxt}</td><td style="${l.failReason==='no_proc' ? 'color:var(--error-red); font-weight:700;' : ''}">${procTxt}</td><td style="${l.failReason==='no_loc' ? 'color:var(--error-red); font-weight:700;' : ''}">${locTxt}</td><td>${qtyTxt}</td></tr>`; 
       }).join(''); 
       
       document.getElementById('result-detail-body').innerHTML = detailHtml; 
@@ -1440,14 +1490,13 @@
   }
   
   function toggleResultDetail() { const box = document.getElementById('result-detail-box'); const icon = document.getElementById('toggle-icon'); const isHidden = box.style.display === 'none'; box.style.display = isHidden ? 'block' : 'none'; icon.innerText = isHidden ? 'keyboard_arrow_up' : 'keyboard_arrow_down'; }
-  // [MODIFIED] handleContinueRegistration: Re-sync
+  // [MODIFIED] handleContinueRegistration: Re-indexing
   async function handleContinueRegistration() { 
       M.Modal.getInstance(document.getElementById('add-result-modal')).close(); 
       const tbody = document.getElementById('page-add-tbody'); 
       const rows = Array.from(tbody.children); 
       let hasFailures = false; 
 
-      // 2줄씩 묶어서 처리
       for (let i = rows.length - 2; i >= 0; i -= 2) {
           const topRow = rows[i];
           const bottomRow = rows[i+1];
@@ -1465,13 +1514,25 @@
           addPageEntry(); 
       }
       
+      // Re-index and Re-color
       const remainingRows = tbody.querySelectorAll('tr');
       for (let i = 0; i < remainingRows.length; i += 2) {
-          const noCell = remainingRows[i].querySelector('.no-cell');
-          if (noCell) noCell.innerText = (i / 2) + 1;
+          const topRow = remainingRows[i];
+          const bottomRow = remainingRows[i+1];
+          const setIndex = (i / 2) + 1;
+          
+          // Index
+          const noCell = topRow.querySelector('.no-cell');
+          if (noCell) noCell.innerText = setIndex;
+
+          // Color
+          topRow.classList.remove('odd', 'even');
+          bottomRow.classList.remove('odd', 'even');
+          const groupClass = (setIndex % 2 !== 0) ? 'odd' : 'even';
+          topRow.classList.add(groupClass);
+          bottomRow.classList.add(groupClass);
       }
 
-      // [NEW] v0.11.7 Sync Data
       await refreshInitialData();
   }
   function saveSettings() { const url = document.getElementById('sheet-url').value; const match = url.match(/[-\w]{25,}/); if (match) { localStorage.setItem(STORAGE_KEY, match[0]); location.reload(); } }
