@@ -49,7 +49,6 @@
       --text-muted: #757575;
       --primary-color: #4db6ac;
       --primary-rgb: 77, 182, 172;
-      /* [FIX] Dark Mode Primary Light - Brighter than Primary */
       --primary-light: #80cbc4; 
       --primary-dark: #26a69a;
       --border-color: #424242;
@@ -79,74 +78,94 @@
         padding-left: 0;
     }
     
-    /* Page Entry Table Styles */
+    /* [MODIFIED] Page Entry Table Styles - v0.11.0 */
     .page-entry-table {
         width: 100%;
         max-width: 700px;
         margin: 0 auto 20px auto;
-        border-collapse: separate;
-        border-spacing: 0 10px;
-    }
-
-    .page-entry-table tbody {
+        border-collapse: collapse; /* 셀 간격 제거 */
+        border-spacing: 0;
+        border-style: hidden; /* 모서리 둥글게 처리를 위해 숨김 */
         box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         border-radius: 8px;
         overflow: hidden;
     }
 
-    .page-entry-table td {
-        padding: 4px 8px;
-        border: none;
-        vertical-align: middle;
-        height: 42px;
+    .page-entry-table tbody {
+        /* 기존 box-shadow 등 제거, table 자체에 적용 */
     }
 
+    /* [MODIFIED] Cell Styles */
+    .page-entry-table td {
+        padding: 0 !important; /* 입력창 꽉 차게 */
+        margin: 0 !important;
+        border: 1px solid rgba(255, 255, 255, 0.2); /* 구분선 */
+        vertical-align: middle;
+        height: 42px;
+        box-sizing: border-box;
+    }
+
+    /* [MODIFIED] Input & Select Styles */
+    .page-entry-table input, 
+    .page-entry-table select {
+        width: 100% !important;
+        height: 100% !important;
+        border: none !important;
+        background-color: transparent !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        font-size: 0.95rem !important;
+        padding: 0 10px !important;
+        box-shadow: none !important;
+        color: inherit;
+        box-sizing: border-box;
+        display: block;
+        cursor: pointer;
+    }
+    
+    .page-entry-table input:focus,
+    .page-entry-table select:focus {
+        background-color: rgba(0,0,0,0.05) !important;
+        outline: none !important;
+    }
+    
     /* Odd Entry (Primary Color) */
-    .page-entry.odd {
+    .entry-group.odd {
         background-color: var(--primary-color);
         color: #ffffff;
     }
-    .page-entry.odd input, .page-entry.odd select {
-        color: #ffffff;
-        background-color: rgba(255, 255, 255, 0.2) !important;
-        border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    }
-    .page-entry.odd input::placeholder { color: rgba(255, 255, 255, 0.6); }
-    .page-entry.odd .card-name-disp { font-weight: 700; color: #ffffff; }
+    .entry-group.odd input::placeholder { color: rgba(255, 255, 255, 0.7); }
+    .entry-group.odd select { color: #ffffff; }
+    .entry-group.odd option { color: var(--text-primary); } /* 옵션창은 기본색 */
 
     /* Even Entry (Primary Light Color) */
-    .page-entry.even {
+    .entry-group.even {
         background-color: var(--primary-light);
         color: var(--text-primary); 
     }
-    body.dark-mode .page-entry.even {
-        color: #121212; /* Ensure readability on bright teal in dark mode */
+    body.dark-mode .entry-group.even {
+        color: #121212; 
     }
-    .page-entry.even input, .page-entry.even select {
-        background-color: var(--bg-surface) !important;
-        border: 1px solid var(--border-color) !important;
-        color: var(--text-primary);
-    }
-    .page-entry.even .card-name-disp { font-weight: 700; }
+    .entry-group.even input::placeholder { color: rgba(0, 0, 0, 0.4); }
+    .entry-group.even select { color: var(--text-primary); }
 
-    /* Common Entry Styles & [FIX] Input Width */
-    .page-entry input, .page-entry select {
-        border-radius: 4px !important;
-        height: 32px !important;
-        margin: 0 !important;
-        font-size: 0.9rem !important;
-        padding: 0 8px !important;
-        box-shadow: none !important;
-        width: 100%; /* [FIX] Fill cell width */
-        box-sizing: border-box; /* [FIX] Include padding in width */
-    }
-    
-    .page-entry .no-cell {
+    .page-entry-table .no-cell {
         width: 40px;
         text-align: center;
         font-weight: 800;
         font-size: 1.1rem;
-        border-right: 1px solid rgba(0,0,0,0.05);
+        border-right: 1px solid rgba(255,255,255,0.3);
+        background-color: rgba(0,0,0,0.1);
+    }
+    
+    .card-name-disp {
+        padding: 0 10px;
+        line-height: 42px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        font-weight: 700;
+        font-size: 0.9rem;
     }
 
     .add-row-btn-cell {
@@ -167,6 +186,7 @@
         cursor: pointer;
         transition: all 0.2s;
         border-radius: 8px;
+        margin-top: 10px;
     }
     .add-page-row-btn:hover {
         background-color: var(--bg-surface);
@@ -233,7 +253,6 @@
     .container { margin-top: 30px; width: auto !important; max-width: 100% !important; min-height: 60vh; margin-left: 15px !important; margin-right: 15px !important; transition: margin 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
     #dynamic-header-wrapper { position: relative; width: 100%; height: 220px; margin-top: 20px; margin-bottom: 20px; transition: height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); z-index: 100; overflow: visible; max-width: 100%; }
     
-    /* [FIX] Pure Coordinate System (Golden Formula) - REPAIRED */
     .app-title-container { position: absolute; display: flex; justify-content: center; align-items: center; z-index: 2; width: 220px; top: 30px; left: calc(50% - 110px); margin: 0 !important; transform: none; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
     .synapse-logo-container { position: relative; display: inline-block; max-width: 250px; overflow: hidden; white-space: nowrap; transition: max-width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); vertical-align: middle; }
     .synapse-text-logo { position: relative; z-index: 2; font-size: 2.6rem; font-weight: 900; color: #000000; letter-spacing: 2px; line-height: 1; transition: color 0.3s, opacity 0.3s; }
@@ -244,9 +263,7 @@
     .title-ygo { position: absolute; top: -20px; left: 0; width: 100%; text-align: center; font-size: 1rem; font-weight: 700; color: var(--text-primary); letter-spacing: 2px; opacity: 0.8; transition: opacity 0.3s ease; }
     .title-beta { position: absolute; bottom: -25px; left: 0; width: 100%; text-align: center; font-size: 0.85rem; font-weight: 700; color: var(--error-red); letter-spacing: 3px; transition: opacity 0.3s ease; }
     
-    /* [FIX] Search Box - No @media query interference */
     .search-box { position: absolute; padding: 0; background: transparent; box-shadow: none; display: flex; flex-direction: column; align-items: center; z-index: 1; top: 130px; width: min(95%, 700px); left: max(2.5%, calc(50% - 350px)); margin: 0 !important; transform: none; transition: top 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); will-change: top, width, left; }
-    /* REMOVED: @media only screen and (min-width: 801px) block */
     
     .search-header-row { width: 100%; max-width: 700px; margin: 0 auto; display: flex; justify-content: flex-start; padding-left: 5px; margin-bottom: 5px; transition: opacity 0.3s ease; }
     .search-row { display: flex; align-items: center; justify-content: center; width: 100%; gap: 8px; max-width: 700px !important; justify-content: flex-start; transition: max-width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
@@ -500,6 +517,8 @@
           <h5 style="font-weight: 700; color: var(--text-primary);">카드 등록</h5>
           
           <table id="page-add-table" class="page-entry-table">
+              <tbody id="page-add-tbody">
+                  </tbody>
               <tfoot id="page-add-tfoot">
                   <tr>
                       <td colspan="4" class="add-row-btn-cell">
@@ -538,7 +557,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.10.11</span>
+        <span class="footer-item">ver. 0.11.0</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -660,7 +679,7 @@
   let isContinuingRegistration = false;
   let blurTimer = null;
   let currentRegion = 'ko';
-  let currentMode = 'home'; // 'home' | 'search' | 'discard' | 'add' | 'move' | 'settings'
+  let currentMode = 'home'; 
 
   let currentFocus = -1;
 
@@ -671,6 +690,7 @@
     
     updateActiveNav('home');
     
+    // [MODIFIED] 초기화 함수 호출
     initPageAdd();
 
     const modals = document.querySelectorAll('.modal');
@@ -684,7 +704,8 @@
                 }
                 if(el.id === 'manage-card-modal') resetManageModal(); 
                 if(el.id === 'add-result-modal') {
-                    location.reload(); 
+                   // [MODIFIED] 등록 완료 후 모달 닫힘 -> 페이지 초기화 방식 변경
+                   handleContinueRegistration();
                 }
             } 
         };
@@ -955,37 +976,50 @@
       else wrapper.classList.remove('active');
   }
 
+  // [MODIFIED] initPageAdd: 0.11.0 초기화 로직 변경
   function initPageAdd() {
+      document.getElementById('page-add-tbody').innerHTML = '';
       addPageEntry();
   }
 
+  // [MODIFIED] addPageEntry: 2행을 1세트로 추가 (tbody 생성 안 함)
   function addPageEntry() {
-      const table = document.getElementById('page-add-table');
-      const tfoot = document.getElementById('page-add-tfoot');
+      const tbody = document.getElementById('page-add-tbody');
       
-      const entries = table.querySelectorAll('tbody.page-entry');
-      const nextNum = entries.length + 1;
+      // 현재 존재하는 '세트'의 개수 계산 (tr 개수 / 2)
+      const currentSets = tbody.querySelectorAll('tr').length / 2;
+      const nextNum = currentSets + 1;
+      
+      // 홀/짝 결정 (디자인용 클래스)
       const isOdd = nextNum % 2 !== 0;
-      const rowClass = isOdd ? 'odd' : 'even';
-      
-      const tbody = document.createElement('tbody');
-      tbody.className = `page-entry ${rowClass}`;
-      
-      tbody.innerHTML = `
-        <tr>
-            <td rowspan="2" class="no-cell">${nextNum}</td>
-            <td style="width:30%; padding:4px 8px;"><span class="card-name-disp" style="font-size:0.9rem; line-height:1.2; display:block;">카드 번호 입력</span></td>
-            <td style="width:35%; padding:0;"><input type="text" class="page-card-no" placeholder="카드 번호" oninput="handleCardNoInput(this)" onblur="fetchCardNameForPage(this)" onkeydown="if(event.key==='Enter') fetchCardNameForPage(this)"></td>
-            <td style="width:25%; padding:0;"><select class="browser-default page-card-another" disabled><option value="" selected>일러스트</option></select></td>
-        </tr>
-        <tr>
-            <td style="padding:0;"><select class="browser-default page-card-proc" disabled><option value="" disabled selected>레어도</option>${allProcessingTypes.map(p => `<option value="${p}">${getLocalizedRarity(p)}</option>`).join('')}</select></td>
-            <td style="padding:0;"><div class="td-flex-container"><select class="browser-default page-card-loc" onchange="handlePageLocationChange(this)" disabled><option value="" disabled selected>보관 위치</option>${allLocations.map(l => `<option value="${l}">${l}</option>`).join('')}<option value="DIRECT">직접 추가</option></select><input type="text" class="direct-input loc-direct" style="display:none;" placeholder="입력"></div></td>
-            <td style="padding:0;"><input type="number" class="page-card-qty" min="1" disabled placeholder="수량" onfocus="if(this.value=='0')this.value=''" onblur="if(this.value=='')this.value='0'"></td>
-        </tr>
+      const groupClass = isOdd ? 'odd' : 'even';
+
+      // --- 첫 번째 행 (윗줄) ---
+      const trTop = document.createElement('tr');
+      trTop.className = `entry-row top-row entry-group ${groupClass}`;
+      trTop.innerHTML = `
+          <td rowspan="2" class="no-cell">${nextNum}</td>
+          <td style="width:30%;"><div class="card-name-disp">카드 번호 입력</div></td>
+          <td style="width:35%;"><input type="text" class="page-card-no" placeholder="카드 번호" oninput="handleCardNoInput(this)" onblur="fetchCardNameForPage(this)" onkeydown="if(event.key==='Enter') fetchCardNameForPage(this)"></td>
+          <td style="width:25%;"><select class="browser-default page-card-another" disabled><option value="" selected>일러스트</option></select></td>
       `;
 
-      table.insertBefore(tbody, tfoot);
+      // --- 두 번째 행 (아랫줄) ---
+      const trBottom = document.createElement('tr');
+      trBottom.className = `entry-row bottom-row entry-group ${groupClass}`;
+      trBottom.innerHTML = `
+          <td><select class="browser-default page-card-proc" disabled><option value="" disabled selected>레어도</option>${allProcessingTypes.map(p => `<option value="${p}">${getLocalizedRarity(p)}</option>`).join('')}</select></td>
+          <td>
+            <div style="display:flex; width:100%; height:100%;">
+                <select class="browser-default page-card-loc" onchange="handlePageLocationChange(this)" disabled style="flex:1;"><option value="" disabled selected>보관 위치</option>${allLocations.map(l => `<option value="${l}">${l}</option>`).join('')}<option value="DIRECT">직접 추가</option></select>
+                <input type="text" class="direct-input loc-direct" style="display:none; flex:1; border-left:1px solid rgba(255,255,255,0.3) !important;" placeholder="입력">
+            </div>
+          </td>
+          <td><input type="number" class="page-card-qty" min="1" disabled placeholder="수량" onfocus="if(this.value=='0')this.value=''" onblur="if(this.value=='')this.value='0'"></td>
+      `;
+
+      tbody.appendChild(trTop);
+      tbody.appendChild(trBottom);
   }
 
   function handleCardNoInput(input) {
@@ -994,13 +1028,16 @@
       input.setSelectionRange(start, start);
   }
 
+  // [MODIFIED] Location Change: Sibling 탐색 로직 변경
   function handlePageLocationChange(sel) {
-      const row = sel.closest('tr');
-      const directInput = row.querySelector('.loc-direct');
+      const container = sel.parentNode;
+      const directInput = container.querySelector('.loc-direct');
+      // sel은 bottomRow에 있음
+      const row = sel.closest('tr'); 
       const qtyInput = row.querySelector('.page-card-qty');
       
       if (sel.value === 'DIRECT') {
-          sel.style.flex = "0 0 40%";
+          sel.style.flex = "1"; 
           directInput.style.display = "block";
           directInput.style.flex = "1";
           directInput.focus();
@@ -1020,51 +1057,57 @@
       }
   }
 
+  // [MODIFIED] fetchCardNameForPage: Top/Bottom Row 탐색 적용
   async function fetchCardNameForPage(input) {
-      const tbody = input.closest('tbody');
-      const cardNo = input.value.trim();
-      const nameSpan = tbody.querySelector('.card-name-disp');
-      const anotherSel = tbody.querySelector('.page-card-another');
-      const procSel = tbody.querySelector('.page-card-proc');
-      const locSel = tbody.querySelector('.page-card-loc');
-      const qtyInput = tbody.querySelector('.page-card-qty');
+      const topRow = input.closest('tr');
+      const bottomRow = topRow.nextElementSibling; // 바로 다음 행이 짝꿍
 
+      const cardNo = input.value.trim();
+      const nameDiv = topRow.querySelector('.card-name-disp'); 
+      
+      const anotherSel = topRow.querySelector('.page-card-another');
+      const procSel = bottomRow.querySelector('.page-card-proc');
+      const locSel = bottomRow.querySelector('.page-card-loc');
+      const qtyInput = bottomRow.querySelector('.page-card-qty');
+
+      // 초기화
       procSel.disabled = true; procSel.value = "";
       locSel.disabled = true; locSel.value = "";
       qtyInput.disabled = true; qtyInput.value = "";
       anotherSel.disabled = true; anotherSel.innerHTML = '<option value="" selected>일러스트</option>';
 
       if (!cardNo) {
-          nameSpan.innerText = "카드 번호 입력";
+          nameDiv.innerText = "카드 번호 입력";
           return;
       }
 
       if (clientCache[cardNo]) {
           const cached = clientCache[cardNo];
-          nameSpan.innerText = cached.name;
-          applyPageCardData(cached, tbody);
+          nameDiv.innerText = cached.name;
+          applyPageCardDataToRows(cached, topRow, bottomRow);
           return;
       }
 
-      nameSpan.innerText = "조회 중...";
+      nameDiv.innerText = "조회 중...";
       try {
           const res = await callApi('getCardNameFromDb', { cardNo });
           if (res.name.includes("오류") || res.name.includes("확인하세요")) {
-              nameSpan.innerText = res.name;
+              nameDiv.innerText = res.name;
           } else {
               clientCache[cardNo] = { name: res.name, anotherCount: res.anotherCount, rarities: res.rarities };
-              nameSpan.innerText = res.name;
-              applyPageCardData(res, tbody);
+              nameDiv.innerText = res.name;
+              applyPageCardDataToRows(res, topRow, bottomRow);
           }
       } catch (e) {
-          nameSpan.innerText = "접속 오류";
+          nameDiv.innerText = "접속 오류";
       }
   }
 
-  function applyPageCardData(data, tbody) {
-      const anotherSel = tbody.querySelector('.page-card-another');
-      const procSel = tbody.querySelector('.page-card-proc');
-      const locSel = tbody.querySelector('.page-card-loc');
+  // [NEW] 분리된 행에 데이터 적용
+  function applyPageCardDataToRows(data, topRow, bottomRow) {
+      const anotherSel = topRow.querySelector('.page-card-another');
+      const procSel = bottomRow.querySelector('.page-card-proc');
+      const locSel = bottomRow.querySelector('.page-card-loc');
 
       const count = data.anotherCount || 1;
       let optionsHtml = '';
@@ -1091,43 +1134,51 @@
       locSel.disabled = false;
   }
 
+  // [MODIFIED] submitPageEntries: 2행씩 묶어서(Step=2) 순회
   async function submitPageEntries() {
-      const table = document.getElementById('page-add-table');
-      const entries = table.querySelectorAll('tbody.page-entry');
+      const tbody = document.getElementById('page-add-tbody');
+      const rows = tbody.querySelectorAll('tr'); 
       const validRows = [];
       const detailLog = [];
       let successCount = 0; 
       let successQty = 0;
 
-      for (let tbody of entries) {
-          const no = tbody.querySelector('.no-cell').innerText;
-          const cardNo = tbody.querySelector('.page-card-no').value.trim();
-          let name = tbody.querySelector('.card-name-disp').innerText;
+      for (let i = 0; i < rows.length; i += 2) {
+          const topRow = rows[i];
+          const bottomRow = rows[i+1];
+
+          const no = topRow.querySelector('.no-cell').innerText;
+          const cardNo = topRow.querySelector('.page-card-no').value.trim();
+          let nameText = topRow.querySelector('.card-name-disp').innerText;
           
           if (!cardNo) continue; 
 
-          let another = tbody.querySelector('.page-card-another').value;
-          let proc = tbody.querySelector('.page-card-proc').value;
-          let loc = tbody.querySelector('.page-card-loc').value;
-          if (loc === 'DIRECT') loc = tbody.querySelector('.loc-direct').value.trim();
+          let another = topRow.querySelector('.page-card-another').value;
+          let proc = bottomRow.querySelector('.page-card-proc').value;
           
-          const qtyVal = tbody.querySelector('.page-card-qty').value;
+          let locSelect = bottomRow.querySelector('.page-card-loc');
+          let loc = locSelect.value;
+          if (loc === 'DIRECT') loc = bottomRow.querySelector('.loc-direct').value.trim();
+          
+          const qtyVal = bottomRow.querySelector('.page-card-qty').value;
           const qty = parseInt(qtyVal);
 
           let failReason = null;
-          if (name.includes("입력") || name.includes("오류") || name.includes("확인")) {
-              failReason = "invalid_no"; name = "유효하지 않은 카드";
+          if (nameText.includes("입력") || nameText.includes("오류") || nameText.includes("확인")) {
+              failReason = "invalid_no"; nameText = "유효하지 않은 카드";
           } else if (!proc) failReason = "no_proc";
           else if (!loc) failReason = "no_loc";
           else if (!qty || qty < 1) failReason = "invalid_qty";
 
           if (failReason) {
-              detailLog.push({ no, name, cardNo, another, proc: proc||"미선택", loc: loc||"미선택", qty: qty||0, status: 'fail', failReason });
+              detailLog.push({ no, name: nameText, cardNo, another, proc: proc||"미선택", loc: loc||"미선택", qty: qty||0, status: 'fail', failReason });
+              topRow.dataset.status = 'fail'; // Mark Fail
           } else {
-              validRows.push([name, cardNo, proc, qty, loc, another]);
-              detailLog.push({ no, name, cardNo, another, proc, loc, qty, status: 'success' });
+              validRows.push([nameText, cardNo, proc, qty, loc, another]);
+              detailLog.push({ no, name: nameText, cardNo, another, proc, loc, qty, status: 'success' });
               successCount++;
               successQty += qty;
+              topRow.dataset.status = 'success'; // Mark Success
           }
       }
 
@@ -1184,64 +1235,52 @@
 
       const filteredRows = localCardDatabase.filter(row => targetNames.has(String(row[0]))); 
       
-      // [NEW] Logic for Cross-Fade within Search Mode
       if (currentMode === 'search') {
           const wrapper = document.getElementById('content-slider-wrapper');
-          const contentWrapper = document.getElementById('result-content-wrapper'); // .content-section
-          const resultArea = document.getElementById('result-area'); // The Table
+          const contentWrapper = document.getElementById('result-content-wrapper');
+          const resultArea = document.getElementById('result-area');
 
-          // 1. Lock Height (Animation Start)
           const oldHeight = wrapper.offsetHeight;
           wrapper.style.height = oldHeight + 'px';
 
-          // 2. Create Ghost (Clone of current table)
           const ghost = resultArea.cloneNode(true);
           ghost.id = 'result-ghost';
           ghost.style.position = 'absolute';
           ghost.style.top = '0';
-          // Match margins of resultArea to align perfectly
           ghost.style.left = '0';
           ghost.style.right = '0';
           ghost.style.marginLeft = 'auto';
           ghost.style.marginRight = 'auto';
-          ghost.style.marginTop = '0'; // Margin removed
-          ghost.style.paddingTop = '30px'; // Inherited, but key is margin 0
+          ghost.style.marginTop = '0';
+          ghost.style.paddingTop = '30px';
           ghost.style.width = '100%';
           ghost.style.maxWidth = '700px';
           ghost.style.zIndex = '5';
           ghost.style.transition = 'opacity 0.4s ease';
           
-          // Make parent relative so absolute ghost positions correctly
-          // [FIX] Move ghost to wrapper to avoid height impact on contentWrapper
           wrapper.appendChild(ghost);
 
-          // 3. Render New Data (Updates #result-area)
           renderTable(filteredRows); 
 
-          // 4. Prepare New State
           resultArea.style.opacity = '0';
           resultArea.style.transition = 'opacity 0.4s ease';
           
-          // Measure New Height - [FIX] Simple offsetHeight thanks to padding
           const newHeight = resultArea.offsetHeight;
 
-          // 5. Animate (Next Frame)
           requestAnimationFrame(() => {
               wrapper.style.height = newHeight + 'px';
               ghost.style.opacity = '0';
               resultArea.style.opacity = '1';
           });
 
-          // 6. Cleanup after 400ms
           setTimeout(() => {
               if(ghost.parentNode) ghost.parentNode.removeChild(ghost);
-              wrapper.style.height = ''; // Auto
+              wrapper.style.height = ''; 
               resultArea.style.opacity = '';
               resultArea.style.transition = '';
           }, 400);
 
       } else {
-          // Normal Switch (Not from search mode)
           renderTable(filteredRows); 
           switchToMode('search'); 
       }
@@ -1256,11 +1295,9 @@
   function getLocalizedRarity(key) { if (!key) return ""; const info = rarityLookup[key]; if (info && info.data[currentRegion]) { return info.data[currentRegion]; } return key; }
   
   function renderTable(rows) { 
-      // showLoading(false); // [FIX] Removed
       const resultArea = document.getElementById('result-area'); 
       if (rows.length === 0) { 
           resultArea.innerHTML = "<p class='center'>결과 없음</p>"; 
-          // [FIX] Removed animation triggering logic
           return; 
       } 
       const groups = {}; 
@@ -1269,7 +1306,6 @@
       Object.keys(groups).forEach(cardNo => { const rowId = `row-${cardNo}`.replace(/[^a-zA-Z0-9]/g, ''); const cardRows = rows.filter(r => String(r[1]) === cardNo); const totalQty = cardRows.reduce((sum, r) => sum + (parseInt(r[3]) || 0), 0); const locSet = new Set(cardRows.map(r => String(r[4])).filter(l => l)); const distinctKeys = [...new Set(cardRows.map(r => String(r[2]).trim()).filter(k => k))]; distinctKeys.sort((a, b) => { const infoA = rarityLookup[a]; const infoB = rarityLookup[b]; const idxA = infoA ? infoA.index : 999999; const idxB = infoB ? infoB.index : 999999; return idxA - idxB || a.localeCompare(b); }); const displayNamesForSummary = [...new Set(distinctKeys.map(k => rarityMap[k] || k))]; const procStr = displayNamesForSummary.join(", "); const locStr = [...locSet].join(", "); const anotherGroups = {}; cardRows.forEach(r => { const another = String(r[5] || "").trim(); const displayAnother = another === "" ? "기본" : another; if(!anotherGroups[displayAnother]) anotherGroups[displayAnother] = []; anotherGroups[displayAnother].push(r); }); let leftTableHtml = `<table class="split-table"><thead><tr><th class="fp-col-1">일러스트</th><th class="fp-col-2">보관 위치</th><th class="fp-col-3">총 수량</th></tr></thead><tbody>`; let rightTableHtml = `<table class="split-table"><thead><tr>`; distinctKeys.forEach(key => { const info = rarityLookup[key]; let displayName = key; let tooltipContent = key; if (info) { displayName = info.data.display || key; tooltipContent = info.data[currentRegion] || key; } tooltipContent = tooltipContent.replace(/\(/g, '<br>('); rightTableHtml += `<th class="sp-col tooltipped" data-position="top" data-tooltip="${tooltipContent}">${displayName}</th>`; }); rightTableHtml += `</tr></thead><tbody>`; const anotherKeys = Object.keys(anotherGroups).sort((a, b) => { if (a === "기본") return -1; if (b === "기본") return 1; return a.localeCompare(b, undefined, { numeric: true }); }); anotherKeys.forEach(another => { const grpRows = anotherGroups[another]; const locGroups = {}; grpRows.forEach(r => { const loc = String(r[4]); const proc = String(r[2]); const qty = parseInt(r[3]) || 0; if(!locGroups[loc]) locGroups[loc] = { total: 0, procs: {} }; locGroups[loc].total += qty; locGroups[loc].procs[proc] = (locGroups[loc].procs[proc] || 0) + qty; }); const locKeys = Object.keys(locGroups); locKeys.forEach((loc, idx) => { const d = locGroups[loc]; leftTableHtml += `<tr>`; if(idx === 0) leftTableHtml += `<td rowspan="${locKeys.length}">${another}</td>`; leftTableHtml += `<td>${loc}</td><td>${d.total}</td></tr>`; rightTableHtml += `<tr>`; distinctKeys.forEach(key => { const val = d.procs[key] || 0; rightTableHtml += `<td>${val}</td>`; }); rightTableHtml += `</tr>`; }); }); leftTableHtml += `</tbody></table>`; rightTableHtml += `</tbody></table>`; newHtml += ` <div class="new-card-box"> <div class="summary-split-wrapper"> <div class="summary-left">${cardNo}</div> <div class="summary-right"> <table class="summary-table"> <tr><td class="summary-label-cell">보관 위치</td><td class="summary-label-cell">수량</td></tr> <tr><td class="summary-value-cell">${locStr}</td><td class="summary-value-cell">${totalQty}</td></tr> <tr><td class="summary-label-cell border-double-top">보유 레어도</td><td class="summary-value-cell border-double-top">${procStr}</td></tr> </table> </div> </div> <div id="detail-${rowId}" class="detail-slide-wrapper"> <div class="split-table-wrapper"> <div class="fixed-side">${leftTableHtml}</div> <div class="scroll-side">${rightTableHtml}</div> </div> </div> <button class="show-more-btn" onclick="toggleNewDetail('detail-${rowId}')"><span>자세히 보기</span><i class="material-icons tiny">keyboard_arrow_down</i></button> </div> `; }); 
       resultArea.innerHTML = newHtml; 
       M.Tooltip.init(resultArea.querySelectorAll('.tooltipped'), { html: true, margin: 3 }); 
-      // [FIX] Removed animation triggering logic
   }
   function toggleNewDetail(detailId) { const content = document.getElementById(detailId); const btn = content.nextElementSibling; const textSpan = btn.querySelector('span'); const icon = btn.querySelector('i'); if (content.style.maxHeight) { content.style.maxHeight = null; textSpan.innerText = '자세히 보기'; icon.innerText = 'keyboard_arrow_down'; } else { content.style.maxHeight = content.scrollHeight + "px"; textSpan.innerText = '간략히 보기'; icon.innerText = 'keyboard_arrow_up'; } }
   function toggleAnother(rowId) {}
@@ -1287,7 +1323,40 @@
   async function submitNewCards() { const tbody = document.getElementById('add-card-tbody'); const validRows = []; const detailLog = []; let successCount = 0; let successQty = 0; for (let tr of tbody.children) { const no = tr.cells[0].innerText; const cardNo = tr.querySelector('.new-card-no').value.trim(); let name = tr.querySelector('.card-name-fetch').innerText; if (!cardNo) continue; let another = tr.querySelector('.new-card-another').value.trim(); let proc = tr.querySelector('.new-card-proc').value; let loc = tr.querySelector('.new-card-loc').value === 'DIRECT' ? tr.querySelector('.loc-direct').value.trim() : tr.querySelector('.new-card-loc').value; const qty = parseInt(tr.querySelector('.new-card-qty').value); let failReason = null; if (name.includes("유효하지 않은") || name.includes("확인하세요") || name.includes("결과 없음")) { failReason = "invalid_no"; name = "유효하지 않은 카드 번호"; } else if (name.includes("조회 중") || name.includes("오류")) { failReason = "error"; name = "조회 오류"; } else if (!proc) { failReason = "no_proc"; proc = "미선택"; } else if (!loc) { failReason = "no_loc"; loc = "미선택"; } if (failReason) { detailLog.push({ no, name, cardNo, another, proc, loc, qty, status: 'fail', failReason }); tr.dataset.status = 'fail'; } else { validRows.push([name, cardNo, proc, qty, loc, another]); detailLog.push({ no, name, cardNo, another, proc, loc, qty, status: 'success' }); successCount++; successQty += qty; tr.dataset.status = 'success'; } } if (validRows.length > 0) { const btn = document.getElementById('add-submit-btn'); btn.classList.add('disabled'); showLoading(true, "기록 중..."); try { await callApi('addCards', {}, validRows); showLoading(false); showResultModal(successCount, successQty, detailLog); } catch (e) { showLoading(false); btn.classList.remove('disabled'); M.toast({html: '서버 통신 오류', classes: 'red darken-2 rounded'}); } } else { showResultModal(0, 0, detailLog); } }
   function showResultModal(count, totalQty, detailLog) { const modal = M.Modal.getInstance(document.getElementById('add-result-modal')); document.getElementById('result-success-text').innerText = `${count}종의 카드 ${totalQty}장을 등록했습니다.`; const failCount = detailLog.filter(l => l.status === 'fail').length; document.getElementById('result-fail-text').innerText = failCount > 0 ? `(${failCount}종의 카드를 등록할 수 없습니다.)` : ""; hasRegisteredInSession = true; let summaryHtml = ""; const successLogs = detailLog.filter(l => l.status === 'success'); if (successLogs.length > 0) { const aggregated = {}; successLogs.forEach(l => { const name = l.name; const no = l.cardNo; const q = l.qty; if(!aggregated[name]) aggregated[name] = {}; if(!aggregated[name][no]) aggregated[name][no] = 0; aggregated[name][no] += q; }); Object.keys(aggregated).forEach(name => { const numbers = Object.keys(aggregated[name]); numbers.forEach((no, idx) => { summaryHtml += `<tr class="success-row">`; if(idx === 0) summaryHtml += `<td rowspan="${numbers.length}">${name}</td>`; summaryHtml += `<td>${no}</td><td>${aggregated[name][no]}장</td></tr>`; }); }); } const failLogs = detailLog.filter(l => l.status === 'fail'); if (failLogs.length > 0) { failLogs.forEach((l) => { let reason = l.name; if(l.failReason === "no_proc" || l.failReason === "no_loc") reason = `${l.failReason === "no_proc" ? "레어도" : "보관 위치"} 미선택`; else if(l.failReason === "invalid_no") reason = "존재하지 않은 카드 번호"; summaryHtml += `<tr class="fail-row">`; summaryHtml += `<td style="color:var(--error-red);">${reason}</td><td>${l.cardNo}</td><td>-</td></tr>`; }); } document.getElementById('result-summary-body').innerHTML = summaryHtml; let detailHtml = detailLog.map(l => { const rowClass = l.status === 'success' ? 'success-row' : 'fail-row'; return `<tr class="${rowClass}"><td>${l.no}</td><td style="${l.status==='fail' && (l.failReason==='invalid_no' || l.failReason==='error') ? 'color:var(--error-red); font-weight:700;' : ''}">${l.name}</td><td>${l.cardNo}</td><td>${l.another || '-'}</td><td style="${l.status==='fail' && l.failReason==='no_proc' ? 'color:var(--error-red); font-weight:700;' : ''}">${l.proc}</td><td style="${l.status==='fail' && l.failReason==='no_loc' ? 'color:var(--error-red); font-weight:700;' : ''}">${l.loc}</td><td>${l.qty}</td></tr>`; }).join(''); document.getElementById('result-detail-body').innerHTML = detailHtml; document.getElementById('result-detail-box').style.display = 'none'; document.getElementById('toggle-icon').innerText = 'keyboard_arrow_down'; modal.open(); }
   function toggleResultDetail() { const box = document.getElementById('result-detail-box'); const icon = document.getElementById('toggle-icon'); const isHidden = box.style.display === 'none'; box.style.display = isHidden ? 'block' : 'none'; icon.innerText = isHidden ? 'keyboard_arrow_up' : 'keyboard_arrow_down'; }
-  function handleContinueRegistration() { M.Modal.getInstance(document.getElementById('add-result-modal')).close(); const tbody = document.getElementById('add-card-tbody'); let hasFailures = false; Array.from(tbody.children).forEach(tr => { if (tr.dataset.status === 'success') { tr.remove(); } else { hasFailures = true; delete tr.dataset.status; } }); if (!hasFailures) { addMoreRows(1); } else { reIndexRows(); const currentCount = tbody.children.length; const remainder = currentCount % 5; if (remainder !== 0) { addMoreRows(5 - remainder); } } document.getElementById('add-card-modal').dataset.keepData = "true"; const addCardModal = M.Modal.getInstance(document.getElementById('add-card-modal')); if (!addCardModal.isOpen) { addCardModal.open(); } }
+  // [MODIFIED] handleContinueRegistration: 행 단위 삭제
+  function handleContinueRegistration() { 
+      M.Modal.getInstance(document.getElementById('add-result-modal')).close(); 
+      const tbody = document.getElementById('page-add-tbody'); 
+      const rows = Array.from(tbody.children); 
+      let hasFailures = false; 
+
+      // 2줄씩 묶어서 처리, 역순으로 순회해야 삭제 시 인덱스 문제 없음
+      for (let i = rows.length - 2; i >= 0; i -= 2) {
+          const topRow = rows[i];
+          const bottomRow = rows[i+1];
+          
+          if (topRow.dataset.status === 'success') {
+              tbody.removeChild(topRow);
+              tbody.removeChild(bottomRow);
+          } else {
+              hasFailures = true;
+              delete topRow.dataset.status; // 실패 상태 초기화
+          }
+      }
+
+      if (!hasFailures) { 
+          addPageEntry(); 
+      }
+      
+      // 인덱스 재정렬은 복잡하므로 여기서는 생략하고 새로고침을 유도하거나 그대로 둠
+      // (완벽하게 하려면 남은 행들의 No를 다시 매겨야 함)
+      // 간단히 남은 행들의 번호만 업데이트
+      const remainingRows = tbody.querySelectorAll('tr');
+      for (let i = 0; i < remainingRows.length; i += 2) {
+          const noCell = remainingRows[i].querySelector('.no-cell');
+          if (noCell) noCell.innerText = (i / 2) + 1;
+      }
+  }
   function saveSettings() { const url = document.getElementById('sheet-url').value; const match = url.match(/[-\w]{25,}/); if (match) { localStorage.setItem(STORAGE_KEY, match[0]); location.reload(); } }
   function disconnectSheet() { localStorage.removeItem(STORAGE_KEY); location.reload(); }
   function saveRecentSearch(name) { let recent = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]'); recent = [name, ...recent.filter(n => n !== name)].slice(0, 5); localStorage.setItem(RECENT_KEY, JSON.stringify(recent)); }
