@@ -206,7 +206,8 @@
 
     .add-page-row-btn {
         width: 100%;
-        padding: 12px;
+        /* [MODIFIED] Height Reduced (padding 12px -> 8px) */
+        padding: 8px 12px;
         background-color: var(--bg-sub);
         border: 1px solid rgba(0,0,0,0.1);
         border-top: none; 
@@ -237,7 +238,6 @@
         margin-top: 20px; 
     }
     
-    /* [NEW] Delete Row Styles */
     .col-delete {
         width: 40px;
         text-align: center;
@@ -307,7 +307,6 @@
     .region-dropdown-list li { padding: 8px 0; font-size: 0.8rem; color: var(--text-primary); cursor: pointer; white-space: nowrap; }
     .region-dropdown-list li:hover { background-color: var(--bg-sub); color: var(--primary-color); font-weight: 700; }
 
-    /* [MODIFIED] v0.11.15 Reduced top margin */
     .container { margin-top: 10px; width: auto !important; max-width: 100% !important; min-height: 60vh; margin-left: 15px !important; margin-right: 15px !important; transition: margin 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
     #dynamic-header-wrapper { position: relative; width: 100%; height: 220px; margin-top: 20px; margin-bottom: 20px; transition: height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); z-index: 100; overflow: visible; max-width: 100%; }
     
@@ -676,7 +675,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.11.15</span>
+        <span class="footer-item">ver. 0.11.16</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -1119,15 +1118,15 @@
       // [MODIFIED] Added Delete Column
       trTop.innerHTML = `
           <td rowspan="2" class="no-cell">${nextNum}</td>
-          <td style="width:30%;"><div class="card-name-disp">카드 번호 입력</div></td>
-          <td style="width:35%;"><input type="text" class="page-card-no" placeholder="카드 번호" oninput="handleCardNoInput(this)" onblur="fetchCardNameForPage(this)" onkeydown="if(event.key==='Enter') fetchCardNameForPage(this)"></td>
-          <td style="width:25%;"><select class="browser-default page-card-another" disabled><option value="" selected>일러스트</option></select></td>
+          <td colspan="3" style="position: relative;"><div class="card-name-disp">카드 번호 입력</div></td>
+          <td style="width: 110px;"><input type="text" class="page-card-no" oninput="handleCardNoInput(this)" onblur="fetchCardNameForPage(this)" onkeydown="if(event.key==='Enter') fetchCardNameForPage(this)" placeholder="카드 번호"></td>
           <td rowspan="2" class="col-delete" onclick="deletePageEntry(this)"><i class="material-icons">delete</i></td>
       `;
 
       const trBottom = document.createElement('tr');
       trBottom.className = `entry-row bottom-row entry-group ${groupClass}`;
       trBottom.innerHTML = `
+          <td><select class="browser-default page-card-another" disabled><option value="" selected>일러스트</option></select></td>
           <td><select class="browser-default page-card-proc" disabled><option value="" disabled selected>레어도</option>${allProcessingTypes.map(p => `<option value="${p}">${getLocalizedRarity(p)}</option>`).join('')}</select></td>
           <td>
             <input type="text" class="page-card-loc" list="loc-datalist" disabled placeholder="보관 위치">
@@ -1236,7 +1235,7 @@
       input.dataset.prevCardNo = cardNo; 
 
       const nameDiv = topRow.querySelector('.card-name-disp'); 
-      const anotherSel = topRow.querySelector('.page-card-another');
+      const anotherSel = bottomRow.querySelector('.page-card-another');
       const procSel = bottomRow.querySelector('.page-card-proc');
       const locInput = bottomRow.querySelector('.page-card-loc'); 
       const qtyInput = bottomRow.querySelector('.page-card-qty');
@@ -1290,7 +1289,7 @@
   }
 
   function applyPageCardDataToRows(data, topRow, bottomRow) {
-      const anotherSel = topRow.querySelector('.page-card-another');
+      const anotherSel = bottomRow.querySelector('.page-card-another');
       const procSel = bottomRow.querySelector('.page-card-proc');
       const locInput = bottomRow.querySelector('.page-card-loc'); 
 
@@ -1353,8 +1352,8 @@
           
           if (!cardNo) continue; 
 
-          let another = topRow.querySelector('.page-card-another').value;
-          const isAnotherDisabled = topRow.querySelector('.page-card-another').disabled;
+          let another = bottomRow.querySelector('.page-card-another').value;
+          const isAnotherDisabled = bottomRow.querySelector('.page-card-another').disabled;
 
           let proc = bottomRow.querySelector('.page-card-proc').value;
           let loc = bottomRow.querySelector('.page-card-loc').value.trim();
