@@ -206,7 +206,6 @@
 
     .add-page-row-btn {
         width: 100%;
-        /* [MODIFIED] Height Reduced (padding 12px -> 8px) */
         padding: 8px 12px;
         background-color: var(--bg-sub);
         border: 1px solid rgba(0,0,0,0.1);
@@ -217,7 +216,11 @@
         transition: all 0.2s;
         border-radius: 0 0 8px 8px; 
         margin-top: 0; 
-        display: block;
+        /* [NEW] Flex for controls */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
     }
     .add-page-row-btn:hover {
         background-color: var(--bg-surface);
@@ -226,6 +229,43 @@
     }
     body.dark-mode .add-page-row-btn {
         border-color: rgba(255,255,255,0.1);
+    }
+    
+    /* [NEW] Qty Control Styles */
+    .qty-control-box {
+        display: flex;
+        align-items: center;
+        background: rgba(0,0,0,0.05);
+        border-radius: 16px;
+        padding: 2px 4px;
+        gap: 8px;
+    }
+    body.dark-mode .qty-control-box {
+        background: rgba(255,255,255,0.1);
+    }
+    .ctrl-btn {
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        cursor: pointer;
+        font-weight: 800;
+        transition: background-color 0.2s;
+        user-select: none;
+    }
+    .ctrl-btn:hover {
+        background-color: rgba(0,0,0,0.1);
+        color: var(--primary-color);
+    }
+    body.dark-mode .ctrl-btn:hover {
+        background-color: rgba(255,255,255,0.2);
+    }
+    .ctrl-val {
+        min-width: 20px;
+        text-align: center;
+        font-weight: 700;
     }
 
     .page-btn-container {
@@ -642,9 +682,14 @@
                   </tbody>
               <tfoot id="page-add-tfoot">
                   <tr>
-                      <td colspan="5" class="add-row-btn-cell">
-                          <button class="add-page-row-btn" onclick="addPageEntry()">
-                              <i class="material-icons" style="vertical-align:middle; font-size:1.2rem;">add</i> 추가 등록
+                      <td colspan="6" class="add-row-btn-cell">
+                          <button class="add-page-row-btn" onclick="addMultipleRows()">
+                              <div class="qty-control-box" onclick="event.stopPropagation()">
+                                  <span class="ctrl-btn" onclick="adjustAddCount(-1)">-</span>
+                                  <span id="add-row-count" class="ctrl-val">1</span>
+                                  <span class="ctrl-btn" onclick="adjustAddCount(1)">+</span>
+                              </div>
+                              <span style="display:flex; align-items:center; gap:4px;"><i class="material-icons" style="font-size:1.1rem;">add</i> 추가 등록</span>
                           </button>
                       </td>
                   </tr>
@@ -800,6 +845,7 @@
   let currentMode = 'home'; 
   
   let isAutoCopyEnabled = false;
+  let rowAddCount = 1; // [NEW] Row add count state
 
   let currentFocus = -1;
 
@@ -1103,6 +1149,20 @@
       document.getElementById('page-add-tbody').innerHTML = '';
       addPageEntry();
   }
+  
+  // [NEW] Adjust Add Count
+  function adjustAddCount(delta) {
+      rowAddCount += delta;
+      if(rowAddCount < 1) rowAddCount = 1;
+      document.getElementById('add-row-count').innerText = rowAddCount;
+  }
+  
+  // [NEW] Add Multiple Rows
+  function addMultipleRows() {
+      for(let i=0; i<rowAddCount; i++) {
+          addPageEntry();
+      }
+  }
 
   function addPageEntry() {
       const tbody = document.getElementById('page-add-tbody');
@@ -1115,7 +1175,7 @@
 
       const trTop = document.createElement('tr');
       trTop.className = `entry-row top-row entry-group ${groupClass}`;
-      // [MODIFIED] Added Delete Column
+      // [MODIFIED] New Layout: No | Name | CardNo | Delete
       trTop.innerHTML = `
           <td rowspan="2" class="no-cell">${nextNum}</td>
           <td colspan="3" style="position: relative;"><div class="card-name-disp">카드 번호 입력</div></td>
@@ -1125,19 +1185,19 @@
 
       const trBottom = document.createElement('tr');
       trBottom.className = `entry-row bottom-row entry-group ${groupClass}`;
+      // [MODIFIED] New Layout: Another | Proc | Loc | Qty
       trBottom.innerHTML = `
           <td><select class="browser-default page-card-another" disabled><option value="" selected>일러스트</option></select></td>
           <td><select class="browser-default page-card-proc" disabled><option value="" disabled selected>레어도</option>${allProcessingTypes.map(p => `<option value="${p}">${getLocalizedRarity(p)}</option>`).join('')}</select></td>
           <td>
             <input type="text" class="page-card-loc" list="loc-datalist" disabled placeholder="보관 위치">
           </td>
-          <td><input type="number" class="page-card-qty" min="1" disabled placeholder="수량" onfocus="if(this.value=='0')this.value=''" onblur="if(this.value=='')this.value='0'"></td>
+          <td style="width: 110px;"><input type="number" class="page-card-qty" min="1" disabled placeholder="수량" onfocus="if(this.value=='0')this.value=''" onblur="if(this.value=='')this.value='0'"></td>
       `;
 
       tbody.appendChild(trTop);
       tbody.appendChild(trBottom);
       
-      // [NEW] Reindex to handle delete button state
       reindexRows();
 
       const locInput = trBottom.querySelector('.page-card-loc');
@@ -1173,13 +1233,11 @@
       });
   }
   
-  // [NEW] Delete Entry Function
   function deletePageEntry(btn) {
       const topRow = btn.parentNode;
       const bottomRow = topRow.nextElementSibling;
       const tbody = document.getElementById('page-add-tbody');
       
-      // Prevent deletion if only 1 item (redundant check, but safe)
       if (tbody.querySelectorAll('tr').length <= 2) return;
 
       tbody.removeChild(topRow);
@@ -1188,7 +1246,6 @@
       reindexRows();
   }
 
-  // [NEW] Reindex Rows & Update Colors & Button State
   function reindexRows() {
       const tbody = document.getElementById('page-add-tbody');
       const rows = tbody.querySelectorAll('tr');
@@ -1208,7 +1265,6 @@
           topRow.classList.add(groupClass);
           bottomRow.classList.add(groupClass);
           
-          // Disable delete btn if only 1 item remains
           const delBtn = topRow.querySelector('.col-delete');
           if (totalSets <= 1) {
               delBtn.classList.add('disabled');
