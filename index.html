@@ -131,7 +131,7 @@
     body.dark-mode .page-entry-table select,
     body.dark-mode .card-name-disp,
     body.dark-mode .page-entry-table .no-cell,
-    body.dark-mode .card-link { /* Link color in dark mode */
+    body.dark-mode .card-link { 
         color: var(--text-table-dark) !important;
     }
 
@@ -186,7 +186,7 @@
         color: inherit;
     }
 
-    /* [NEW] Card Link Style */
+    /* Card Link Style */
     .card-link {
         color: inherit;
         text-decoration: none;
@@ -606,7 +606,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.11.8</span>
+        <span class="footer-item">ver. 0.11.9</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -747,6 +747,7 @@
             onCloseEnd: function(el) { 
                 if(el.id === 'add-card-modal') {
                     if (hasRegisteredInSession) {
+                        // [MODIFIED] Do nothing, already synced via result modal
                     }
                     else if(!el.dataset.keepData) resetAddModal();
                     else delete el.dataset.keepData; 
@@ -1067,6 +1068,7 @@
       input.setSelectionRange(start, start);
   }
 
+  // [MODIFIED] fetchCardNameForPage: Updated URL Logic
   async function fetchCardNameForPage(input) {
       const topRow = input.closest('tr');
       const bottomRow = topRow.nextElementSibling; 
@@ -1095,9 +1097,8 @@
 
       if (clientCache[cardNo]) {
           const cached = clientCache[cardNo];
-          // [MODIFIED] Check for linkData
           if (cached.linkData) {
-              const url = `https://www.db.yugioh-card.com/yugiohdb/card_search.action?ope=2&cid=${cached.linkData.id}&request_locale=${cached.linkData.locale}`;
+              const url = "https://www.db.yugioh-card.com" + cached.linkData.id + "&request_locale=" + cached.linkData.locale;
               nameDiv.innerHTML = `<a href="${url}" target="_blank" class="card-link" onclick="event.stopPropagation()">${cached.name}</a>`;
           } else {
               nameDiv.innerText = cached.name;
@@ -1116,9 +1117,8 @@
               nameDiv.innerText = res.name;
           } else {
               clientCache[cardNo] = { name: res.name, anotherCount: res.anotherCount, rarities: res.rarities, linkData: res.linkData };
-              // [MODIFIED] Check for linkData
               if (res.linkData) {
-                  const url = `https://www.db.yugioh-card.com/yugiohdb/card_search.action?ope=2&cid=${res.linkData.id}&request_locale=${res.linkData.locale}`;
+                  const url = "https://www.db.yugioh-card.com" + res.linkData.id + "&request_locale=" + res.linkData.locale;
                   nameDiv.innerHTML = `<a href="${url}" target="_blank" class="card-link" onclick="event.stopPropagation()">${res.name}</a>`;
               } else {
                   nameDiv.innerText = res.name;
@@ -1159,7 +1159,6 @@
       }
       
       procSel.disabled = false;
-      // [MODIFIED] Auto-select first rarity option
       if (procSel.options.length > 1) {
           procSel.selectedIndex = 1;
       }
@@ -1178,6 +1177,7 @@
       };
   }
 
+  // [MODIFIED] submitPageEntries: Validation Update
   async function submitPageEntries() {
       const tbody = document.getElementById('page-add-tbody');
       const rows = tbody.querySelectorAll('tr'); 
@@ -1197,6 +1197,9 @@
           if (!cardNo) continue; 
 
           let another = topRow.querySelector('.page-card-another').value;
+          // Check if dropdown enabled but no value
+          const isAnotherDisabled = topRow.querySelector('.page-card-another').disabled;
+
           let proc = bottomRow.querySelector('.page-card-proc').value;
           let loc = bottomRow.querySelector('.page-card-loc').value.trim();
           
@@ -1206,6 +1209,8 @@
           let failReason = null;
           if (nameText.includes("입력") || nameText.includes("오류") || nameText.includes("확인")) {
               failReason = "invalid_no"; nameText = "유효하지 않은 카드";
+          } else if (!isAnotherDisabled && !another) {
+              failReason = "no_another"; another = "미선택";
           } else if (!proc) failReason = "no_proc";
           else if (!loc) failReason = "no_loc";
           else if (!qty || qty < 1) failReason = "invalid_qty";
@@ -1380,7 +1385,7 @@
   }
   function toggleNewDetail(detailId) { const content = document.getElementById(detailId); const btn = content.nextElementSibling; const textSpan = btn.querySelector('span'); const icon = btn.querySelector('i'); if (content.style.maxHeight) { content.style.maxHeight = null; textSpan.innerText = '자세히 보기'; icon.innerText = 'keyboard_arrow_down'; } else { content.style.maxHeight = content.scrollHeight + "px"; textSpan.innerText = '간략히 보기'; icon.innerText = 'keyboard_arrow_up'; } }
   
-  // [MODIFIED] showResultModal (v0.11.8)
+  // [MODIFIED] showResultModal (v0.11.9)
   function showResultModal(count, totalQty, detailLog, fatalError = null) { 
       const el = document.getElementById('add-result-modal');
       let modal = M.Modal.getInstance(el);
@@ -1422,7 +1427,6 @@
       successText.innerHTML = mainMsg;
       failText.innerHTML = subMsg;
       
-      // [MODIFIED] Summary Logic
       let summaryHtml = ""; 
       
       // 1. Success Group
@@ -1443,6 +1447,7 @@
       failLogs.forEach((l) => { 
           let reason = l.name;
           if(l.failReason === "no_proc" || l.failReason === "no_loc") reason = `${l.failReason === "no_proc" ? "레어도" : "보관 위치"} 미선택`;
+          else if(l.failReason === "no_another") reason = "일러스트 미선택";
           summaryHtml += `<tr class="fail-row"><td style="color:var(--error-red);">${l.name}</td><td style="color:var(--error-red); font-size:0.8rem;">실패</td></tr>`; 
       });
 
@@ -1452,13 +1457,12 @@
           summaryHtml += `<tr class="fail-row"><td style="color:var(--error-red);">번호 오류</td><td style="color:var(--error-red); font-size:0.8rem;">실패</td></tr>`;
       });
       
-      // Detail Header Update
       const tableHead = document.querySelector('#result-detail-box thead tr');
       if(tableHead) tableHead.innerHTML = `<th style="width:10%;">No</th><th style="width:20%;">카드 이름</th><th style="width:15%;">카드 번호</th><th style="width:15%;">일러스트</th><th style="width:15%;">레어도</th><th style="width:15%;">보관 위치</th><th style="width:10%;">수량</th>`; 
       
       tableBody.innerHTML = summaryHtml; 
       
-      // [MODIFIED] Detail Body Logic
+      // [MODIFIED] Detail Body Logic with improved red text rules
       let detailHtml = detailLog.map(l => { 
           const rowClass = l.status === 'success' ? 'success-row' : 'fail-row'; 
           
@@ -1474,10 +1478,18 @@
                   procTxt = "미선택"; locTxt = "-"; qtyTxt = "-";
               } else if (l.failReason === 'no_loc') {
                   locTxt = "미선택"; qtyTxt = "-";
+              } else if (l.failReason === 'no_another') {
+                  anotherTxt = "미선택"; procTxt = "-"; locTxt = "-"; qtyTxt = "-";
               }
           }
 
-          return `<tr class="${rowClass}"><td>${l.no}</td><td style="${l.status==='fail' ? 'color:var(--error-red); font-weight:700;' : ''}">${l.name}</td><td>${l.cardNo}</td><td>${anotherTxt}</td><td style="${l.failReason==='no_proc' ? 'color:var(--error-red); font-weight:700;' : ''}">${procTxt}</td><td style="${l.failReason==='no_loc' ? 'color:var(--error-red); font-weight:700;' : ''}">${locTxt}</td><td>${qtyTxt}</td></tr>`; 
+          // Apply red only to specific errors
+          const nameStyle = (l.status === 'fail' && (l.failReason === 'invalid_no' || l.failReason === 'error')) ? 'color:var(--error-red); font-weight:700;' : '';
+          const anotherStyle = (l.status === 'fail' && l.failReason === 'no_another') ? 'color:var(--error-red); font-weight:700;' : '';
+          const procStyle = (l.status === 'fail' && l.failReason === 'no_proc') ? 'color:var(--error-red); font-weight:700;' : '';
+          const locStyle = (l.status === 'fail' && l.failReason === 'no_loc') ? 'color:var(--error-red); font-weight:700;' : '';
+
+          return `<tr class="${rowClass}"><td>${l.no}</td><td style="${nameStyle}">${l.name}</td><td>${l.cardNo}</td><td style="${anotherStyle}">${anotherTxt}</td><td style="${procStyle}">${procTxt}</td><td style="${locStyle}">${locTxt}</td><td>${qtyTxt}</td></tr>`; 
       }).join(''); 
       
       document.getElementById('result-detail-body').innerHTML = detailHtml; 
