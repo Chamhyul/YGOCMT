@@ -38,10 +38,10 @@
       --nav-border: rgba(0, 0, 0, 0.1);
       --nav-shadow: 0 4px 15px rgba(0,0,0,0.1);
 
-      /* [MODIFIED] Color Variables for v0.11.2 */
+      /* Color Variables for Table */
       --bg-odd-row: #80cbc4; 
       --text-table-light: #424242;
-      --text-table-dark: #333333; /* 다크 모드에서도 진한 회색 (배경이 밝으므로) */
+      --text-table-dark: #333333; 
     }
 
     body.dark-mode {
@@ -73,8 +73,7 @@
       --nav-border: rgba(255, 255, 255, 0.1);
       --nav-shadow: 0 4px 20px rgba(0,0,0,0.5);
       
-      /* Dark Mode Adjustments */
-      --bg-odd-row: #26a69a; /* Darker teal for dark mode odd rows */
+      --bg-odd-row: #26a69a; 
     }
 
     body, input, button, table, .btn, .modal-content, select { font-family: 'Pretendard', sans-serif !important; }
@@ -86,7 +85,7 @@
         padding-left: 0;
     }
     
-    /* [MODIFIED] Page Entry Table Styles - v0.11.1 ~ 0.11.2 */
+    /* Page Entry Table Styles */
     .page-entry-table {
         width: 100%;
         max-width: 700px;
@@ -99,7 +98,6 @@
         overflow: hidden;
     }
 
-    /* Cell Styles */
     .page-entry-table td {
         padding: 0 !important; 
         margin: 0 !important;
@@ -125,13 +123,16 @@
         box-sizing: border-box !important; 
         display: block;
         cursor: pointer;
-        color: var(--text-table-light); /* Default Text Color */
+        color: var(--text-table-light); 
         outline: none !important; 
     }
     
+    /* [MODIFIED] Dark Mode Text Color Fix */
     body.dark-mode .page-entry-table input,
-    body.dark-mode .page-entry-table select {
-        color: var(--text-table-dark); /* v0.11.2: 다크 모드에서도 진한 회색 */
+    body.dark-mode .page-entry-table select,
+    body.dark-mode .card-name-disp,
+    body.dark-mode .page-entry-table .no-cell {
+        color: var(--text-table-dark) !important;
     }
 
     .page-entry-table input:focus,
@@ -142,19 +143,16 @@
         box-shadow: none !important; 
     }
     
-    /* [MODIFIED] Placeholder Styles v0.11.2 - Force Opacity & Inherit Color */
+    /* [MODIFIED] Placeholder Styles: Inherit Parent Color */
     .page-entry-table input::placeholder {
         color: inherit !important;
-        opacity: 1 !important; /* 브라우저 기본 투명도 제거 */
+        opacity: 1 !important;
     }
 
     /* Odd Entry */
     .entry-group.odd {
         background-color: var(--bg-odd-row);
         color: var(--text-table-light);
-    }
-    body.dark-mode .entry-group.odd {
-        color: var(--text-table-dark);
     }
     
     .entry-group.odd select { color: inherit; } 
@@ -164,9 +162,6 @@
     .entry-group.even {
         background-color: var(--primary-light);
         color: var(--text-table-light);
-    }
-    body.dark-mode .entry-group.even {
-        color: var(--text-table-dark);
     }
     
     .entry-group.even select { color: inherit; }
@@ -581,7 +576,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.11.2</span>
+        <span class="footer-item">ver. 0.11.3</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -1038,7 +1033,6 @@
       tbody.appendChild(trBottom);
   }
 
-  // [MODIFIED] handleCardNoInput: 한글 입력 제한
   function handleCardNoInput(input) {
       const start = input.selectionStart;
       input.value = input.value.replace(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g, '').toUpperCase();
@@ -1072,13 +1066,18 @@
       }
   }
 
+  // [MODIFIED] fetchCardNameForPage: Prevent Reset Logic
   async function fetchCardNameForPage(input) {
       const topRow = input.closest('tr');
       const bottomRow = topRow.nextElementSibling; 
 
       const cardNo = input.value.trim();
+      const prevCardNo = input.dataset.prevCardNo;
+
+      if (prevCardNo === cardNo) return; // 변동 없으면 종료
+      input.dataset.prevCardNo = cardNo; // 현재 값 저장
+
       const nameDiv = topRow.querySelector('.card-name-disp'); 
-      
       const anotherSel = topRow.querySelector('.page-card-another');
       const procSel = bottomRow.querySelector('.page-card-proc');
       const locSel = bottomRow.querySelector('.page-card-loc');
@@ -1229,7 +1228,61 @@
   function resetAddModal() { document.getElementById('add-card-tbody').innerHTML = ''; addMoreRows(1); }
   function resetManageModal() { document.getElementById('manage-card-tbody').innerHTML = ''; addManageRows(1); }
   function validateSheetLink() { clearTimeout(validationTimeout); const url = document.getElementById('sheet-url').value.trim(); const mark = document.getElementById('valid-mark'), msg = document.getElementById('status-msg'), confirmBtn = document.getElementById('confirm-btn'); if (!url) { mark.style.display = 'none'; msg.innerText = ''; confirmBtn.classList.add('disabled'); return; } const match = url.match(/[-\w]{25,}/); if (!match) { mark.innerHTML = '<i class="material-icons" style="color: var(--error-red)">cancel</i>'; mark.style.display = 'block'; msg.innerText = '구글 시트 링크를 적어주세요.'; msg.style.color = 'var(--error-red)'; confirmBtn.classList.add('disabled'); return; } validationTimeout = setTimeout(async () => { msg.innerText = '권한 확인 중...'; try { const res = await callApi('checkSheet', { targetId: match[0] }); if (res.status === 'OK') { mark.innerHTML = '<i class="material-icons" style="color: var(--success-green)">check_circle</i>'; msg.innerText = '유효한 시트입니다.'; msg.style.color = 'var(--success-green)'; confirmBtn.classList.remove('disabled'); if (res.sheetName) document.getElementById('connected-sheet-name').innerText = `연결됨("${res.sheetName}")`; } else { mark.innerHTML = '<i class="material-icons" style="color: var(--warning-yellow)">warning</i>'; msg.innerText = (res.status === 'NO_EDIT_ACCESS') ? '공유 설정을 링크를 가진 모든 사용자 / 편집자로 설정해주세요.' : '접근할 수 없거나 형식이 잘못되었습니다.'; msg.style.color = 'var(--warning-yellow)'; confirmBtn.classList.add('disabled'); } mark.style.display = 'block'; } catch (e) { msg.innerText = '확인 실패'; } }, 500); }
-  async function refreshInitialData() { const savedId = localStorage.getItem(STORAGE_KEY); if (!savedId) return; showLoading(true, "데이터 동기화 중..."); try { const res = await callApi('getInitialData'); showLoading(false); isAppConfigured = res.isConfigured; if (res.isConfigured) { allNames = res.names; allProcessingTypes = res.processingTypes; allLocations = res.locations; localCardDatabase = res.allCards; rarityMap = res.rarityMap || {}; rarityMappingRaw = res.rarityMappingRaw || []; clientCache = res.clientCache || {}; nameDb = res.nameDb || {}; if (res.sheetName) document.getElementById('connected-sheet-name').innerText = `연결됨("${res.sheetName}")`; cidLookup = {}; Object.keys(nameDb).forEach(nameKey => { const entry = nameDb[nameKey]; if (entry && entry.id) { if (!cidLookup[entry.id]) cidLookup[entry.id] = new Set(); cidLookup[entry.id].add(nameKey); } }); const expandedSet = new Set(allNames); allNames.forEach(name => { const entry = nameDb[name]; if (entry && entry.id) { const siblings = cidLookup[entry.id]; if (siblings) { siblings.forEach(sName => expandedSet.add(sName)); } } }); allNames = Array.from(expandedSet).sort(); rarityLookup = {}; rarityMappingRaw.forEach((row, index) => { Object.values(row).forEach(val => { const key = String(val).trim(); if(key) { rarityLookup[key] = { data: row, index: index }; } }); }); } } catch (e) { showLoading(false); } }
+  
+  // [MODIFIED] refreshInitialData: Sort and Repopulate
+  async function refreshInitialData() { 
+      const savedId = localStorage.getItem(STORAGE_KEY); if (!savedId) return; 
+      showLoading(true, "데이터 동기화 중..."); 
+      try { 
+          const res = await callApi('getInitialData'); 
+          showLoading(false); 
+          isAppConfigured = res.isConfigured; 
+          if (res.isConfigured) { 
+              allNames = res.names; 
+              allProcessingTypes = res.processingTypes; 
+              // [MODIFIED] Sort locations
+              allLocations = res.locations.sort(); 
+              localCardDatabase = res.allCards; 
+              rarityMap = res.rarityMap || {}; 
+              rarityMappingRaw = res.rarityMappingRaw || []; 
+              clientCache = res.clientCache || {}; 
+              nameDb = res.nameDb || {}; 
+              if (res.sheetName) document.getElementById('connected-sheet-name').innerText = `연결됨("${res.sheetName}")`; 
+              
+              // [NEW] Repopulate existing location dropdowns
+              const locSelects = document.querySelectorAll('.page-card-loc, .new-card-loc, .manage-loc, .move-loc');
+              locSelects.forEach(sel => {
+                  const currentVal = sel.value;
+                  const isDirect = sel.querySelector('option[value="DIRECT"]');
+                  let html = '<option value="" disabled selected>선택</option>';
+                  
+                  // Keep special options based on class
+                  if (sel.classList.contains('page-card-loc')) {
+                      html = '<option value="" disabled selected>보관 위치</option>';
+                  }
+                  
+                  html += allLocations.map(l => `<option value="${l}">${l}</option>`).join('');
+                  
+                  if (sel.classList.contains('page-card-loc') || sel.classList.contains('new-card-loc') || sel.classList.contains('move-loc')) {
+                      html += '<option value="DIRECT">직접 추가</option>';
+                  }
+                  
+                  sel.innerHTML = html;
+                  if (currentVal && allLocations.includes(currentVal)) {
+                      sel.value = currentVal;
+                  }
+              });
+
+              cidLookup = {}; 
+              Object.keys(nameDb).forEach(nameKey => { const entry = nameDb[nameKey]; if (entry && entry.id) { if (!cidLookup[entry.id]) cidLookup[entry.id] = new Set(); cidLookup[entry.id].add(nameKey); } }); 
+              const expandedSet = new Set(allNames); 
+              allNames.forEach(name => { const entry = nameDb[name]; if (entry && entry.id) { const siblings = cidLookup[entry.id]; if (siblings) { siblings.forEach(sName => expandedSet.add(sName)); } } }); 
+              allNames = Array.from(expandedSet).sort(); 
+              rarityLookup = {}; 
+              rarityMappingRaw.forEach((row, index) => { Object.values(row).forEach(val => { const key = String(val).trim(); if(key) { rarityLookup[key] = { data: row, index: index }; } }); }); 
+          } 
+      } catch (e) { showLoading(false); } 
+  }
   
   function startSearch() { 
       if (!localStorage.getItem(STORAGE_KEY)) { openGuideFromMain(); return; } 
