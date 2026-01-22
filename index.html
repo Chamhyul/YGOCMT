@@ -226,7 +226,7 @@
         margin-top: 20px; 
     }
 
-    /* Navigation & Layout (Existing) */
+    /* Navigation & Layout */
     .app-sidebar {
         position: fixed; left: 0; top: 0; bottom: 0; width: 240px;
         background-color: var(--nav-bg); z-index: 900; display: flex; flex-direction: column;
@@ -399,6 +399,13 @@
     @media only screen and (max-width: 600px) { .footer-separator.mobile-hide { display: none; } .footer-item.copyright { width: 100%; margin-top: 4px; } }
     .sheet-name-display { display: inline-block; max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; color: var(--text-muted); font-size: 0.8rem; margin-left: 8px; }
     @media only screen and (max-width: 600px) { .sheet-name-display { max-width: 100px; } }
+
+    /* [MODIFIED] v0.11.6 Result Modal Styles */
+    .result-icon-area { text-align: center; margin-top: 20px; margin-bottom: 10px; }
+    .result-icon-area i { font-size: 4rem; }
+    .result-summary, .result-fail-summary { text-align: center; }
+    .toggle-result-btn { justify-content: center; } 
+    #result-summary-table-box { max-width: 600px; margin: 0 auto; }
   </style>
 </head>
 <body>
@@ -581,7 +588,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.11.5</span>
+        <span class="footer-item">ver. 0.11.6</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -668,7 +675,7 @@
 
 <div id="add-result-modal" class="modal">
   <div class="modal-content">
-    <div class="result-icon-area"><i class="material-icons">check_circle</i></div>
+    <div id="result-icon-area" class="result-icon-area"></div>
     <h5 style="font-weight: 800; text-align: center; margin-bottom: 20px;">카드 등록 완료!</h5>
     <p id="result-success-text" class="result-summary"></p>
     <p id="result-fail-text" class="result-fail-summary"></p>
@@ -1003,7 +1010,6 @@
       addPageEntry();
   }
 
-  // [MODIFIED] addPageEntry: Use Combo Box (Input+Datalist)
   function addPageEntry() {
       const tbody = document.getElementById('page-add-tbody');
       
@@ -1022,7 +1028,6 @@
           <td style="width:25%;"><select class="browser-default page-card-another" disabled><option value="" selected>일러스트</option></select></td>
       `;
 
-      // [MODIFIED] Using input list="loc-datalist" instead of select
       const trBottom = document.createElement('tr');
       trBottom.className = `entry-row bottom-row entry-group ${groupClass}`;
       trBottom.innerHTML = `
@@ -1043,7 +1048,7 @@
       input.setSelectionRange(start, start);
   }
 
-  // [MODIFIED] fetchCardNameForPage: Updated selector logic for new input structure
+  // [MODIFIED] fetchCardNameForPage: Race Condition Fix
   async function fetchCardNameForPage(input) {
       const topRow = input.closest('tr');
       const bottomRow = topRow.nextElementSibling; 
@@ -1057,7 +1062,7 @@
       const nameDiv = topRow.querySelector('.card-name-disp'); 
       const anotherSel = topRow.querySelector('.page-card-another');
       const procSel = bottomRow.querySelector('.page-card-proc');
-      const locInput = bottomRow.querySelector('.page-card-loc'); // Now input
+      const locInput = bottomRow.querySelector('.page-card-loc'); 
       const qtyInput = bottomRow.querySelector('.page-card-qty');
 
       procSel.disabled = true; procSel.value = "";
@@ -1080,6 +1085,10 @@
       nameDiv.innerText = "조회 중...";
       try {
           const res = await callApi('getCardNameFromDb', { cardNo });
+          
+          // [NEW] Check for race condition
+          if (input.value.trim() !== cardNo) return;
+
           if (res.name.includes("오류") || res.name.includes("확인하세요")) {
               nameDiv.innerText = res.name;
           } else {
@@ -1088,6 +1097,8 @@
               applyPageCardDataToRows(res, topRow, bottomRow);
           }
       } catch (e) {
+          // [NEW] Check for race condition
+          if (input.value.trim() !== cardNo) return;
           nameDiv.innerText = "접속 오류";
       }
   }
@@ -1095,7 +1106,7 @@
   function applyPageCardDataToRows(data, topRow, bottomRow) {
       const anotherSel = topRow.querySelector('.page-card-another');
       const procSel = bottomRow.querySelector('.page-card-proc');
-      const locInput = bottomRow.querySelector('.page-card-loc'); // Now input
+      const locInput = bottomRow.querySelector('.page-card-loc'); 
 
       const count = data.anotherCount || 1;
       let optionsHtml = '';
@@ -1120,9 +1131,8 @@
       }
       
       procSel.disabled = false;
-      locInput.disabled = false; // Enable input
+      locInput.disabled = false; 
       
-      // Auto-enable quantity if loc has value
       locInput.oninput = function() {
           const qtyInp = bottomRow.querySelector('.page-card-qty');
           if(this.value.trim().length > 0) {
@@ -1135,7 +1145,6 @@
       };
   }
 
-  // [MODIFIED] submitPageEntries: Read from input directly
   async function submitPageEntries() {
       const tbody = document.getElementById('page-add-tbody');
       const rows = tbody.querySelectorAll('tr'); 
@@ -1156,8 +1165,6 @@
 
           let another = topRow.querySelector('.page-card-another').value;
           let proc = bottomRow.querySelector('.page-card-proc').value;
-          
-          // [MODIFIED] Read location from input directly
           let loc = bottomRow.querySelector('.page-card-loc').value.trim();
           
           const qtyVal = bottomRow.querySelector('.page-card-qty').value;
@@ -1191,7 +1198,8 @@
           } catch (e) {
               console.error("Registration Error:", e);
               showLoading(false);
-              M.toast({html: '처리 중 오류가 발생했습니다. (콘솔 확인)', classes: 'red darken-2'});
+              // [MODIFIED] Fatal error to Modal
+              showResultModal(0, 0, [], e.toString());
           }
       } else if (detailLog.length > 0) {
           showResultModal(0, 0, detailLog); 
@@ -1219,8 +1227,6 @@
   function resetAddModal() { document.getElementById('add-card-tbody').innerHTML = ''; addMoreRows(1); }
   function resetManageModal() { document.getElementById('manage-card-tbody').innerHTML = ''; addManageRows(1); }
   function validateSheetLink() { clearTimeout(validationTimeout); const url = document.getElementById('sheet-url').value.trim(); const mark = document.getElementById('valid-mark'), msg = document.getElementById('status-msg'), confirmBtn = document.getElementById('confirm-btn'); if (!url) { mark.style.display = 'none'; msg.innerText = ''; confirmBtn.classList.add('disabled'); return; } const match = url.match(/[-\w]{25,}/); if (!match) { mark.innerHTML = '<i class="material-icons" style="color: var(--error-red)">cancel</i>'; mark.style.display = 'block'; msg.innerText = '구글 시트 링크를 적어주세요.'; msg.style.color = 'var(--error-red)'; confirmBtn.classList.add('disabled'); return; } validationTimeout = setTimeout(async () => { msg.innerText = '권한 확인 중...'; try { const res = await callApi('checkSheet', { targetId: match[0] }); if (res.status === 'OK') { mark.innerHTML = '<i class="material-icons" style="color: var(--success-green)">check_circle</i>'; msg.innerText = '유효한 시트입니다.'; msg.style.color = 'var(--success-green)'; confirmBtn.classList.remove('disabled'); if (res.sheetName) document.getElementById('connected-sheet-name').innerText = `연결됨("${res.sheetName}")`; } else { mark.innerHTML = '<i class="material-icons" style="color: var(--warning-yellow)">warning</i>'; msg.innerText = (res.status === 'NO_EDIT_ACCESS') ? '공유 설정을 링크를 가진 모든 사용자 / 편집자로 설정해주세요.' : '접근할 수 없거나 형식이 잘못되었습니다.'; msg.style.color = 'var(--warning-yellow)'; confirmBtn.classList.add('disabled'); } mark.style.display = 'block'; } catch (e) { msg.innerText = '확인 실패'; } }, 500); }
-  
-  // [MODIFIED] refreshInitialData: Populate datalist
   async function refreshInitialData() { 
       const savedId = localStorage.getItem(STORAGE_KEY); if (!savedId) return; 
       showLoading(true, "데이터 동기화 중..."); 
@@ -1231,9 +1237,7 @@
           if (res.isConfigured) { 
               allNames = res.names; 
               allProcessingTypes = res.processingTypes; 
-              
               allLocations = res.locations.sort(); 
-              
               localCardDatabase = res.allCards; 
               rarityMap = res.rarityMap || {}; 
               rarityMappingRaw = res.rarityMappingRaw || []; 
@@ -1241,12 +1245,8 @@
               nameDb = res.nameDb || {}; 
               if (res.sheetName) document.getElementById('connected-sheet-name').innerText = `연결됨("${res.sheetName}")`; 
               
-              // [NEW] Populate Shared Datalist
               const datalist = document.getElementById('loc-datalist');
               datalist.innerHTML = allLocations.map(l => `<option value="${l}">`).join('');
-
-              // Repopulate logic for modals if needed (kept simple for datalist)
-              // (Datalist automatically updates for all inputs linked to it)
 
               cidLookup = {}; 
               Object.keys(nameDb).forEach(nameKey => { const entry = nameDb[nameKey]; if (entry && entry.id) { if (!cidLookup[entry.id]) cidLookup[entry.id] = new Set(); cidLookup[entry.id].add(nameKey); } }); 
@@ -1347,31 +1347,103 @@
       M.Tooltip.init(resultArea.querySelectorAll('.tooltipped'), { html: true, margin: 3 }); 
   }
   function toggleNewDetail(detailId) { const content = document.getElementById(detailId); const btn = content.nextElementSibling; const textSpan = btn.querySelector('span'); const icon = btn.querySelector('i'); if (content.style.maxHeight) { content.style.maxHeight = null; textSpan.innerText = '자세히 보기'; icon.innerText = 'keyboard_arrow_down'; } else { content.style.maxHeight = content.scrollHeight + "px"; textSpan.innerText = '간략히 보기'; icon.innerText = 'keyboard_arrow_up'; } }
-  function showResultModal(count, totalQty, detailLog) { 
+  
+  // [MODIFIED] showResultModal: Enhanced UI & Logic v0.11.6
+  function showResultModal(count, totalQty, detailLog, fatalError = null) { 
       const el = document.getElementById('add-result-modal');
       let modal = M.Modal.getInstance(el);
       if (!modal) modal = M.Modal.init(el, { dismissible: false, onCloseEnd: handleContinueRegistration }); 
       
-      document.getElementById('result-success-text').innerText = `${count}종의 카드 ${totalQty}장을 등록했습니다.`; 
-      const failCount = detailLog.filter(l => l.status === 'fail').length; 
-      document.getElementById('result-fail-text').innerText = failCount > 0 ? `(${failCount}종의 카드를 등록할 수 없습니다.)` : ""; 
-      hasRegisteredInSession = true; 
-      let summaryHtml = ""; 
+      const iconArea = document.getElementById('result-icon-area');
+      const successText = document.getElementById('result-success-text');
+      const failText = document.getElementById('result-fail-text');
+      const tableBody = document.getElementById('result-summary-body');
+      
+      // 상태 판별
+      let state = 'SUCCESS';
+      const failCount = detailLog.filter(l => l.status === 'fail').length;
+      
+      if (fatalError) state = 'FATAL';
+      else if (count === 0 && failCount > 0) state = 'FAIL';
+      else if (count > 0 && failCount > 0) state = 'PARTIAL';
+      
+      // 아이콘 및 텍스트 설정
+      let iconHtml = '';
+      let mainMsg = '';
+      let subMsg = '';
+      
+      if (state === 'SUCCESS') {
+          iconHtml = `<i class="material-icons green-text text-accent-4">check_circle</i>`;
+          mainMsg = `카드 ${totalQty}장을 등록 완료했습니다.`;
+      } else if (state === 'PARTIAL') {
+          iconHtml = `<i class="material-icons amber-text text-accent-4">warning</i>`; // Triangle exclamation usually
+          mainMsg = `카드 ${totalQty}장을 등록 완료했습니다.`;
+          subMsg = `${failCount}종의 카드 등록을 실패했습니다.`;
+      } else if (state === 'FAIL') {
+          iconHtml = `<i class="material-icons red-text text-accent-4">cancel</i>`;
+          mainMsg = `카드 등록에 실패했습니다.`;
+      } else if (state === 'FATAL') {
+          iconHtml = `<i class="material-icons red-text text-accent-4">cancel</i>`;
+          mainMsg = `카드 등록에 실패했습니다.`;
+          subMsg = `<span class="grey-text text-darken-1" style="font-size:0.8rem;">[오류] ${fatalError}</span>`;
+      }
+      
+      iconArea.innerHTML = iconHtml;
+      successText.innerHTML = mainMsg;
+      failText.innerHTML = subMsg;
+      
+      // 요약표 생성 (이름 기준 집계)
       const successLogs = detailLog.filter(l => l.status === 'success'); 
+      let summaryHtml = ""; 
+      
       if (successLogs.length > 0) { 
-          const aggregated = {}; 
-          successLogs.forEach(l => { const name = l.name; const no = l.cardNo; const q = l.qty; if(!aggregated[name]) aggregated[name] = {}; if(!aggregated[name][no]) aggregated[name][no] = 0; aggregated[name][no] += q; }); 
-          Object.keys(aggregated).forEach(name => { const numbers = Object.keys(aggregated[name]); numbers.forEach((no, idx) => { summaryHtml += `<tr class="success-row">`; if(idx === 0) summaryHtml += `<td rowspan="${numbers.length}">${name}</td>`; summaryHtml += `<td>${no}</td><td>${aggregated[name][no]}장</td></tr>`; }); }); 
+          const nameAgg = {}; 
+          successLogs.forEach(l => { 
+              if(!nameAgg[l.name]) nameAgg[l.name] = 0;
+              nameAgg[l.name] += l.qty;
+          }); 
+          
+          for(const [name, qty] of Object.entries(nameAgg)) {
+              summaryHtml += `<tr class="success-row"><td>${name}</td><td>${qty}장</td></tr>`;
+          }
       } 
+      
+      // 실패 로그 (기존 유지)
       const failLogs = detailLog.filter(l => l.status === 'fail'); 
-      if (failLogs.length > 0) { failLogs.forEach((l) => { let reason = l.name; if(l.failReason === "no_proc" || l.failReason === "no_loc") reason = `${l.failReason === "no_proc" ? "레어도" : "보관 위치"} 미선택`; else if(l.failReason === "invalid_no") reason = "존재하지 않은 카드 번호"; summaryHtml += `<tr class="fail-row">`; summaryHtml += `<td style="color:var(--error-red);">${reason}</td><td>${l.cardNo}</td><td>-</td></tr>`; }); } 
-      document.getElementById('result-summary-body').innerHTML = summaryHtml; 
-      let detailHtml = detailLog.map(l => { const rowClass = l.status === 'success' ? 'success-row' : 'fail-row'; return `<tr class="${rowClass}"><td>${l.no}</td><td style="${l.status==='fail' && (l.failReason==='invalid_no' || l.failReason==='error') ? 'color:var(--error-red); font-weight:700;' : ''}">${l.name}</td><td>${l.cardNo}</td><td>${l.another || '-'}</td><td style="${l.status==='fail' && l.failReason==='no_proc' ? 'color:var(--error-red); font-weight:700;' : ''}">${l.proc}</td><td style="${l.status==='fail' && l.failReason==='no_loc' ? 'color:var(--error-red); font-weight:700;' : ''}">${l.loc}</td><td>${l.qty}</td></tr>`; }).join(''); 
+      if (failLogs.length > 0) { 
+          failLogs.forEach((l) => { 
+              let reason = l.name; 
+              if(l.failReason === "no_proc" || l.failReason === "no_loc") reason = `${l.failReason === "no_proc" ? "레어도" : "보관 위치"} 미선택`; 
+              else if(l.failReason === "invalid_no") reason = "존재하지 않은 카드 번호"; 
+              summaryHtml += `<tr class="fail-row"><td style="color:var(--error-red);">${reason}</td><td>-</td></tr>`; 
+          }); 
+      } 
+      
+      // 테이블 헤더 변경 (No 제거)
+      const tableHead = document.querySelector('#result-detail-box thead tr');
+      if(tableHead) tableHead.innerHTML = `<th style="width:10%;">No</th><th style="width:20%;">카드 이름</th><th style="width:15%;">카드 번호</th><th style="width:15%;">어나더</th><th style="width:15%;">레어도</th><th style="width:15%;">보관 위치</th><th style="width:10%;">수량</th>`; // Detail table keeps structure
+      
+      // Summary Table Header Update (Dynamic injection or static HTML change needed?)
+      // The current HTML has no header for summary table, just body. 
+      // We will inject rows with Name | Qty.
+      
+      tableBody.innerHTML = summaryHtml; 
+      
+      // Detail Table Body (Keep full details)
+      let detailHtml = detailLog.map(l => { 
+          const rowClass = l.status === 'success' ? 'success-row' : 'fail-row'; 
+          return `<tr class="${rowClass}"><td>${l.no}</td><td style="${l.status==='fail' && (l.failReason==='invalid_no' || l.failReason==='error') ? 'color:var(--error-red); font-weight:700;' : ''}">${l.name}</td><td>${l.cardNo}</td><td>${l.another || '-'}</td><td style="${l.status==='fail' && l.failReason==='no_proc' ? 'color:var(--error-red); font-weight:700;' : ''}">${l.proc}</td><td style="${l.status==='fail' && l.failReason==='no_loc' ? 'color:var(--error-red); font-weight:700;' : ''}">${l.loc}</td><td>${l.qty}</td></tr>`; 
+      }).join(''); 
+      
       document.getElementById('result-detail-body').innerHTML = detailHtml; 
+      
       document.getElementById('result-detail-box').style.display = 'none'; 
       document.getElementById('toggle-icon').innerText = 'keyboard_arrow_down'; 
+      
+      hasRegisteredInSession = true; 
       modal.open(); 
   }
+  
   function toggleResultDetail() { const box = document.getElementById('result-detail-box'); const icon = document.getElementById('toggle-icon'); const isHidden = box.style.display === 'none'; box.style.display = isHidden ? 'block' : 'none'; icon.innerText = isHidden ? 'keyboard_arrow_up' : 'keyboard_arrow_down'; }
   // [MODIFIED] handleContinueRegistration: 행 단위 삭제
   function handleContinueRegistration() { 
