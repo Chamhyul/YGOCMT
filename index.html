@@ -38,12 +38,10 @@
       --nav-border: rgba(0, 0, 0, 0.1);
       --nav-shadow: 0 4px 15px rgba(0,0,0,0.1);
 
-      /* [NEW] v0.11.1 Color Variables */
-      --bg-odd-row: #80cbc4; /* Teal 200: Brighter than primary, Darker than even */
+      /* [MODIFIED] Color Variables for v0.11.2 */
+      --bg-odd-row: #80cbc4; 
       --text-table-light: #424242;
-      --text-table-dark: #e0e0e0;
-      --placeholder-light: rgba(66, 66, 66, 0.5);
-      --placeholder-dark: rgba(224, 224, 224, 0.5);
+      --text-table-dark: #333333; /* 다크 모드에서도 진한 회색 (배경이 밝으므로) */
     }
 
     body.dark-mode {
@@ -88,7 +86,7 @@
         padding-left: 0;
     }
     
-    /* [MODIFIED] Page Entry Table Styles - v0.11.1 */
+    /* [MODIFIED] Page Entry Table Styles - v0.11.1 ~ 0.11.2 */
     .page-entry-table {
         width: 100%;
         max-width: 700px;
@@ -101,18 +99,18 @@
         overflow: hidden;
     }
 
-    /* [MODIFIED] Cell Styles */
+    /* Cell Styles */
     .page-entry-table td {
         padding: 0 !important; 
         margin: 0 !important;
-        border: 1px solid rgba(255, 255, 255, 0.3); /* Lighter border for new bg */
+        border: 1px solid rgba(255, 255, 255, 0.3); 
         vertical-align: middle;
         height: 42px;
         box-sizing: border-box;
-        overflow: hidden; /* Prevent child overflow */
+        overflow: hidden; 
     }
 
-    /* [MODIFIED] Input & Select Styles - Fix Overflow & Colors */
+    /* Input & Select Styles */
     .page-entry-table input, 
     .page-entry-table select {
         width: 100% !important;
@@ -123,28 +121,34 @@
         margin: 0 !important;
         font-size: 0.95rem !important;
         padding: 0 10px !important;
-        box-shadow: none !important; /* Materialize default shadow removal */
-        box-sizing: border-box !important; /* Critical fix for overflow */
+        box-shadow: none !important; 
+        box-sizing: border-box !important; 
         display: block;
         cursor: pointer;
         color: var(--text-table-light); /* Default Text Color */
-        outline: none !important; /* Remove focus ring overflow */
+        outline: none !important; 
     }
     
     body.dark-mode .page-entry-table input,
     body.dark-mode .page-entry-table select {
-        color: var(--text-table-dark);
+        color: var(--text-table-dark); /* v0.11.2: 다크 모드에서도 진한 회색 */
     }
 
     .page-entry-table input:focus,
     .page-entry-table select:focus {
         background-color: rgba(0,0,0,0.05) !important;
         outline: none !important;
-        border-bottom: none !important; /* Materialize override */
-        box-shadow: none !important; /* Materialize override */
+        border-bottom: none !important; 
+        box-shadow: none !important; 
     }
     
-    /* [MODIFIED] Odd Entry (Brighter Background, Dark Text) */
+    /* [MODIFIED] Placeholder Styles v0.11.2 - Force Opacity & Inherit Color */
+    .page-entry-table input::placeholder {
+        color: inherit !important;
+        opacity: 1 !important; /* 브라우저 기본 투명도 제거 */
+    }
+
+    /* Odd Entry */
     .entry-group.odd {
         background-color: var(--bg-odd-row);
         color: var(--text-table-light);
@@ -153,13 +157,10 @@
         color: var(--text-table-dark);
     }
     
-    .entry-group.odd input::placeholder { color: var(--placeholder-light); }
-    body.dark-mode .entry-group.odd input::placeholder { color: var(--placeholder-dark); }
-    
     .entry-group.odd select { color: inherit; } 
     .entry-group.odd option { color: var(--text-primary); background: var(--bg-surface); } 
 
-    /* [MODIFIED] Even Entry (Keep Background, Dark Text) */
+    /* Even Entry */
     .entry-group.even {
         background-color: var(--primary-light);
         color: var(--text-table-light);
@@ -167,9 +168,6 @@
     body.dark-mode .entry-group.even {
         color: var(--text-table-dark);
     }
-
-    .entry-group.even input::placeholder { color: var(--placeholder-light); }
-    body.dark-mode .entry-group.even input::placeholder { color: var(--placeholder-dark); }
     
     .entry-group.even select { color: inherit; }
 
@@ -583,7 +581,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.11.1</span>
+        <span class="footer-item">ver. 0.11.2</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -1040,9 +1038,10 @@
       tbody.appendChild(trBottom);
   }
 
+  // [MODIFIED] handleCardNoInput: 한글 입력 제한
   function handleCardNoInput(input) {
       const start = input.selectionStart;
-      input.value = input.value.toUpperCase();
+      input.value = input.value.replace(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g, '').toUpperCase();
       input.setSelectionRange(start, start);
   }
 
