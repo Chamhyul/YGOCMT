@@ -400,12 +400,21 @@
     .sheet-name-display { display: inline-block; max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; color: var(--text-muted); font-size: 0.8rem; margin-left: 8px; }
     @media only screen and (max-width: 600px) { .sheet-name-display { max-width: 100px; } }
 
-    /* [MODIFIED] v0.11.6 Result Modal Styles */
+    /* Result Modal Styles */
     .result-icon-area { text-align: center; margin-top: 20px; margin-bottom: 10px; }
     .result-icon-area i { font-size: 4rem; }
     .result-summary, .result-fail-summary { text-align: center; }
-    .toggle-result-btn { justify-content: center; } 
-    #result-summary-table-box { max-width: 600px; margin: 0 auto; }
+    .toggle-result-btn { display: flex; justify-content: center; width: 100%; cursor: pointer; } 
+    
+    /* [MODIFIED] v0.11.7: Table Width & Spacing */
+    #result-summary-table-box { 
+        max-width: 300px; 
+        margin: 0 auto 20px auto; 
+    }
+    
+    /* [NEW] Summary Table Column Sizing */
+    #result-summary-body td:first-child { width: 80%; } 
+    #result-summary-body td:last-child { width: 20%; white-space: nowrap; }
   </style>
 </head>
 <body>
@@ -588,7 +597,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.11.6</span>
+        <span class="footer-item">ver. 0.11.7</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -728,7 +737,9 @@
         let options = {
             onCloseEnd: function(el) { 
                 if(el.id === 'add-card-modal') {
-                    if (hasRegisteredInSession) location.reload();
+                    if (hasRegisteredInSession) {
+                        // [MODIFIED] Do nothing, already synced via result modal
+                    }
                     else if(!el.dataset.keepData) resetAddModal();
                     else delete el.dataset.keepData; 
                 }
@@ -1048,7 +1059,6 @@
       input.setSelectionRange(start, start);
   }
 
-  // [MODIFIED] fetchCardNameForPage: Race Condition Fix
   async function fetchCardNameForPage(input) {
       const topRow = input.closest('tr');
       const bottomRow = topRow.nextElementSibling; 
@@ -1086,7 +1096,6 @@
       try {
           const res = await callApi('getCardNameFromDb', { cardNo });
           
-          // [NEW] Check for race condition
           if (input.value.trim() !== cardNo) return;
 
           if (res.name.includes("오류") || res.name.includes("확인하세요")) {
@@ -1097,7 +1106,6 @@
               applyPageCardDataToRows(res, topRow, bottomRow);
           }
       } catch (e) {
-          // [NEW] Check for race condition
           if (input.value.trim() !== cardNo) return;
           nameDiv.innerText = "접속 오류";
       }
@@ -1198,7 +1206,6 @@
           } catch (e) {
               console.error("Registration Error:", e);
               showLoading(false);
-              // [MODIFIED] Fatal error to Modal
               showResultModal(0, 0, [], e.toString());
           }
       } else if (detailLog.length > 0) {
@@ -1347,8 +1354,6 @@
       M.Tooltip.init(resultArea.querySelectorAll('.tooltipped'), { html: true, margin: 3 }); 
   }
   function toggleNewDetail(detailId) { const content = document.getElementById(detailId); const btn = content.nextElementSibling; const textSpan = btn.querySelector('span'); const icon = btn.querySelector('i'); if (content.style.maxHeight) { content.style.maxHeight = null; textSpan.innerText = '자세히 보기'; icon.innerText = 'keyboard_arrow_down'; } else { content.style.maxHeight = content.scrollHeight + "px"; textSpan.innerText = '간략히 보기'; icon.innerText = 'keyboard_arrow_up'; } }
-  
-  // [MODIFIED] showResultModal: Enhanced UI & Logic v0.11.6
   function showResultModal(count, totalQty, detailLog, fatalError = null) { 
       const el = document.getElementById('add-result-modal');
       let modal = M.Modal.getInstance(el);
@@ -1359,7 +1364,6 @@
       const failText = document.getElementById('result-fail-text');
       const tableBody = document.getElementById('result-summary-body');
       
-      // 상태 판별
       let state = 'SUCCESS';
       const failCount = detailLog.filter(l => l.status === 'fail').length;
       
@@ -1367,7 +1371,6 @@
       else if (count === 0 && failCount > 0) state = 'FAIL';
       else if (count > 0 && failCount > 0) state = 'PARTIAL';
       
-      // 아이콘 및 텍스트 설정
       let iconHtml = '';
       let mainMsg = '';
       let subMsg = '';
@@ -1376,7 +1379,7 @@
           iconHtml = `<i class="material-icons green-text text-accent-4">check_circle</i>`;
           mainMsg = `카드 ${totalQty}장을 등록 완료했습니다.`;
       } else if (state === 'PARTIAL') {
-          iconHtml = `<i class="material-icons amber-text text-accent-4">warning</i>`; // Triangle exclamation usually
+          iconHtml = `<i class="material-icons amber-text text-accent-4">warning</i>`; 
           mainMsg = `카드 ${totalQty}장을 등록 완료했습니다.`;
           subMsg = `${failCount}종의 카드 등록을 실패했습니다.`;
       } else if (state === 'FAIL') {
@@ -1392,7 +1395,6 @@
       successText.innerHTML = mainMsg;
       failText.innerHTML = subMsg;
       
-      // 요약표 생성 (이름 기준 집계)
       const successLogs = detailLog.filter(l => l.status === 'success'); 
       let summaryHtml = ""; 
       
@@ -1408,7 +1410,6 @@
           }
       } 
       
-      // 실패 로그 (기존 유지)
       const failLogs = detailLog.filter(l => l.status === 'fail'); 
       if (failLogs.length > 0) { 
           failLogs.forEach((l) => { 
@@ -1419,17 +1420,11 @@
           }); 
       } 
       
-      // 테이블 헤더 변경 (No 제거)
       const tableHead = document.querySelector('#result-detail-box thead tr');
-      if(tableHead) tableHead.innerHTML = `<th style="width:10%;">No</th><th style="width:20%;">카드 이름</th><th style="width:15%;">카드 번호</th><th style="width:15%;">어나더</th><th style="width:15%;">레어도</th><th style="width:15%;">보관 위치</th><th style="width:10%;">수량</th>`; // Detail table keeps structure
-      
-      // Summary Table Header Update (Dynamic injection or static HTML change needed?)
-      // The current HTML has no header for summary table, just body. 
-      // We will inject rows with Name | Qty.
+      if(tableHead) tableHead.innerHTML = `<th style="width:10%;">No</th><th style="width:20%;">카드 이름</th><th style="width:15%;">카드 번호</th><th style="width:15%;">어나더</th><th style="width:15%;">레어도</th><th style="width:15%;">보관 위치</th><th style="width:10%;">수량</th>`; 
       
       tableBody.innerHTML = summaryHtml; 
       
-      // Detail Table Body (Keep full details)
       let detailHtml = detailLog.map(l => { 
           const rowClass = l.status === 'success' ? 'success-row' : 'fail-row'; 
           return `<tr class="${rowClass}"><td>${l.no}</td><td style="${l.status==='fail' && (l.failReason==='invalid_no' || l.failReason==='error') ? 'color:var(--error-red); font-weight:700;' : ''}">${l.name}</td><td>${l.cardNo}</td><td>${l.another || '-'}</td><td style="${l.status==='fail' && l.failReason==='no_proc' ? 'color:var(--error-red); font-weight:700;' : ''}">${l.proc}</td><td style="${l.status==='fail' && l.failReason==='no_loc' ? 'color:var(--error-red); font-weight:700;' : ''}">${l.loc}</td><td>${l.qty}</td></tr>`; 
@@ -1445,14 +1440,14 @@
   }
   
   function toggleResultDetail() { const box = document.getElementById('result-detail-box'); const icon = document.getElementById('toggle-icon'); const isHidden = box.style.display === 'none'; box.style.display = isHidden ? 'block' : 'none'; icon.innerText = isHidden ? 'keyboard_arrow_up' : 'keyboard_arrow_down'; }
-  // [MODIFIED] handleContinueRegistration: 행 단위 삭제
-  function handleContinueRegistration() { 
+  // [MODIFIED] handleContinueRegistration: Re-sync
+  async function handleContinueRegistration() { 
       M.Modal.getInstance(document.getElementById('add-result-modal')).close(); 
       const tbody = document.getElementById('page-add-tbody'); 
       const rows = Array.from(tbody.children); 
       let hasFailures = false; 
 
-      // 2줄씩 묶어서 처리, 역순으로 순회해야 삭제 시 인덱스 문제 없음
+      // 2줄씩 묶어서 처리
       for (let i = rows.length - 2; i >= 0; i -= 2) {
           const topRow = rows[i];
           const bottomRow = rows[i+1];
@@ -1462,7 +1457,7 @@
               tbody.removeChild(bottomRow);
           } else {
               hasFailures = true;
-              delete topRow.dataset.status; // 실패 상태 초기화
+              delete topRow.dataset.status; 
           }
       }
 
@@ -1475,6 +1470,9 @@
           const noCell = remainingRows[i].querySelector('.no-cell');
           if (noCell) noCell.innerText = (i / 2) + 1;
       }
+
+      // [NEW] v0.11.7 Sync Data
+      await refreshInitialData();
   }
   function saveSettings() { const url = document.getElementById('sheet-url').value; const match = url.match(/[-\w]{25,}/); if (match) { localStorage.setItem(STORAGE_KEY, match[0]); location.reload(); } }
   function disconnectSheet() { localStorage.removeItem(STORAGE_KEY); location.reload(); }
