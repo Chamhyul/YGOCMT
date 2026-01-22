@@ -606,7 +606,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.11.9</span>
+        <span class="footer-item">ver. 0.11.10</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -1068,7 +1068,7 @@
       input.setSelectionRange(start, start);
   }
 
-  // [MODIFIED] fetchCardNameForPage: Updated URL Logic
+  // [MODIFIED] fetchCardNameForPage: Force Link Generation
   async function fetchCardNameForPage(input) {
       const topRow = input.closest('tr');
       const bottomRow = topRow.nextElementSibling; 
@@ -1097,12 +1097,12 @@
 
       if (clientCache[cardNo]) {
           const cached = clientCache[cardNo];
-          if (cached.linkData) {
-              const url = "https://www.db.yugioh-card.com" + cached.linkData.id + "&request_locale=" + cached.linkData.locale;
-              nameDiv.innerHTML = `<a href="${url}" target="_blank" class="card-link" onclick="event.stopPropagation()">${cached.name}</a>`;
-          } else {
-              nameDiv.innerText = cached.name;
-          }
+          // [NEW] Generate Link with fallback
+          const linkId = (cached.linkData && cached.linkData.id) ? cached.linkData.id : "/MISSING_CID";
+          const linkLocale = (cached.linkData && cached.linkData.locale) ? cached.linkData.locale : currentRegion;
+          const url = "https://www.db.yugioh-card.com" + linkId + "&request_locale=" + linkLocale;
+          nameDiv.innerHTML = `<a href="${url}" target="_blank" class="card-link" onclick="event.stopPropagation()">${cached.name}</a>`;
+          
           applyPageCardDataToRows(cached, topRow, bottomRow);
           return;
       }
@@ -1117,12 +1117,12 @@
               nameDiv.innerText = res.name;
           } else {
               clientCache[cardNo] = { name: res.name, anotherCount: res.anotherCount, rarities: res.rarities, linkData: res.linkData };
-              if (res.linkData) {
-                  const url = "https://www.db.yugioh-card.com" + res.linkData.id + "&request_locale=" + res.linkData.locale;
-                  nameDiv.innerHTML = `<a href="${url}" target="_blank" class="card-link" onclick="event.stopPropagation()">${res.name}</a>`;
-              } else {
-                  nameDiv.innerText = res.name;
-              }
+              // [NEW] Generate Link with fallback
+              const linkId = (res.linkData && res.linkData.id) ? res.linkData.id : "/MISSING_CID";
+              const linkLocale = (res.linkData && res.linkData.locale) ? res.linkData.locale : currentRegion;
+              const url = "https://www.db.yugioh-card.com" + linkId + "&request_locale=" + linkLocale;
+              nameDiv.innerHTML = `<a href="${url}" target="_blank" class="card-link" onclick="event.stopPropagation()">${res.name}</a>`;
+              
               applyPageCardDataToRows(res, topRow, bottomRow);
           }
       } catch (e) {
@@ -1177,7 +1177,6 @@
       };
   }
 
-  // [MODIFIED] submitPageEntries: Validation Update
   async function submitPageEntries() {
       const tbody = document.getElementById('page-add-tbody');
       const rows = tbody.querySelectorAll('tr'); 
@@ -1197,7 +1196,6 @@
           if (!cardNo) continue; 
 
           let another = topRow.querySelector('.page-card-another').value;
-          // Check if dropdown enabled but no value
           const isAnotherDisabled = topRow.querySelector('.page-card-another').disabled;
 
           let proc = bottomRow.querySelector('.page-card-proc').value;
@@ -1384,8 +1382,6 @@
       M.Tooltip.init(resultArea.querySelectorAll('.tooltipped'), { html: true, margin: 3 }); 
   }
   function toggleNewDetail(detailId) { const content = document.getElementById(detailId); const btn = content.nextElementSibling; const textSpan = btn.querySelector('span'); const icon = btn.querySelector('i'); if (content.style.maxHeight) { content.style.maxHeight = null; textSpan.innerText = '자세히 보기'; icon.innerText = 'keyboard_arrow_down'; } else { content.style.maxHeight = content.scrollHeight + "px"; textSpan.innerText = '간략히 보기'; icon.innerText = 'keyboard_arrow_up'; } }
-  
-  // [MODIFIED] showResultModal (v0.11.9)
   function showResultModal(count, totalQty, detailLog, fatalError = null) { 
       const el = document.getElementById('add-result-modal');
       let modal = M.Modal.getInstance(el);
@@ -1429,7 +1425,6 @@
       
       let summaryHtml = ""; 
       
-      // 1. Success Group
       const successLogs = detailLog.filter(l => l.status === 'success');
       if (successLogs.length > 0) { 
           const nameAgg = {}; 
@@ -1442,7 +1437,6 @@
           }
       } 
       
-      // 2. Fail Group (General)
       const failLogs = detailLog.filter(l => l.status === 'fail' && l.failReason !== 'invalid_no');
       failLogs.forEach((l) => { 
           let reason = l.name;
@@ -1451,7 +1445,6 @@
           summaryHtml += `<tr class="fail-row"><td style="color:var(--error-red);">${l.name}</td><td style="color:var(--error-red); font-size:0.8rem;">실패</td></tr>`; 
       });
 
-      // 3. Fail Group (Invalid No)
       const invalidLogs = detailLog.filter(l => l.status === 'fail' && l.failReason === 'invalid_no');
       invalidLogs.forEach((l) => {
           summaryHtml += `<tr class="fail-row"><td style="color:var(--error-red);">번호 오류</td><td style="color:var(--error-red); font-size:0.8rem;">실패</td></tr>`;
@@ -1462,7 +1455,6 @@
       
       tableBody.innerHTML = summaryHtml; 
       
-      // [MODIFIED] Detail Body Logic with improved red text rules
       let detailHtml = detailLog.map(l => { 
           const rowClass = l.status === 'success' ? 'success-row' : 'fail-row'; 
           
@@ -1483,7 +1475,6 @@
               }
           }
 
-          // Apply red only to specific errors
           const nameStyle = (l.status === 'fail' && (l.failReason === 'invalid_no' || l.failReason === 'error')) ? 'color:var(--error-red); font-weight:700;' : '';
           const anotherStyle = (l.status === 'fail' && l.failReason === 'no_another') ? 'color:var(--error-red); font-weight:700;' : '';
           const procStyle = (l.status === 'fail' && l.failReason === 'no_proc') ? 'color:var(--error-red); font-weight:700;' : '';
@@ -1508,6 +1499,7 @@
       const tbody = document.getElementById('page-add-tbody'); 
       const rows = Array.from(tbody.children); 
       let hasFailures = false; 
+      let hasSuccess = false; 
 
       for (let i = rows.length - 2; i >= 0; i -= 2) {
           const topRow = rows[i];
@@ -1516,6 +1508,7 @@
           if (topRow.dataset.status === 'success') {
               tbody.removeChild(topRow);
               tbody.removeChild(bottomRow);
+              hasSuccess = true; 
           } else {
               hasFailures = true;
               delete topRow.dataset.status; 
@@ -1526,18 +1519,15 @@
           addPageEntry(); 
       }
       
-      // Re-index and Re-color
       const remainingRows = tbody.querySelectorAll('tr');
       for (let i = 0; i < remainingRows.length; i += 2) {
           const topRow = remainingRows[i];
           const bottomRow = remainingRows[i+1];
           const setIndex = (i / 2) + 1;
           
-          // Index
           const noCell = topRow.querySelector('.no-cell');
           if (noCell) noCell.innerText = setIndex;
 
-          // Color
           topRow.classList.remove('odd', 'even');
           bottomRow.classList.remove('odd', 'even');
           const groupClass = (setIndex % 2 !== 0) ? 'odd' : 'even';
@@ -1545,7 +1535,9 @@
           bottomRow.classList.add(groupClass);
       }
 
-      await refreshInitialData();
+      if (hasSuccess) {
+          await refreshInitialData();
+      }
   }
   function saveSettings() { const url = document.getElementById('sheet-url').value; const match = url.match(/[-\w]{25,}/); if (match) { localStorage.setItem(STORAGE_KEY, match[0]); location.reload(); } }
   function disconnectSheet() { localStorage.removeItem(STORAGE_KEY); location.reload(); }
