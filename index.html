@@ -74,7 +74,7 @@
       --nav-shadow: 0 4px 20px rgba(0,0,0,0.5);
       
       /* [MODIFIED] Dark Mode Odd Row Color (Teal 300) */
-      --bg-odd-row: #4db6ac; 
+      --bg-odd-row: #56B0AB; 
     }
 
     body, input, button, table, .btn, .modal-content, select { font-family: 'Pretendard', sans-serif !important; }
@@ -607,7 +607,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.11.12</span>
+        <span class="footer-item">ver. 0.11.13</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -748,7 +748,7 @@
             onCloseEnd: function(el) { 
                 if(el.id === 'add-card-modal') {
                     if (hasRegisteredInSession) {
-                        
+                        // [MODIFIED] Do nothing, already synced via result modal
                     }
                     else if(!el.dataset.keepData) resetAddModal();
                     else delete el.dataset.keepData; 
@@ -1220,7 +1220,7 @@
               detailLog.push({ no, name: nameText, cardNo, another, proc: proc||"미선택", loc: loc||"미선택", qty: qty||0, status: 'fail', failReason });
               topRow.dataset.status = 'fail'; 
           } else {
-              // Convert "DEFAULT" back to ""
+              // [MODIFIED] Convert "DEFAULT" back to ""
               const submitAnother = (another === "DEFAULT") ? "" : another;
               validRows.push([nameText, cardNo, proc, qty, loc, submitAnother]);
               // Pass the raw 'another' ("DEFAULT") to detailLog for display logic in modal
@@ -1389,7 +1389,7 @@
   }
   function toggleNewDetail(detailId) { const content = document.getElementById(detailId); const btn = content.nextElementSibling; const textSpan = btn.querySelector('span'); const icon = btn.querySelector('i'); if (content.style.maxHeight) { content.style.maxHeight = null; textSpan.innerText = '자세히 보기'; icon.innerText = 'keyboard_arrow_down'; } else { content.style.maxHeight = content.scrollHeight + "px"; textSpan.innerText = '간략히 보기'; icon.innerText = 'keyboard_arrow_up'; } }
   
-  // [MODIFIED] showResultModal (v0.11.12)
+  // [MODIFIED] showResultModal (v0.11.13)
   function showResultModal(count, totalQty, detailLog, fatalError = null) { 
       const el = document.getElementById('add-result-modal');
       let modal = M.Modal.getInstance(el);
@@ -1433,7 +1433,6 @@
       
       let summaryHtml = ""; 
       
-      // 1. Success Group
       const successLogs = detailLog.filter(l => l.status === 'success');
       if (successLogs.length > 0) { 
           const nameAgg = {}; 
@@ -1446,7 +1445,6 @@
           }
       } 
       
-      // 2. Fail Group (General)
       const failLogs = detailLog.filter(l => l.status === 'fail' && l.failReason !== 'invalid_no');
       failLogs.forEach((l) => { 
           let reason = l.name;
@@ -1455,7 +1453,6 @@
           summaryHtml += `<tr class="fail-row"><td style="color:var(--error-red);">${l.name}</td><td style="color:var(--error-red); font-size:0.8rem;">실패</td></tr>`; 
       });
 
-      // 3. Fail Group (Invalid No)
       const invalidLogs = detailLog.filter(l => l.status === 'fail' && l.failReason === 'invalid_no');
       invalidLogs.forEach((l) => {
           summaryHtml += `<tr class="fail-row"><td style="color:var(--error-red);">번호 오류</td><td style="color:var(--error-red); font-size:0.8rem;">실패</td></tr>`;
@@ -1466,14 +1463,12 @@
       
       tableBody.innerHTML = summaryHtml; 
       
-      // [MODIFIED] Detail Body Logic with "DEFAULT" -> "기본" fix
       let detailHtml = detailLog.map(l => { 
           const rowClass = l.status === 'success' ? 'success-row' : 'fail-row'; 
           
           let procTxt = l.proc;
           let locTxt = l.loc;
           let qtyTxt = l.qty;
-          // [FIX] Convert "DEFAULT" or empty to "기본"
           let anotherTxt = (l.another === "DEFAULT" || !l.another) ? "기본" : l.another;
 
           if (l.status === 'fail') {
@@ -1492,8 +1487,10 @@
           const anotherStyle = (l.status === 'fail' && l.failReason === 'no_another') ? 'color:var(--error-red); font-weight:700;' : '';
           const procStyle = (l.status === 'fail' && l.failReason === 'no_proc') ? 'color:var(--error-red); font-weight:700;' : '';
           const locStyle = (l.status === 'fail' && l.failReason === 'no_loc') ? 'color:var(--error-red); font-weight:700;' : '';
+          // [MODIFIED] Quantity Style
+          const qtyStyle = (l.status === 'fail' && l.failReason === 'invalid_qty') ? 'color:var(--error-red); font-weight:700;' : '';
 
-          return `<tr class="${rowClass}"><td>${l.no}</td><td style="${nameStyle}">${l.name}</td><td>${l.cardNo}</td><td style="${anotherStyle}">${anotherTxt}</td><td style="${procStyle}">${procTxt}</td><td style="${locStyle}">${locTxt}</td><td>${qtyTxt}</td></tr>`; 
+          return `<tr class="${rowClass}"><td>${l.no}</td><td style="${nameStyle}">${l.name}</td><td>${l.cardNo}</td><td style="${anotherStyle}">${anotherTxt}</td><td style="${procStyle}">${procTxt}</td><td style="${locStyle}">${locTxt}</td><td style="${qtyStyle}">${qtyTxt}</td></tr>`; 
       }).join(''); 
       
       document.getElementById('result-detail-body').innerHTML = detailHtml; 
@@ -1532,7 +1529,6 @@
           addPageEntry(); 
       }
       
-      // Re-index and Re-color
       const remainingRows = tbody.querySelectorAll('tr');
       for (let i = 0; i < remainingRows.length; i += 2) {
           const topRow = remainingRows[i];
