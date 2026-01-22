@@ -216,7 +216,6 @@
         transition: all 0.2s;
         border-radius: 0 0 8px 8px; 
         margin-top: 0; 
-        /* [NEW] Flex for controls */
         display: flex;
         align-items: center;
         justify-content: center;
@@ -231,7 +230,6 @@
         border-color: rgba(255,255,255,0.1);
     }
     
-    /* [NEW] Qty Control Styles */
     .qty-control-box {
         display: flex;
         align-items: center;
@@ -684,12 +682,12 @@
                   <tr>
                       <td colspan="6" class="add-row-btn-cell">
                           <button class="add-page-row-btn" onclick="addMultipleRows()">
+                              <span style="font-weight: 700;">카드 추가 등록</span>
                               <div class="qty-control-box" onclick="event.stopPropagation()">
                                   <span class="ctrl-btn" onclick="adjustAddCount(-1)">-</span>
-                                  <span id="add-row-count" class="ctrl-val">1</span>
+                                  <span id="add-row-count" class="ctrl-val">1장</span>
                                   <span class="ctrl-btn" onclick="adjustAddCount(1)">+</span>
                               </div>
-                              <span style="display:flex; align-items:center; gap:4px;"><i class="material-icons" style="font-size:1.1rem;">add</i> 추가 등록</span>
                           </button>
                       </td>
                   </tr>
@@ -720,7 +718,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.11.16</span>
+        <span class="footer-item">ver. 0.11.17</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -1154,7 +1152,7 @@
   function adjustAddCount(delta) {
       rowAddCount += delta;
       if(rowAddCount < 1) rowAddCount = 1;
-      document.getElementById('add-row-count').innerText = rowAddCount;
+      document.getElementById('add-row-count').innerText = rowAddCount + "장";
   }
   
   // [NEW] Add Multiple Rows
