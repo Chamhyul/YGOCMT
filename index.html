@@ -94,7 +94,7 @@
         border-spacing: 0;
         border-style: hidden; 
         box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        border-radius: 8px; /* 테이블 전체 라운딩 */
+        border-radius: 8px;
         overflow: hidden;
     }
 
@@ -185,28 +185,26 @@
         color: inherit;
     }
 
-    /* [MODIFIED] Add Button Area Styles */
     .add-row-btn-cell {
         text-align: center;
-        padding: 0 !important; /* 셀 패딩 제거 */
+        padding: 0 !important;
         background: transparent !important;
         border: none !important;
         box-shadow: none !important;
     }
 
-    /* [MODIFIED] Add Button Styles - Attached to table */
     .add-page-row-btn {
         width: 100%;
         padding: 12px;
         background-color: var(--bg-sub);
         border: 1px solid rgba(0,0,0,0.1);
-        border-top: none; /* 위쪽 경계선 제거 (테이블과 연결) */
+        border-top: none; 
         color: var(--text-muted);
         font-weight: 700;
         cursor: pointer;
         transition: all 0.2s;
-        border-radius: 0 0 8px 8px; /* 하단만 둥글게 */
-        margin-top: 0; /* 마진 제거 */
+        border-radius: 0 0 8px 8px; 
+        margin-top: 0; 
         display: block;
     }
     .add-page-row-btn:hover {
@@ -218,7 +216,6 @@
         border-color: rgba(255,255,255,0.1);
     }
 
-    /* Page Button Container */
     .page-btn-container {
         max-width: 700px;
         margin: 0 auto;
@@ -226,7 +223,7 @@
         justify-content: flex-end;
         gap: 10px;
         padding-bottom: 40px;
-        margin-top: 20px; /* 버튼과 간격 */
+        margin-top: 20px; 
     }
 
     /* Navigation & Layout (Existing) */
@@ -584,7 +581,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.11.4</span>
+        <span class="footer-item">ver. 0.11.5</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -1124,9 +1121,8 @@
       
       procSel.disabled = false;
       locInput.disabled = false; // Enable input
-      // locInput receives focus logic or value update if needed? No, user types.
       
-      // Auto-enable quantity if loc has value (unlikely on fresh fetch) or bind event
+      // Auto-enable quantity if loc has value
       locInput.oninput = function() {
           const qtyInp = bottomRow.querySelector('.page-card-qty');
           if(this.value.trim().length > 0) {
@@ -1193,8 +1189,9 @@
               showLoading(false);
               showResultModal(successCount, successQty, detailLog);
           } catch (e) {
+              console.error("Registration Error:", e);
               showLoading(false);
-              M.toast({html: '서버 통신 오류', classes: 'red darken-2'});
+              M.toast({html: '처리 중 오류가 발생했습니다. (콘솔 확인)', classes: 'red darken-2'});
           }
       } else if (detailLog.length > 0) {
           showResultModal(0, 0, detailLog); 
@@ -1350,6 +1347,32 @@
       M.Tooltip.init(resultArea.querySelectorAll('.tooltipped'), { html: true, margin: 3 }); 
   }
   function toggleNewDetail(detailId) { const content = document.getElementById(detailId); const btn = content.nextElementSibling; const textSpan = btn.querySelector('span'); const icon = btn.querySelector('i'); if (content.style.maxHeight) { content.style.maxHeight = null; textSpan.innerText = '자세히 보기'; icon.innerText = 'keyboard_arrow_down'; } else { content.style.maxHeight = content.scrollHeight + "px"; textSpan.innerText = '간략히 보기'; icon.innerText = 'keyboard_arrow_up'; } }
+  function showResultModal(count, totalQty, detailLog) { 
+      const el = document.getElementById('add-result-modal');
+      let modal = M.Modal.getInstance(el);
+      if (!modal) modal = M.Modal.init(el, { dismissible: false, onCloseEnd: handleContinueRegistration }); 
+      
+      document.getElementById('result-success-text').innerText = `${count}종의 카드 ${totalQty}장을 등록했습니다.`; 
+      const failCount = detailLog.filter(l => l.status === 'fail').length; 
+      document.getElementById('result-fail-text').innerText = failCount > 0 ? `(${failCount}종의 카드를 등록할 수 없습니다.)` : ""; 
+      hasRegisteredInSession = true; 
+      let summaryHtml = ""; 
+      const successLogs = detailLog.filter(l => l.status === 'success'); 
+      if (successLogs.length > 0) { 
+          const aggregated = {}; 
+          successLogs.forEach(l => { const name = l.name; const no = l.cardNo; const q = l.qty; if(!aggregated[name]) aggregated[name] = {}; if(!aggregated[name][no]) aggregated[name][no] = 0; aggregated[name][no] += q; }); 
+          Object.keys(aggregated).forEach(name => { const numbers = Object.keys(aggregated[name]); numbers.forEach((no, idx) => { summaryHtml += `<tr class="success-row">`; if(idx === 0) summaryHtml += `<td rowspan="${numbers.length}">${name}</td>`; summaryHtml += `<td>${no}</td><td>${aggregated[name][no]}장</td></tr>`; }); }); 
+      } 
+      const failLogs = detailLog.filter(l => l.status === 'fail'); 
+      if (failLogs.length > 0) { failLogs.forEach((l) => { let reason = l.name; if(l.failReason === "no_proc" || l.failReason === "no_loc") reason = `${l.failReason === "no_proc" ? "레어도" : "보관 위치"} 미선택`; else if(l.failReason === "invalid_no") reason = "존재하지 않은 카드 번호"; summaryHtml += `<tr class="fail-row">`; summaryHtml += `<td style="color:var(--error-red);">${reason}</td><td>${l.cardNo}</td><td>-</td></tr>`; }); } 
+      document.getElementById('result-summary-body').innerHTML = summaryHtml; 
+      let detailHtml = detailLog.map(l => { const rowClass = l.status === 'success' ? 'success-row' : 'fail-row'; return `<tr class="${rowClass}"><td>${l.no}</td><td style="${l.status==='fail' && (l.failReason==='invalid_no' || l.failReason==='error') ? 'color:var(--error-red); font-weight:700;' : ''}">${l.name}</td><td>${l.cardNo}</td><td>${l.another || '-'}</td><td style="${l.status==='fail' && l.failReason==='no_proc' ? 'color:var(--error-red); font-weight:700;' : ''}">${l.proc}</td><td style="${l.status==='fail' && l.failReason==='no_loc' ? 'color:var(--error-red); font-weight:700;' : ''}">${l.loc}</td><td>${l.qty}</td></tr>`; }).join(''); 
+      document.getElementById('result-detail-body').innerHTML = detailHtml; 
+      document.getElementById('result-detail-box').style.display = 'none'; 
+      document.getElementById('toggle-icon').innerText = 'keyboard_arrow_down'; 
+      modal.open(); 
+  }
+  function toggleResultDetail() { const box = document.getElementById('result-detail-box'); const icon = document.getElementById('toggle-icon'); const isHidden = box.style.display === 'none'; box.style.display = isHidden ? 'block' : 'none'; icon.innerText = isHidden ? 'keyboard_arrow_up' : 'keyboard_arrow_down'; }
   // [MODIFIED] handleContinueRegistration: 행 단위 삭제
   function handleContinueRegistration() { 
       M.Modal.getInstance(document.getElementById('add-result-modal')).close(); 
