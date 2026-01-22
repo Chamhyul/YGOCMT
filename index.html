@@ -236,6 +236,30 @@
         padding-bottom: 40px;
         margin-top: 20px; 
     }
+    
+    /* [NEW] Delete Row Styles */
+    .col-delete {
+        width: 40px;
+        text-align: center;
+        border-left: 1px solid rgba(255,255,255,0.3);
+        cursor: pointer;
+        color: var(--text-muted);
+        transition: all 0.2s;
+        vertical-align: middle;
+    }
+    .col-delete:hover {
+        background-color: rgba(0,0,0,0.05);
+        color: var(--error-red);
+    }
+    .col-delete.disabled {
+        pointer-events: none;
+        opacity: 0.3;
+        cursor: default;
+    }
+    .col-delete i {
+        font-size: 1.2rem;
+        vertical-align: middle;
+    }
 
     /* Navigation & Layout */
     .app-sidebar {
@@ -283,7 +307,8 @@
     .region-dropdown-list li { padding: 8px 0; font-size: 0.8rem; color: var(--text-primary); cursor: pointer; white-space: nowrap; }
     .region-dropdown-list li:hover { background-color: var(--bg-sub); color: var(--primary-color); font-weight: 700; }
 
-    .container { margin-top: 30px; width: auto !important; max-width: 100% !important; min-height: 60vh; margin-left: 15px !important; margin-right: 15px !important; transition: margin 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
+    /* [MODIFIED] v0.11.15 Reduced top margin */
+    .container { margin-top: 10px; width: auto !important; max-width: 100% !important; min-height: 60vh; margin-left: 15px !important; margin-right: 15px !important; transition: margin 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
     #dynamic-header-wrapper { position: relative; width: 100%; height: 220px; margin-top: 20px; margin-bottom: 20px; transition: height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); z-index: 100; overflow: visible; max-width: 100%; }
     
     .app-title-container { position: absolute; display: flex; justify-content: center; align-items: center; z-index: 2; width: 220px; top: 30px; left: calc(50% - 110px); margin: 0 !important; transform: none; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
@@ -412,14 +437,19 @@
     @media only screen and (max-width: 600px) { .sheet-name-display { max-width: 100px; } }
 
     /* [MODIFIED] v0.11.14 UI Changes */
-    /* Remove icon style */
     .content-header-icon { display: none; } 
     
-    /* Title Spacing */
+    /* [MODIFIED] v0.11.15 Larger Title & Subtitle */
     .content-title {
-        margin-bottom: 30px;
+        margin-bottom: 10px; /* Reduced from 30px */
         font-weight: 700;
         color: var(--text-primary);
+        font-size: 1.5rem; /* Increased Size */
+    }
+    .content-subtitle {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        margin-bottom: 30px;
     }
 
     /* Result Modal Styles */
@@ -436,7 +466,7 @@
     #result-summary-body td:first-child { width: 80%; } 
     #result-summary-body td:last-child { width: 20%; white-space: nowrap; }
 
-    /* [NEW] Auto Copy Switch Style */
+    /* Auto Copy Switch Style */
     .input-control-row {
         display: flex;
         justify-content: flex-end;
@@ -596,6 +626,7 @@
 
       <div id="add-content-area" class="content-section centered-content-area">
           <h5 class="content-title">카드 등록</h5>
+          <p class="content-subtitle">카드 정보를 입력하여 카드를 등록할 수 있습니다.</p>
           
           <div class="input-control-row">
               <div class="switch">
@@ -603,8 +634,7 @@
                       보관 위치 자동 복사
                       <input type="checkbox" id="auto-copy-switch" onchange="toggleAutoCopy()">
                       <span class="lever"></span>
-                      ON
-                  </label>
+                      </label>
               </div>
           </div>
 
@@ -613,7 +643,7 @@
                   </tbody>
               <tfoot id="page-add-tfoot">
                   <tr>
-                      <td colspan="4" class="add-row-btn-cell">
+                      <td colspan="5" class="add-row-btn-cell">
                           <button class="add-page-row-btn" onclick="addPageEntry()">
                               <i class="material-icons" style="vertical-align:middle; font-size:1.2rem;">add</i> 추가 등록
                           </button>
@@ -646,7 +676,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.11.14</span>
+        <span class="footer-item">ver. 0.11.15</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -770,7 +800,6 @@
   let currentRegion = 'ko';
   let currentMode = 'home'; 
   
-  // [NEW] Auto Copy State
   let isAutoCopyEnabled = false;
 
   let currentFocus = -1;
@@ -1067,7 +1096,6 @@
       else wrapper.classList.remove('active');
   }
 
-  // [NEW] Toggle Auto Copy
   function toggleAutoCopy() {
       isAutoCopyEnabled = document.getElementById('auto-copy-switch').checked;
   }
@@ -1088,11 +1116,13 @@
 
       const trTop = document.createElement('tr');
       trTop.className = `entry-row top-row entry-group ${groupClass}`;
+      // [MODIFIED] Added Delete Column
       trTop.innerHTML = `
           <td rowspan="2" class="no-cell">${nextNum}</td>
           <td style="width:30%;"><div class="card-name-disp">카드 번호 입력</div></td>
           <td style="width:35%;"><input type="text" class="page-card-no" placeholder="카드 번호" oninput="handleCardNoInput(this)" onblur="fetchCardNameForPage(this)" onkeydown="if(event.key==='Enter') fetchCardNameForPage(this)"></td>
           <td style="width:25%;"><select class="browser-default page-card-another" disabled><option value="" selected>일러스트</option></select></td>
+          <td rowspan="2" class="col-delete" onclick="deletePageEntry(this)"><i class="material-icons">delete</i></td>
       `;
 
       const trBottom = document.createElement('tr');
@@ -1108,7 +1138,9 @@
       tbody.appendChild(trTop);
       tbody.appendChild(trBottom);
       
-      // [NEW] Attach auto-copy listener
+      // [NEW] Reindex to handle delete button state
+      reindexRows();
+
       const locInput = trBottom.querySelector('.page-card-loc');
       locInput.addEventListener('input', function() {
           if (!isAutoCopyEnabled) return;
@@ -1120,7 +1152,7 @@
           rows.forEach(row => {
               if (row === trBottom) {
                   startCopy = true;
-                  return; // Skip current row
+                  return; 
               }
               if (startCopy) {
                   const nextLocInput = row.querySelector('.page-card-loc');
@@ -1129,7 +1161,6 @@
                   if (!nextLocInput.disabled) {
                       nextLocInput.value = val;
                       
-                      // Auto enable qty if location has val
                       if (val.trim().length > 0) {
                           nextQtyInput.disabled = false;
                           if (!nextQtyInput.value) nextQtyInput.value = "1";
@@ -1141,6 +1172,51 @@
               }
           });
       });
+  }
+  
+  // [NEW] Delete Entry Function
+  function deletePageEntry(btn) {
+      const topRow = btn.parentNode;
+      const bottomRow = topRow.nextElementSibling;
+      const tbody = document.getElementById('page-add-tbody');
+      
+      // Prevent deletion if only 1 item (redundant check, but safe)
+      if (tbody.querySelectorAll('tr').length <= 2) return;
+
+      tbody.removeChild(topRow);
+      tbody.removeChild(bottomRow);
+      
+      reindexRows();
+  }
+
+  // [NEW] Reindex Rows & Update Colors & Button State
+  function reindexRows() {
+      const tbody = document.getElementById('page-add-tbody');
+      const rows = tbody.querySelectorAll('tr');
+      const totalSets = rows.length / 2;
+      
+      for (let i = 0; i < rows.length; i += 2) {
+          const topRow = rows[i];
+          const bottomRow = rows[i+1];
+          const setIndex = (i / 2) + 1;
+          
+          const noCell = topRow.querySelector('.no-cell');
+          if (noCell) noCell.innerText = setIndex;
+
+          topRow.classList.remove('odd', 'even');
+          bottomRow.classList.remove('odd', 'even');
+          const groupClass = (setIndex % 2 !== 0) ? 'odd' : 'even';
+          topRow.classList.add(groupClass);
+          bottomRow.classList.add(groupClass);
+          
+          // Disable delete btn if only 1 item remains
+          const delBtn = topRow.querySelector('.col-delete');
+          if (totalSets <= 1) {
+              delBtn.classList.add('disabled');
+          } else {
+              delBtn.classList.remove('disabled');
+          }
+      }
   }
 
   function handleCardNoInput(input) {
@@ -1247,9 +1323,7 @@
 
       locInput.disabled = false; 
       
-      // [NEW] Trigger Auto Copy on initial load if applicable (unlikely on fetch, but good to have input listener ready)
       locInput.oninput = function() {
-          // Handled by addEventListener in addPageEntry now, but keep basic logic for qty enable
           const qtyInp = bottomRow.querySelector('.page-card-qty');
           if(this.value.trim().length > 0) {
               qtyInp.disabled = false;
@@ -1579,7 +1653,7 @@
   }
   
   function toggleResultDetail() { const box = document.getElementById('result-detail-box'); const icon = document.getElementById('toggle-icon'); const isHidden = box.style.display === 'none'; box.style.display = isHidden ? 'block' : 'none'; icon.innerText = isHidden ? 'keyboard_arrow_up' : 'keyboard_arrow_down'; }
-  // [MODIFIED] handleContinueRegistration: Re-sync condition
+  // [MODIFIED] handleContinueRegistration: Re-indexing
   async function handleContinueRegistration() { 
       M.Modal.getInstance(document.getElementById('add-result-modal')).close(); 
       const tbody = document.getElementById('page-add-tbody'); 
@@ -1605,23 +1679,9 @@
           addPageEntry(); 
       }
       
-      const remainingRows = tbody.querySelectorAll('tr');
-      for (let i = 0; i < remainingRows.length; i += 2) {
-          const topRow = remainingRows[i];
-          const bottomRow = remainingRows[i+1];
-          const setIndex = (i / 2) + 1;
-          
-          const noCell = topRow.querySelector('.no-cell');
-          if (noCell) noCell.innerText = setIndex;
+      // Re-index logic
+      reindexRows();
 
-          topRow.classList.remove('odd', 'even');
-          bottomRow.classList.remove('odd', 'even');
-          const groupClass = (setIndex % 2 !== 0) ? 'odd' : 'even';
-          topRow.classList.add(groupClass);
-          bottomRow.classList.add(groupClass);
-      }
-
-      // [MODIFIED] Sync only if success
       if (hasSuccess) {
           await refreshInitialData();
       }
