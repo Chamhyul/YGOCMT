@@ -94,7 +94,7 @@
         border-spacing: 0;
         border-style: hidden; 
         box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        border-radius: 8px;
+        border-radius: 8px; /* 테이블 전체 라운딩 */
         overflow: hidden;
     }
 
@@ -127,7 +127,6 @@
         outline: none !important; 
     }
     
-    /* [MODIFIED] Dark Mode Text Color Fix */
     body.dark-mode .page-entry-table input,
     body.dark-mode .page-entry-table select,
     body.dark-mode .card-name-disp,
@@ -143,7 +142,6 @@
         box-shadow: none !important; 
     }
     
-    /* [MODIFIED] Placeholder Styles: Inherit Parent Color */
     .page-entry-table input::placeholder {
         color: inherit !important;
         opacity: 1 !important;
@@ -187,30 +185,37 @@
         color: inherit;
     }
 
+    /* [MODIFIED] Add Button Area Styles */
     .add-row-btn-cell {
         text-align: center;
-        padding: 0 !important;
+        padding: 0 !important; /* 셀 패딩 제거 */
         background: transparent !important;
         border: none !important;
         box-shadow: none !important;
     }
 
+    /* [MODIFIED] Add Button Styles - Attached to table */
     .add-page-row-btn {
         width: 100%;
         padding: 12px;
         background-color: var(--bg-sub);
-        border: 1px dashed var(--border-color);
+        border: 1px solid rgba(0,0,0,0.1);
+        border-top: none; /* 위쪽 경계선 제거 (테이블과 연결) */
         color: var(--text-muted);
         font-weight: 700;
         cursor: pointer;
         transition: all 0.2s;
-        border-radius: 8px;
-        margin-top: 10px;
+        border-radius: 0 0 8px 8px; /* 하단만 둥글게 */
+        margin-top: 0; /* 마진 제거 */
+        display: block;
     }
     .add-page-row-btn:hover {
         background-color: var(--bg-surface);
         color: var(--primary-color);
         border-color: var(--primary-color);
+    }
+    body.dark-mode .add-page-row-btn {
+        border-color: rgba(255,255,255,0.1);
     }
 
     /* Page Button Container */
@@ -221,6 +226,7 @@
         justify-content: flex-end;
         gap: 10px;
         padding-bottom: 40px;
+        margin-top: 20px; /* 버튼과 간격 */
     }
 
     /* Navigation & Layout (Existing) */
@@ -400,6 +406,8 @@
 </head>
 <body>
 
+<datalist id="loc-datalist"></datalist>
+
 <aside class="app-sidebar">
     <a class="nav-item" onclick="switchToMode('home')" data-mode="home">
         <i class="material-icons">home</i>
@@ -576,7 +584,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.11.3</span>
+        <span class="footer-item">ver. 0.11.4</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -998,6 +1006,7 @@
       addPageEntry();
   }
 
+  // [MODIFIED] addPageEntry: Use Combo Box (Input+Datalist)
   function addPageEntry() {
       const tbody = document.getElementById('page-add-tbody');
       
@@ -1016,15 +1025,13 @@
           <td style="width:25%;"><select class="browser-default page-card-another" disabled><option value="" selected>일러스트</option></select></td>
       `;
 
+      // [MODIFIED] Using input list="loc-datalist" instead of select
       const trBottom = document.createElement('tr');
       trBottom.className = `entry-row bottom-row entry-group ${groupClass}`;
       trBottom.innerHTML = `
           <td><select class="browser-default page-card-proc" disabled><option value="" disabled selected>레어도</option>${allProcessingTypes.map(p => `<option value="${p}">${getLocalizedRarity(p)}</option>`).join('')}</select></td>
           <td>
-            <div style="display:flex; width:100%; height:100%;">
-                <select class="browser-default page-card-loc" onchange="handlePageLocationChange(this)" disabled style="flex:1;"><option value="" disabled selected>보관 위치</option>${allLocations.map(l => `<option value="${l}">${l}</option>`).join('')}<option value="DIRECT">직접 추가</option></select>
-                <input type="text" class="direct-input loc-direct" style="display:none; flex:1; border-left:1px solid rgba(255,255,255,0.3) !important;" placeholder="입력">
-            </div>
+            <input type="text" class="page-card-loc" list="loc-datalist" disabled placeholder="보관 위치">
           </td>
           <td><input type="number" class="page-card-qty" min="1" disabled placeholder="수량" onfocus="if(this.value=='0')this.value=''" onblur="if(this.value=='')this.value='0'"></td>
       `;
@@ -1039,34 +1046,7 @@
       input.setSelectionRange(start, start);
   }
 
-  function handlePageLocationChange(sel) {
-      const container = sel.parentNode;
-      const directInput = container.querySelector('.loc-direct');
-      const row = sel.closest('tr'); 
-      const qtyInput = row.querySelector('.page-card-qty');
-      
-      if (sel.value === 'DIRECT') {
-          sel.style.flex = "1"; 
-          directInput.style.display = "block";
-          directInput.style.flex = "1";
-          directInput.focus();
-      } else {
-          sel.style.flex = "1";
-          directInput.style.display = "none";
-          directInput.value = "";
-      }
-      
-      if (sel.value) {
-          qtyInput.disabled = false;
-          if (!qtyInput.value) qtyInput.value = "1";
-      } else {
-          qtyInput.disabled = true;
-          qtyInput.value = "";
-          qtyInput.placeholder = "수량";
-      }
-  }
-
-  // [MODIFIED] fetchCardNameForPage: Prevent Reset Logic
+  // [MODIFIED] fetchCardNameForPage: Updated selector logic for new input structure
   async function fetchCardNameForPage(input) {
       const topRow = input.closest('tr');
       const bottomRow = topRow.nextElementSibling; 
@@ -1074,17 +1054,17 @@
       const cardNo = input.value.trim();
       const prevCardNo = input.dataset.prevCardNo;
 
-      if (prevCardNo === cardNo) return; // 변동 없으면 종료
-      input.dataset.prevCardNo = cardNo; // 현재 값 저장
+      if (prevCardNo === cardNo) return; 
+      input.dataset.prevCardNo = cardNo; 
 
       const nameDiv = topRow.querySelector('.card-name-disp'); 
       const anotherSel = topRow.querySelector('.page-card-another');
       const procSel = bottomRow.querySelector('.page-card-proc');
-      const locSel = bottomRow.querySelector('.page-card-loc');
+      const locInput = bottomRow.querySelector('.page-card-loc'); // Now input
       const qtyInput = bottomRow.querySelector('.page-card-qty');
 
       procSel.disabled = true; procSel.value = "";
-      locSel.disabled = true; locSel.value = "";
+      locInput.disabled = true; locInput.value = "";
       qtyInput.disabled = true; qtyInput.value = "";
       anotherSel.disabled = true; anotherSel.innerHTML = '<option value="" selected>일러스트</option>';
 
@@ -1118,7 +1098,7 @@
   function applyPageCardDataToRows(data, topRow, bottomRow) {
       const anotherSel = topRow.querySelector('.page-card-another');
       const procSel = bottomRow.querySelector('.page-card-proc');
-      const locSel = bottomRow.querySelector('.page-card-loc');
+      const locInput = bottomRow.querySelector('.page-card-loc'); // Now input
 
       const count = data.anotherCount || 1;
       let optionsHtml = '';
@@ -1141,10 +1121,25 @@
       } else {
           procSel.innerHTML = `<option value="" disabled selected>레어도</option>` + allProcessingTypes.map(p => `<option value="${p}">${getLocalizedRarity(p)}</option>`).join('');
       }
+      
       procSel.disabled = false;
-      locSel.disabled = false;
+      locInput.disabled = false; // Enable input
+      // locInput receives focus logic or value update if needed? No, user types.
+      
+      // Auto-enable quantity if loc has value (unlikely on fresh fetch) or bind event
+      locInput.oninput = function() {
+          const qtyInp = bottomRow.querySelector('.page-card-qty');
+          if(this.value.trim().length > 0) {
+              qtyInp.disabled = false;
+              if(!qtyInp.value) qtyInp.value = "1";
+          } else {
+              qtyInp.disabled = true;
+              qtyInp.value = "";
+          }
+      };
   }
 
+  // [MODIFIED] submitPageEntries: Read from input directly
   async function submitPageEntries() {
       const tbody = document.getElementById('page-add-tbody');
       const rows = tbody.querySelectorAll('tr'); 
@@ -1166,9 +1161,8 @@
           let another = topRow.querySelector('.page-card-another').value;
           let proc = bottomRow.querySelector('.page-card-proc').value;
           
-          let locSelect = bottomRow.querySelector('.page-card-loc');
-          let loc = locSelect.value;
-          if (loc === 'DIRECT') loc = bottomRow.querySelector('.loc-direct').value.trim();
+          // [MODIFIED] Read location from input directly
+          let loc = bottomRow.querySelector('.page-card-loc').value.trim();
           
           const qtyVal = bottomRow.querySelector('.page-card-qty').value;
           const qty = parseInt(qtyVal);
@@ -1229,7 +1223,7 @@
   function resetManageModal() { document.getElementById('manage-card-tbody').innerHTML = ''; addManageRows(1); }
   function validateSheetLink() { clearTimeout(validationTimeout); const url = document.getElementById('sheet-url').value.trim(); const mark = document.getElementById('valid-mark'), msg = document.getElementById('status-msg'), confirmBtn = document.getElementById('confirm-btn'); if (!url) { mark.style.display = 'none'; msg.innerText = ''; confirmBtn.classList.add('disabled'); return; } const match = url.match(/[-\w]{25,}/); if (!match) { mark.innerHTML = '<i class="material-icons" style="color: var(--error-red)">cancel</i>'; mark.style.display = 'block'; msg.innerText = '구글 시트 링크를 적어주세요.'; msg.style.color = 'var(--error-red)'; confirmBtn.classList.add('disabled'); return; } validationTimeout = setTimeout(async () => { msg.innerText = '권한 확인 중...'; try { const res = await callApi('checkSheet', { targetId: match[0] }); if (res.status === 'OK') { mark.innerHTML = '<i class="material-icons" style="color: var(--success-green)">check_circle</i>'; msg.innerText = '유효한 시트입니다.'; msg.style.color = 'var(--success-green)'; confirmBtn.classList.remove('disabled'); if (res.sheetName) document.getElementById('connected-sheet-name').innerText = `연결됨("${res.sheetName}")`; } else { mark.innerHTML = '<i class="material-icons" style="color: var(--warning-yellow)">warning</i>'; msg.innerText = (res.status === 'NO_EDIT_ACCESS') ? '공유 설정을 링크를 가진 모든 사용자 / 편집자로 설정해주세요.' : '접근할 수 없거나 형식이 잘못되었습니다.'; msg.style.color = 'var(--warning-yellow)'; confirmBtn.classList.add('disabled'); } mark.style.display = 'block'; } catch (e) { msg.innerText = '확인 실패'; } }, 500); }
   
-  // [MODIFIED] refreshInitialData: Sort and Repopulate
+  // [MODIFIED] refreshInitialData: Populate datalist
   async function refreshInitialData() { 
       const savedId = localStorage.getItem(STORAGE_KEY); if (!savedId) return; 
       showLoading(true, "데이터 동기화 중..."); 
@@ -1240,8 +1234,9 @@
           if (res.isConfigured) { 
               allNames = res.names; 
               allProcessingTypes = res.processingTypes; 
-              // [MODIFIED] Sort locations
+              
               allLocations = res.locations.sort(); 
+              
               localCardDatabase = res.allCards; 
               rarityMap = res.rarityMap || {}; 
               rarityMappingRaw = res.rarityMappingRaw || []; 
@@ -1249,29 +1244,12 @@
               nameDb = res.nameDb || {}; 
               if (res.sheetName) document.getElementById('connected-sheet-name').innerText = `연결됨("${res.sheetName}")`; 
               
-              // [NEW] Repopulate existing location dropdowns
-              const locSelects = document.querySelectorAll('.page-card-loc, .new-card-loc, .manage-loc, .move-loc');
-              locSelects.forEach(sel => {
-                  const currentVal = sel.value;
-                  const isDirect = sel.querySelector('option[value="DIRECT"]');
-                  let html = '<option value="" disabled selected>선택</option>';
-                  
-                  // Keep special options based on class
-                  if (sel.classList.contains('page-card-loc')) {
-                      html = '<option value="" disabled selected>보관 위치</option>';
-                  }
-                  
-                  html += allLocations.map(l => `<option value="${l}">${l}</option>`).join('');
-                  
-                  if (sel.classList.contains('page-card-loc') || sel.classList.contains('new-card-loc') || sel.classList.contains('move-loc')) {
-                      html += '<option value="DIRECT">직접 추가</option>';
-                  }
-                  
-                  sel.innerHTML = html;
-                  if (currentVal && allLocations.includes(currentVal)) {
-                      sel.value = currentVal;
-                  }
-              });
+              // [NEW] Populate Shared Datalist
+              const datalist = document.getElementById('loc-datalist');
+              datalist.innerHTML = allLocations.map(l => `<option value="${l}">`).join('');
+
+              // Repopulate logic for modals if needed (kept simple for datalist)
+              // (Datalist automatically updates for all inputs linked to it)
 
               cidLookup = {}; 
               Object.keys(nameDb).forEach(nameKey => { const entry = nameDb[nameKey]; if (entry && entry.id) { if (!cidLookup[entry.id]) cidLookup[entry.id] = new Set(); cidLookup[entry.id].add(nameKey); } }); 
