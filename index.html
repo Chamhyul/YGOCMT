@@ -3,7 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="theme-color" id="meta-theme-color" content="#F0F0F0">
+  
+  <script>
+    (function() {
+      // 로컬 스토리지 확인
+      var savedTheme = localStorage.getItem('yugioh_theme_mode');
+      // 시스템 설정 확인
+      var sysDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      var mode = 'light';
+      if (savedTheme === 'dark' || (!savedTheme && sysDark)) {
+        mode = 'dark';
+      }
+
+      // HTML 태그에 클래스 즉시 주입 (렌더링 시점 당기기)
+      if (mode === 'dark') {
+        document.documentElement.classList.add('dark-mode');
+      }
+
+      // [핵심 2] 동적 메타 태그 생성 (브라우저 UI 색상 즉시 적용)
+      // 하단 탭바와 색상을 일치시키기 위해 CSS 변수와 동일한 값을 사용
+      var themeColor = (mode === 'dark') ? '#000000' : '#F0F0F0';
+      document.write('<meta name="theme-color" id="meta-theme-color" content="' + themeColor + '">');
+      
+      // [핵심 3] HTML 배경색 강제 주입 (초기 흰색 깜빡임 방지)
+      // CSS 로드 전에도 배경색을 유지하기 위함
+      document.write('<style>html { background-color: ' + ((mode === 'dark') ? '#121212' : '#f4f7f6') + '; }</style>');
+    })();
+  </script>
   
   <title>YGO 시냅스 - 보유 카드 관리 시스템</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
@@ -11,9 +38,17 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
-    /* [NEW] 더블 탭 확대 방지 설정 */
+    /* 더블 탭 확대 방지 */
     html, body, button, a, input, select, textarea, .btn, .nav-item, .mobile-nav-item {
         touch-action: manipulation;
+    }
+
+    /* [핵심 4] HTML 태그에 배경색 지정 및 높이 강제 (노치 커버) */
+    html {
+        background-color: var(--bg-body);
+        height: 100%; 
+        width: 100%;
+        overflow-x: hidden;
     }
 
     :root {
@@ -39,20 +74,20 @@
       --disabled-text: #9e9e9e;
       --overlay-bg: rgba(255, 255, 255, 0.85);
       
-      /* 하단 탭바 불투명 단색 (Light) */
+      /* 하단 탭바 불투명 단색 (Light: #F0F0F0) */
       --nav-bg: #F0F0F0; 
       --nav-text: #424242;
       --nav-text-active: #009688;
       --nav-border: rgba(0, 0, 0, 0.1);
       --nav-shadow: 0 -1px 5px rgba(0,0,0,0.05);
 
-      /* Color Variables for Table */
       --bg-odd-row: #80cbc4; 
       --text-table-light: #424242;
       --text-table-dark: #333333; 
     }
 
-    body.dark-mode {
+    /* [핵심 5] html.dark-mode 선택자로 렌더링 시점 당기기 */
+    html.dark-mode {
       --bg-body: #121212;
       --bg-surface: #1e1e1e;
       --bg-sub: #252525;
@@ -75,7 +110,7 @@
       --disabled-text: #757575;
       --overlay-bg: rgba(0, 0, 0, 0.6);
 
-      /* [MODIFIED] 하단 탭바 완전한 검정색 (Dark) */
+      /* [MODIFIED] 다크모드 하단 탭바 색상 (#000000) */
       --nav-bg: #000000;
       --nav-text: #9e9e9e;
       --nav-text-active: #4db6ac;
@@ -88,12 +123,16 @@
     body, input, button, table, .btn, .modal-content, select { font-family: 'Pretendard', sans-serif !important; }
     
     body { 
-        background-color: var(--bg-body); 
+        /* 배경색은 html 태그에 지정하므로 body는 투명 처리 가능하거나 상속 */
+        background-color: transparent; 
         color: var(--text-primary); 
-        transition: background-color 0.3s, color 0.3s, padding-left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        transition: color 0.3s, padding-left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
         padding-left: 0;
-        /* Safe Area for Notch */
         padding-top: env(safe-area-inset-top); 
+        /* Body 최소 높이 100vh 보장하여 viewport-fit=cover 영역 확보 */
+        min-height: 100vh;
+        width: 100%;
+        overflow-x: hidden;
     }
     
     /* Page Entry Table Styles */
@@ -138,11 +177,11 @@
         outline: none !important; 
     }
     
-    body.dark-mode .page-entry-table input,
-    body.dark-mode .page-entry-table select,
-    body.dark-mode .card-name-disp,
-    body.dark-mode .page-entry-table .no-cell,
-    body.dark-mode .card-link { 
+    html.dark-mode .page-entry-table input,
+    html.dark-mode .page-entry-table select,
+    html.dark-mode .card-name-disp,
+    html.dark-mode .page-entry-table .no-cell,
+    html.dark-mode .card-link { 
         color: var(--text-table-dark) !important;
     }
 
@@ -237,7 +276,7 @@
         color: var(--primary-color);
         border-color: var(--primary-color);
     }
-    body.dark-mode .add-page-row-btn {
+    html.dark-mode .add-page-row-btn {
         background-color: var(--bg-sub);
         border-color: rgba(255,255,255,0.1);
         color: var(--text-muted);
@@ -251,7 +290,7 @@
         padding: 2px 4px;
         gap: 8px;
     }
-    body.dark-mode .qty-control-box {
+    html.dark-mode .qty-control-box {
         background: rgba(255,255,255,0.1);
     }
     .ctrl-btn {
@@ -270,7 +309,7 @@
         background-color: rgba(0,0,0,0.1);
         color: var(--primary-color);
     }
-    body.dark-mode .ctrl-btn:hover {
+    html.dark-mode .ctrl-btn:hover {
         background-color: rgba(255,255,255,0.2);
     }
     .ctrl-val {
@@ -317,7 +356,6 @@
         position: fixed; left: 0; top: 0; bottom: 0; width: 240px;
         background-color: var(--nav-bg); z-index: 900; display: flex; flex-direction: column;
         padding-top: 80px; box-shadow: 1px 0 0 var(--nav-border);
-        /* Sidebar는 Blur 유지 혹은 제거 선택 가능, 여기선 통일성을 위해 일단 유지 혹은 변수 따라감 */
         padding-top: calc(80px + env(safe-area-inset-top)); 
         transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), background-color 0.3s ease;
         transform: translateX(0); 
@@ -354,7 +392,7 @@
     @media only screen and (min-width: 601px) and (max-width: 992px) { body { padding-left: 72px; } .app-sidebar { width: 72px; } .nav-text { opacity: 0; display: none; } .nav-item { justify-content: center; padding: 16px 0; border-left: 4px solid transparent; border-right: 0; } .nav-item i { margin-right: 0; } .nav-item.active { border-left: 4px solid var(--primary-color); border-right: 0; } }
     @media only screen and (max-width: 600px) { 
         body { padding-bottom: 80px; padding-left: 0; } 
-        /* [MODIFIED] 사이드바 1px 잔상 제거 (그림자 및 테두리 제거) */
+        /* 사이드바 1px 잔상 제거 (그림자 및 테두리 제거) */
         .app-sidebar { width: 72px !important; transform: translateX(-100%); overflow: hidden; box-shadow: none !important; border: none !important; } 
         .nav-text { display: none !important; } 
         .mobile-nav-container { transform: translateY(0); pointer-events: auto; } 
@@ -382,7 +420,7 @@
     .region-icon { color: var(--text-muted); font-size: 1rem; flex-shrink: 0; }
     .region-text { color: var(--text-primary); font-size: 0.75rem; font-weight: 700; white-space: nowrap; user-select: none; flex: 1; text-align: center; margin-right: 3px; }
     .region-dropdown-list { display: none; position: absolute; top: 100%; right: 0; left: 0; background-color: var(--bg-surface); border: 1px solid var(--border-color); border-top: 1px solid #eee; border-radius: 0 0 12px 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); list-style: none; margin: 0; padding: 5px 0; width: 100%; z-index: 1003; text-align: center; }
-    body.dark-mode .region-dropdown-list { border-top: 1px solid #444; }
+    html.dark-mode .region-dropdown-list { border-top: 1px solid #444; }
     .region-dropdown-list li { padding: 8px 0; font-size: 0.8rem; color: var(--text-primary); cursor: pointer; white-space: nowrap; }
     .region-dropdown-list li:hover { background-color: var(--bg-sub); color: var(--primary-color); font-weight: 700; }
 
@@ -392,7 +430,7 @@
     .app-title-container { position: absolute; display: flex; justify-content: center; align-items: center; z-index: 2; width: 220px; top: 30px; left: calc(50% - 110px); margin: 0 !important; transform: none; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
     .synapse-logo-container { position: relative; display: inline-block; max-width: 250px; overflow: hidden; white-space: nowrap; transition: max-width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); vertical-align: middle; }
     .synapse-text-logo { position: relative; z-index: 2; font-size: 2.6rem; font-weight: 900; color: #000000; letter-spacing: 2px; line-height: 1; transition: color 0.3s, opacity 0.3s; }
-    body.dark-mode .synapse-text-logo { color: #ffffff; }
+    html.dark-mode .synapse-text-logo { color: #ffffff; }
     .logo-bg-wrapper { position: absolute; top: 1px; bottom: 1px; left: 0; right: 0; z-index: 1; }
     .bg-triangle-top { position: absolute; top: 0; left: 0; width: 100%; height: 100%; clip-path: polygon(0 0, 100% 0, 100% 100%); background: linear-gradient(to right, rgba(var(--primary-rgb), 0.8), rgba(var(--primary-rgb), 0.6) 50%, rgba(var(--primary-rgb), 0)); }
     .bg-triangle-bottom { position: absolute; top: 0; left: 0; width: 100%; height: 100%; clip-path: polygon(0 0, 100% 100%, 0 100%); background: linear-gradient(to left, rgba(var(--primary-rgb), 0.8), rgba(var(--primary-rgb), 0.6) 50%, rgba(var(--primary-rgb), 0)); }
@@ -427,15 +465,15 @@
     #search-btn { border-radius: 50px !important; width: 80px; height: 45px; padding: 0; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     input#card-search { text-align: left !important; font-size: 1.1rem; padding-left: 20px !important; padding-right: 40px !important; box-sizing: border-box; color: var(--text-primary); border-bottom: none !important; box-shadow: none !important; height: 46px !important; margin: 0 !important; width: 100%; display: block; }
     input#card-search::placeholder { color: var(--text-muted); }
-    body.dark-mode ::placeholder { color: #757575 !important; }
+    html.dark-mode ::placeholder { color: #757575 !important; }
     .clear-search-btn { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: rgba(0,0,0,0.25); display: none; z-index: 5; transition: color 0.2s; }
     .clear-search-btn:hover { color: rgba(0,0,0,0.6); }
-    body.dark-mode .clear-search-btn { color: rgba(255,255,255,0.25); }
-    body.dark-mode .clear-search-btn:hover { color: rgba(255,255,255,0.7); }
+    html.dark-mode .clear-search-btn { color: rgba(255,255,255,0.25); }
+    html.dark-mode .clear-search-btn:hover { color: rgba(255,255,255,0.7); }
     .btn.cyan-theme { background-color: var(--primary-color) !important; font-weight: 600; color: #fff; }
     .btn.cyan-theme.disabled, .btn.cyan-theme:disabled { background-color: var(--disabled-bg) !important; color: var(--disabled-text) !important; }
     .custom-dropdown { position: absolute; top: 100%; left: -1px; right: -1px; background-color: var(--bg-surface); border: 1px solid var(--border-color); border-top: 1px solid #eee; border-radius: 0 0 24px 24px; z-index: 1000; max-height: 250px; overflow-y: auto; display: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin: 0; padding: 5px 0 10px 0; list-style: none; }
-    body.dark-mode .custom-dropdown { border-top: 1px solid #444; }
+    html.dark-mode .custom-dropdown { border-top: 1px solid #444; }
     .custom-dropdown li { padding: 8px 20px; cursor: pointer; border-bottom: none; font-size: 0.95rem; color: var(--text-primary); display: block; white-space: normal; transition: background-color 0.1s; }
     .custom-dropdown li:hover, .custom-dropdown li.active { background-color: var(--bg-sub); }
     .custom-dropdown li.text-suggest { color: var(--primary-color) !important; font-weight: 700 !important; }
@@ -462,7 +500,7 @@
     .guide-btn i { transition: transform 0.2s; } 
     .guide-btn.active i { transform: rotate(90deg); }
     .guide-content { background: var(--bg-sub); padding: 18px; border-radius: 8px; font-size: 0.95rem; border: 1px solid var(--border-color); display: none; margin-bottom: 15px; color: var(--text-primary); }
-    body.dark-mode .guide-content { color: #b0b0b0; }
+    html.dark-mode .guide-content { color: #b0b0b0; }
     table { background: var(--bg-surface); font-size: 0.85rem; table-layout: fixed; width: 100%; border-collapse: collapse; color: var(--text-primary); }
     th { background: var(--bg-header); color: var(--text-secondary); font-weight: 700; padding: 10px 4px; text-align: center; border: 1px solid var(--border-color); font-size: 0.8rem; word-break: break-all; }
     td { border: 1px solid var(--border-color); text-align: center; padding: 6px 4px; position: relative; word-break: break-all; color: var(--text-primary); }
@@ -474,8 +512,26 @@
     .modal .modal-footer { background-color: var(--bg-surface); border-top: 1px solid var(--border-color); }
     #settings-modal .modal-footer { border-top: none !important; }
     #add-result-modal { width: 95% !important; max-width: 1000px !important; }
-    #loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--overlay-bg); z-index: 11000; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
-    body.dark-mode #loading-text { color: var(--primary-color) !important; }
+    
+    /* [핵심 6] 로딩 오버레이 영역 확장 (음수 마진으로 전체 커버) */
+    #loading-overlay { 
+        display: none; 
+        position: fixed; 
+        top: -50vh; /* 노치 영역 돌파 */
+        bottom: -50vh; /* 하단바 영역 돌파 */
+        left: 0; 
+        right: 0; 
+        height: auto;
+        padding-top: 50vh; /* 컨텐츠 중앙 정렬 보정 */
+        background: var(--overlay-bg); 
+        z-index: 11000; 
+        flex-direction: column; 
+        align-items: center; 
+        justify-content: center; 
+        backdrop-filter: blur(2px); 
+    }
+    
+    html.dark-mode #loading-text { color: var(--primary-color) !important; }
     .new-card-box { margin-bottom: 20px; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; background: var(--bg-surface); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
     .summary-split-wrapper { display: flex; width: 100%; }
     .summary-left { width: 40%; background-color: var(--primary-color); color: white; font-weight: 700; font-size: 1rem; display: flex; align-items: center; justify-content: center; border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); text-align: center; padding: 10px; }
@@ -488,7 +544,7 @@
     .summary-value-cell { width: 50%; font-weight: 500; }
     .show-more-btn { width: 100%; background-color: var(--bg-sub); color: var(--primary-dark); font-weight: 600; padding: 8px 0; border: none; border-top: 1px solid var(--border-color); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; transition: background-color 0.2s; }
     .show-more-btn:hover { background-color: var(--border-color); }
-    body.dark-mode .show-more-btn { color: var(--primary-color); }
+    html.dark-mode .show-more-btn { color: var(--primary-color); }
     .detail-slide-wrapper { max-height: 0; overflow-y: hidden; overflow-x: auto; transition: max-height 0.4s ease-in-out; border-top: none; }
     .split-table-wrapper { display: flex; width: 100%; border-top: 1px solid var(--border-color); }
     .fixed-side { width: 40%; flex-shrink: 0; border-right: 1px solid var(--border-color); background-color: var(--bg-surface); z-index: 2; }
@@ -742,7 +798,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.12.0</span>
+        <span class="footer-item">ver. 0.12.1</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -1028,13 +1084,13 @@
       targets.forEach(el => el.classList.add('active'));
   }
 
-  // [MODIFIED] 동적 테마 컬러 적용 함수 (Dark: #000000)
+  // [MODIFIED] 동적 테마 컬러 적용 함수 (다크모드: #000000, 라이트모드: #F0F0F0)
   function updateMetaThemeColor(mode) {
       const meta = document.getElementById('meta-theme-color');
       if (mode === 'light') {
           meta.setAttribute('content', '#F0F0F0');
       } else {
-          meta.setAttribute('content', '#000000'); // [MODIFIED] Dark Mode Black
+          meta.setAttribute('content', '#000000'); 
       }
   }
 
