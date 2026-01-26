@@ -15,13 +15,10 @@
           mode = 'dark';
         }
 
-        // HTML 태그에 클래스 즉시 주입
         if (mode === 'dark') {
           document.documentElement.classList.add('dark-mode');
         }
 
-        // 테마 컬러 즉시 설정 (브라우저 UI 색상 - 하단 탭바와 일치)
-        // Dark: #000000 (OLED Black), Light: #F0F0F0 (탭바 배경색)
         var themeColor = (mode === 'dark') ? '#000000' : '#F0F0F0';
         document.write('<meta name="theme-color" id="meta-theme-color" content="' + themeColor + '">');
       } catch(e) {
@@ -40,13 +37,11 @@
     * {
         -webkit-tap-highlight-color: transparent;
         touch-action: manipulation;
-        box-sizing: border-box; /* 패딩이 사이즈에 포함되도록 강제 */
+        box-sizing: border-box; 
     }
 
-    /* [MODIFIED] height: 100% 제거 (스크롤바 원인 해결) */
     html {
         background-color: var(--bg-body);
-        /* height: 100%;  <- 삭제됨 */
         -webkit-text-size-adjust: 100%;
         transition: background-color 0.3s ease;
     }
@@ -119,15 +114,18 @@
 
     body, input, button, table, .btn, .modal-content, select { font-family: 'Pretendard', sans-serif !important; }
     
+    /* [MODIFIED] Flexbox Layout 적용 (마진 병합 방지 및 Sticky Footer) */
     body { 
         background-color: var(--bg-body); 
         color: var(--text-primary); 
         transition: background-color 0.3s, color 0.3s, padding-left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
         padding-left: 0;
         padding-top: env(safe-area-inset-top); 
-        /* 동적 뷰포트 단위 사용 (주소창 대응) */
-        min-height: 100dvh;
+        min-height: 100dvh; /* 동적 뷰포트 단위 */
         margin: 0;
+        
+        display: flex; /* Flex Container 설정 */
+        flex-direction: column; /* 세로 정렬 */
     }
     
     .page-entry-table {
@@ -426,7 +424,19 @@
         .region-dropdown-list li:hover { background-color: var(--bg-sub); color: var(--primary-color); font-weight: 700; }
     }
 
-    .container { margin-top: 30px; width: auto !important; max-width: 100% !important; min-height: 60vh; margin-left: 15px !important; margin-right: 15px !important; transition: margin 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
+    /* [MODIFIED] Flex Item 설정 (Sticky Footer) */
+    .container { 
+        margin-top: 30px; 
+        width: auto !important; 
+        max-width: 100% !important; 
+        min-height: 60vh; 
+        margin-left: 15px !important; 
+        margin-right: 15px !important; 
+        transition: margin 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        
+        flex: 1 0 auto; /* 남은 공간 차지 */
+    }
+    
     #dynamic-header-wrapper { position: relative; width: 100%; height: 220px; margin-top: 20px; margin-bottom: 20px; transition: height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); z-index: 100; overflow: visible; max-width: 100%; }
     
     .app-title-container { position: absolute; display: flex; justify-content: center; align-items: center; z-index: 2; width: 220px; top: 30px; left: calc(50% - 110px); margin: 0 !important; transform: none; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
@@ -813,7 +823,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.12.9</span>
+        <span class="footer-item">ver. 0.12.10</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
