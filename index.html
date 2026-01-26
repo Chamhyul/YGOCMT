@@ -137,7 +137,6 @@
         border-style: hidden;
     }
 
-    /* 테두리 색상 보존 */
     .page-entry-table td {
         padding: 0 !important; 
         margin: 0 !important;
@@ -184,18 +183,18 @@
         border-bottom: 1px solid rgba(255, 255, 255, 0.3);
     }
     
-    /* [MODIFIED] 카드 이름:카드 번호 = 3:1 비율 설정 */
+    /* 1행: 이름(3) : 번호(1) 비율 */
     .name-area {
-        flex: 3; /* Ratio 3 */
+        flex: 3; 
         min-width: 0;
         display: flex;
         align-items: center;
-        justify-content: center; 
+        justify-content: center; /* 카드 이름 중앙 정렬 */
         border-right: 1px solid rgba(255, 255, 255, 0.3);
     }
     .no-area {
-        flex: 1; /* Ratio 1 */
-        min-width: 110px; /* 최소 너비 유지 */
+        flex: 1; 
+        min-width: 110px; /* 번호 최소 너비 유지 */
         flex-shrink: 0;
     }
 
@@ -215,7 +214,7 @@
         border-right: none;
     }
 
-    /* 모바일 환경 비율 보존 */
+    /* 모바일 환경 비율 */
     @media only screen and (max-width: 600px) {
         .w-img { flex: 1.1 !important; }
         .w-rare { flex: 1 !important; }
@@ -223,7 +222,7 @@
         .w-qty { flex: 0.7 !important; }
     }
 
-    /* 전역 인풋 스타일 (1행 중앙 정렬용) */
+    /* 전역 인풋 스타일 */
     .page-entry-table input, 
     .page-entry-table select {
         width: 100% !important;
@@ -240,7 +239,7 @@
         cursor: pointer;
         color: var(--text-table-light); 
         outline: none !important;
-        text-align: center; /* 기본은 중앙 */
+        text-align: center; /* 기본은 중앙 (1행 적용) */
     }
     
     /* 2행(하단) 인풋/셀렉트 기본: 좌측 정렬 */
@@ -250,7 +249,7 @@
         padding: 0 5px !important; 
     }
 
-    /* 보관위치 & 수량: 플레이스홀더만 중앙 정렬, 입력 시 좌측 정렬 */
+    /* 보관위치 & 수량: 플레이스홀더만 중앙 정렬 */
     .entry-row-bottom input.page-card-loc:placeholder-shown,
     .entry-row-bottom input.page-card-qty:placeholder-shown {
         text-align: center !important;
@@ -262,19 +261,16 @@
         text-align: left !important;
     }
 
-    /* 플레이스홀더 색상 */
-    .page-card-no::placeholder,
-    .page-card-loc::placeholder,
-    .page-card-qty::placeholder {
-        color: #616161 !important; /* 라이트 모드 (진한 회색) */
-        opacity: 1;
+    /* [MODIFIED] 플레이스홀더 색상 통합 관리 (opacity:1 강제) */
+    .page-entry-table input::placeholder {
+        color: #616161 !important; /* Light Mode: 진한 회색 */
+        opacity: 1 !important;
     }
     
-    /* [MODIFIED] 다크 모드 플레이스홀더: 라이트 모드(#616161)보다 더 진한 회색 */
-    html.dark-mode .page-card-no::placeholder,
-    html.dark-mode .page-card-loc::placeholder,
-    html.dark-mode .page-card-qty::placeholder {
-        color: #3a3a3a !important; /* 라이트 모드보다 더 어두운 회색 */
+    /* Dark Mode: 라이트 모드보다 더 어두운 회색 */
+    html.dark-mode .page-entry-table input::placeholder {
+        color: #3a3a3a !important; 
+        opacity: 1 !important;
     }
 
     html.dark-mode .page-entry-table input,
@@ -793,7 +789,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.12.16</span>
+        <span class="footer-item">ver. 0.12.17</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
