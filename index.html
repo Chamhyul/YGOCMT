@@ -204,13 +204,14 @@
         box-shadow: none !important;
     }
 
+    /* [MODIFIED] Add Page Row Button - Light Mode */
     .add-page-row-btn {
         width: 100%;
         padding: 8px 12px;
-        background-color: var(--bg-sub);
+        background-color: #eeeeee; /* Light Gray */
         border: 1px solid rgba(0,0,0,0.1);
         border-top: none; 
-        color: var(--text-muted);
+        color: #212121; /* High Contrast Dark Text */
         font-weight: 700;
         cursor: pointer;
         transition: all 0.2s;
@@ -226,8 +227,11 @@
         color: var(--primary-color);
         border-color: var(--primary-color);
     }
+    /* [MODIFIED] Add Page Row Button - Dark Mode Override */
     body.dark-mode .add-page-row-btn {
+        background-color: var(--bg-sub);
         border-color: rgba(255,255,255,0.1);
+        color: var(--text-muted);
     }
     
     .qty-control-box {
@@ -345,7 +349,6 @@
     .region-dropdown-list li { padding: 8px 0; font-size: 0.8rem; color: var(--text-primary); cursor: pointer; white-space: nowrap; }
     .region-dropdown-list li:hover { background-color: var(--bg-sub); color: var(--primary-color); font-weight: 700; }
 
-    /* [MODIFIED] v0.11.17 Restored margin */
     .container { margin-top: 30px; width: auto !important; max-width: 100% !important; min-height: 60vh; margin-left: 15px !important; margin-right: 15px !important; transition: margin 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
     #dynamic-header-wrapper { position: relative; width: 100%; height: 220px; margin-top: 20px; margin-bottom: 20px; transition: height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); z-index: 100; overflow: visible; max-width: 100%; }
     
@@ -515,17 +518,8 @@
         margin-right: auto;
         gap: 10px;
     }
-    .switch label {
-        font-size: 0.85rem;
-        color: var(--text-secondary);
-        font-weight: 600;
-    }
-    .switch label input[type=checkbox]:checked + .lever {
-        background-color: var(--primary-light);
-    }
-    .switch label input[type=checkbox]:checked + .lever:after {
-        background-color: var(--primary-color);
-    }
+    /* [MODIFIED] v0.11.18 Replaced .switch with .theme-switch structure */
+    /* .switch label ... styles removed or ignored in favor of global .theme-switch */
   </style>
 </head>
 <body>
@@ -667,13 +661,11 @@
           <p class="content-subtitle">카드 정보를 입력하여 카드를 등록할 수 있습니다.</p>
           
           <div class="input-control-row">
-              <div class="switch">
-                  <label>
-                      보관 위치 자동 복사
-                      <input type="checkbox" id="auto-copy-switch" onchange="toggleAutoCopy()">
-                      <span class="lever"></span>
-                      </label>
-              </div>
+              <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary);">보관 위치 자동 복사</span>
+              <label class="theme-switch" for="auto-copy-switch">
+                  <input type="checkbox" id="auto-copy-switch" onchange="toggleAutoCopy()">
+                  <div class="slider"></div>
+              </label>
           </div>
 
           <table id="page-add-table" class="page-entry-table">
@@ -719,7 +711,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.11.17</span>
+        <span class="footer-item">ver. 0.11.18</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
