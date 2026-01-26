@@ -2,7 +2,9 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" id="meta-theme-color" content="#f4f7f6">
+  
   <title>YGO 시냅스 - 보유 카드 관리 시스템</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
@@ -83,6 +85,8 @@
         color: var(--text-primary); 
         transition: background-color 0.3s, color 0.3s, padding-left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
         padding-left: 0;
+        /* [MODIFIED] Safe Area for Notch */
+        padding-top: env(safe-area-inset-top); 
     }
     
     /* Page Entry Table Styles */
@@ -204,14 +208,13 @@
         box-shadow: none !important;
     }
 
-    /* [MODIFIED] Add Page Row Button - Light Mode */
     .add-page-row-btn {
         width: 100%;
         padding: 8px 12px;
-        background-color: #eeeeee; /* Light Gray */
+        background-color: #eeeeee; 
         border: 1px solid rgba(0,0,0,0.1);
         border-top: none; 
-        color: #212121; /* High Contrast Dark Text */
+        color: #212121; 
         font-weight: 700;
         cursor: pointer;
         transition: all 0.2s;
@@ -227,7 +230,6 @@
         color: var(--primary-color);
         border-color: var(--primary-color);
     }
-    /* [MODIFIED] Add Page Row Button - Dark Mode Override */
     body.dark-mode .add-page-row-btn {
         background-color: var(--bg-sub);
         border-color: rgba(255,255,255,0.1);
@@ -309,6 +311,8 @@
         background-color: var(--nav-bg); z-index: 900; display: flex; flex-direction: column;
         padding-top: 80px; box-shadow: 1px 0 0 var(--nav-border);
         backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+        /* [MODIFIED] Added safe-area-inset-top to padding */
+        padding-top: calc(80px + env(safe-area-inset-top)); 
         transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), background-color 0.3s ease;
         transform: translateX(0); 
     }
@@ -318,7 +322,15 @@
     .nav-item i { margin-right: 16px; font-size: 24px; }
     .nav-text { font-size: 0.95rem; font-weight: 600; white-space: nowrap; opacity: 1; transition: opacity 0.2s; }
 
-    .mobile-nav-container { display: flex; position: fixed; bottom: 0; left: 0; right: 0; width: 100%; height: 60px; z-index: 1050; justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom); background-color: var(--nav-bg); border-top: 1px solid var(--nav-border); box-shadow: 0 -2px 10px rgba(0,0,0,0.05); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); transform: translateY(100%); pointer-events: none; }
+    /* [MODIFIED] Mobile Nav Safe Area */
+    .mobile-nav-container { 
+        display: flex; position: fixed; bottom: 0; left: 0; right: 0; width: 100%; 
+        /* Safe Area Padding & Height Calc */
+        height: calc(60px + env(safe-area-inset-bottom)); 
+        padding-bottom: env(safe-area-inset-bottom);
+        z-index: 1050; justify-content: space-around; align-items: center; 
+        background-color: var(--nav-bg); border-top: 1px solid var(--nav-border); box-shadow: 0 -2px 10px rgba(0,0,0,0.05); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); transform: translateY(100%); pointer-events: none; 
+    }
     .nav-capsule, .nav-circle { display: none; }
     .mobile-nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--nav-text); font-size: 0.65rem; cursor: pointer; flex: 1; height: 100%; transition: color 0.2s, transform 0.1s; font-weight: 500; min-width: 48px; padding: 6px 0; }
     .mobile-nav-item:active { transform: scale(0.95); }
@@ -330,7 +342,12 @@
     @media only screen and (min-width: 601px) and (max-width: 992px) { body { padding-left: 72px; } .app-sidebar { width: 72px; } .nav-text { opacity: 0; display: none; } .nav-item { justify-content: center; padding: 16px 0; border-left: 4px solid transparent; border-right: 0; } .nav-item i { margin-right: 0; } .nav-item.active { border-left: 4px solid var(--primary-color); border-right: 0; } }
     @media only screen and (max-width: 600px) { body { padding-bottom: 80px; padding-left: 0; } .app-sidebar { width: 72px !important; transform: translateX(-100%); overflow: hidden; } .nav-text { display: none !important; } .mobile-nav-container { transform: translateY(0); pointer-events: auto; } .header-right-container { top: 8px; } .container { margin-left: 0 !important; margin-right: 0 !important; } }
 
-    .header-right-container { position: absolute; top: 8px; right: 12px; display: flex; align-items: center; gap: 10px; z-index: 1100; }
+    /* [MODIFIED] Header Right Safe Area */
+    .header-right-container { 
+        position: absolute; top: 8px; right: 12px; display: flex; align-items: center; gap: 10px; z-index: 1100; 
+        top: calc(8px + env(safe-area-inset-top)); /* Safe area offset */
+    }
+    
     .theme-switch-wrapper { display: flex; align-items: center; gap: 8px; height: 18px !important; }
     #theme-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; line-height: 1 !important; }
     .theme-switch { display: inline-block; position: relative; margin-bottom: 0; height: 18px !important; width: 36px !important; line-height: 1 !important; vertical-align: middle; }
@@ -477,15 +494,13 @@
     .sheet-name-display { display: inline-block; max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; color: var(--text-muted); font-size: 0.8rem; margin-left: 8px; }
     @media only screen and (max-width: 600px) { .sheet-name-display { max-width: 100px; } }
 
-    /* [MODIFIED] v0.11.14 UI Changes */
     .content-header-icon { display: none; } 
     
-    /* [MODIFIED] v0.11.15 Larger Title & Subtitle */
     .content-title {
-        margin-bottom: 10px; /* Reduced from 30px */
+        margin-bottom: 10px; 
         font-weight: 700;
         color: var(--text-primary);
-        font-size: 1.5rem; /* Increased Size */
+        font-size: 1.5rem; 
     }
     .content-subtitle {
         color: var(--text-secondary);
@@ -493,7 +508,6 @@
         margin-bottom: 30px;
     }
 
-    /* Result Modal Styles */
     .result-icon-area { text-align: center; margin-top: 20px; margin-bottom: 10px; }
     .result-icon-area i { font-size: 4rem; }
     .result-summary, .result-fail-summary { text-align: center; }
@@ -507,7 +521,6 @@
     #result-summary-body td:first-child { width: 80%; } 
     #result-summary-body td:last-child { width: 20%; white-space: nowrap; }
 
-    /* Auto Copy Switch Style */
     .input-control-row {
         display: flex;
         justify-content: flex-end;
@@ -518,8 +531,6 @@
         margin-right: auto;
         gap: 10px;
     }
-    /* [MODIFIED] v0.11.18 Replaced .switch with .theme-switch structure */
-    /* .switch label ... styles removed or ignored in favor of global .theme-switch */
   </style>
 </head>
 <body>
@@ -711,7 +722,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.11.18</span>
+        <span class="footer-item">ver. 0.11.19</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -836,7 +847,7 @@
   let currentMode = 'home'; 
   
   let isAutoCopyEnabled = false;
-  let rowAddCount = 1; // [NEW] Row add count state
+  let rowAddCount = 1; 
 
   let currentFocus = -1;
 
@@ -997,6 +1008,15 @@
       targets.forEach(el => el.classList.add('active'));
   }
 
+  function updateMetaThemeColor(mode) {
+      const meta = document.getElementById('meta-theme-color');
+      if (mode === 'light') {
+          meta.setAttribute('content', '#f4f7f6'); 
+      } else {
+          meta.setAttribute('content', '#121212'); 
+      }
+  }
+
   let transitionTimer = null;
 
   function switchToMode(mode) {
@@ -1141,14 +1161,12 @@
       addPageEntry();
   }
   
-  // [NEW] Adjust Add Count
   function adjustAddCount(delta) {
       rowAddCount += delta;
       if(rowAddCount < 1) rowAddCount = 1;
       document.getElementById('add-row-count').innerText = rowAddCount + "장";
   }
   
-  // [NEW] Add Multiple Rows
   function addMultipleRows() {
       for(let i=0; i<rowAddCount; i++) {
           addPageEntry();
@@ -1166,7 +1184,6 @@
 
       const trTop = document.createElement('tr');
       trTop.className = `entry-row top-row entry-group ${groupClass}`;
-      // [MODIFIED] New Layout: No | Name | CardNo | Delete
       trTop.innerHTML = `
           <td rowspan="2" class="no-cell">${nextNum}</td>
           <td colspan="3" style="position: relative;"><div class="card-name-disp">카드 번호 입력</div></td>
@@ -1176,7 +1193,6 @@
 
       const trBottom = document.createElement('tr');
       trBottom.className = `entry-row bottom-row entry-group ${groupClass}`;
-      // [MODIFIED] New Layout: Another | Proc | Loc | Qty
       trBottom.innerHTML = `
           <td><select class="browser-default page-card-another" disabled><option value="" selected>일러스트</option></select></td>
           <td><select class="browser-default page-card-proc" disabled><option value="" disabled selected>레어도</option>${allProcessingTypes.map(p => `<option value="${p}">${getLocalizedRarity(p)}</option>`).join('')}</select></td>
@@ -1457,7 +1473,17 @@
   function toggleGuide(forceOpen = null) { const btn = document.getElementById('guide-accordion-btn'); const box = document.getElementById('guide-box'); const isOpen = (forceOpen !== null) ? forceOpen : box.style.display === 'none'; box.style.display = isOpen ? 'block' : 'none'; if (isOpen) btn.classList.add('active'); else btn.classList.remove('active'); }
   function openGuideFromMain() { M.Modal.getInstance(document.getElementById('settings-modal')).open(); toggleGuide(true); }
   function loadTheme() { const savedTheme = localStorage.getItem(THEME_KEY); if (savedTheme === 'dark') { document.body.classList.add('dark-mode'); document.getElementById('checkbox-theme').checked = true; } }
-  function toggleTheme() { if (document.getElementById('checkbox-theme').checked) { document.body.classList.add('dark-mode'); localStorage.setItem(THEME_KEY, 'dark'); } else { document.body.classList.remove('dark-mode'); localStorage.setItem(THEME_KEY, 'light'); } }
+  function toggleTheme() { 
+      if (document.getElementById('checkbox-theme').checked) { 
+          document.body.classList.add('dark-mode'); 
+          localStorage.setItem(THEME_KEY, 'dark'); 
+          updateMetaThemeColor('dark');
+      } else { 
+          document.body.classList.remove('dark-mode'); 
+          localStorage.setItem(THEME_KEY, 'light'); 
+          updateMetaThemeColor('light');
+      } 
+  }
   const regionMap = { 'ko': '한국', 'ja': '일본', 'ae': '아시아', 'cn': '중국', 'en': '영미', 'de': '독일', 'fr': '프랑스', 'it': '이탈리아', 'es': '스페인', 'pt': '포르투갈' };
   function loadRegion() { const savedRegion = localStorage.getItem(REGION_KEY) || 'ko'; currentRegion = savedRegion; document.getElementById('region-text').innerText = regionMap[savedRegion]; }
   function toggleRegionDropdown(event) { event.stopPropagation(); const list = document.getElementById('region-dropdown'); const capsule = document.getElementById('region-capsule'); if (list.style.display === 'block') { list.style.display = 'none'; capsule.classList.remove('active'); } else { list.style.display = 'block'; capsule.classList.add('active'); } }
