@@ -137,7 +137,7 @@
         border-style: hidden;
     }
 
-    /* 테두리 색상 보존 (기존 투명도 있는 흰색) */
+    /* 테두리 색상 보존 */
     .page-entry-table td {
         padding: 0 !important; 
         margin: 0 !important;
@@ -184,19 +184,17 @@
         border-bottom: 1px solid rgba(255, 255, 255, 0.3);
     }
     
-    /* [MODIFIED] 카드 이름 중앙 정렬 복구 */
     .name-area {
         flex: 1; 
         min-width: 0;
         display: flex;
         align-items: center;
-        justify-content: center; /* Flex 중앙 정렬 추가 */
+        justify-content: center; /* 카드 이름 중앙 정렬 */
         border-right: 1px solid rgba(255, 255, 255, 0.3);
     }
     .no-area {
         width: 110px; 
         flex-shrink: 0;
-        /* 카드 번호 input은 전역 text-align: center 상속 */
     }
 
     .entry-row-bottom {
@@ -215,7 +213,7 @@
         border-right: none;
     }
 
-    /* 모바일 환경 비율 보존 (1.1:1:1.2:0.7) */
+    /* 모바일 환경 비율 보존 */
     @media only screen and (max-width: 600px) {
         .w-img { flex: 1.1 !important; }
         .w-rare { flex: 1 !important; }
@@ -240,14 +238,41 @@
         cursor: pointer;
         color: var(--text-table-light); 
         outline: none !important;
-        text-align: center; /* 1행(카드번호)는 이 설정을 따름 */
+        text-align: center; /* 기본은 중앙 */
     }
     
-    /* [MODIFIED] 2행(하단) 인풋/셀렉트 좌측 정렬 및 패딩 조정 */
+    /* 2행(하단) 인풋/셀렉트 기본: 좌측 정렬 */
     .entry-row-bottom input,
     .entry-row-bottom select {
         text-align: left !important;
-        padding: 0 5px !important; /* 좌우 여백 확보 */
+        padding: 0 5px !important; 
+    }
+
+    /* [MODIFIED] 보관위치 & 수량: 플레이스홀더만 중앙 정렬, 입력 시 좌측 정렬 */
+    /* 값이 비어있을 때 (Placeholder 보임) -> 중앙 정렬 */
+    .entry-row-bottom input.page-card-loc:placeholder-shown,
+    .entry-row-bottom input.page-card-qty:placeholder-shown {
+        text-align: center !important;
+    }
+    /* 값이 있거나 포커스됨 -> 좌측 정렬 */
+    .entry-row-bottom input.page-card-loc:not(:placeholder-shown),
+    .entry-row-bottom input.page-card-loc:focus,
+    .entry-row-bottom input.page-card-qty:not(:placeholder-shown),
+    .entry-row-bottom input.page-card-qty:focus {
+        text-align: left !important;
+    }
+
+    /* [MODIFIED] 플레이스홀더 색상 진하게 변경 */
+    .page-card-no::placeholder,
+    .page-card-loc::placeholder,
+    .page-card-qty::placeholder {
+        color: #616161 !important; /* 진한 회색 */
+        opacity: 1;
+    }
+    html.dark-mode .page-card-no::placeholder,
+    html.dark-mode .page-card-loc::placeholder,
+    html.dark-mode .page-card-qty::placeholder {
+        color: #9e9e9e !important; /* 다크모드용 밝은 회색 */
     }
 
     html.dark-mode .page-entry-table input,
@@ -279,7 +304,6 @@
         color: inherit;
         width: 100%;
         line-height: 42px;
-        /* 카드 이름 텍스트 중앙 정렬 */
         text-align: center; 
     }
 
@@ -492,6 +516,17 @@
     .guide-btn.active i { transform: rotate(90deg); }
     .guide-content { background: var(--bg-sub); padding: 18px; border-radius: 8px; font-size: 0.95rem; border: 1px solid var(--border-color); display: none; margin-bottom: 15px; color: var(--text-primary); }
     html.dark-mode .guide-content { color: #b0b0b0; }
+    table { background: var(--bg-surface); font-size: 0.85rem; table-layout: fixed; width: 100%; border-collapse: collapse; color: var(--text-primary); }
+    th { background: var(--bg-header); color: var(--text-secondary); font-weight: 700; padding: 10px 4px; text-align: center; border: 1px solid var(--border-color); font-size: 0.8rem; word-break: break-all; }
+    td { border: 1px solid var(--border-color); text-align: center; padding: 6px 4px; position: relative; word-break: break-all; color: var(--text-primary); }
+    .col-card-no { width: 180px; } .col-loc { width: 110px; } .col-total { width: 60px; } .col-proc { width: 70px; } 
+    .expand-btn { cursor: pointer; color: var(--primary-color); position: absolute; right: 4px; top: 50%; transform: translateY(-50%); font-size: 1.3rem; }
+    .sub-row { width: 100%; max-width: 800px; display: flex; justify-content: flex-start; align-items: flex-start; margin-top: 5px; min-height: 20px; } 
+    .modal { border-radius: 12px; width: 95% !important; max-width: 600px !important; background-color: var(--bg-surface); color: var(--text-primary); }
+    .modal .modal-content { background-color: var(--bg-surface); }
+    .modal .modal-footer { background-color: var(--bg-surface); border-top: 1px solid var(--border-color); }
+    #settings-modal .modal-footer { border-top: none !important; }
+    #add-result-modal { width: 95% !important; max-width: 1000px !important; }
     
     #loading-overlay { 
       display: none; 
@@ -767,7 +802,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.12.14</span>
+        <span class="footer-item">ver. 0.12.15</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
