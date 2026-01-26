@@ -41,11 +41,13 @@
         touch-action: manipulation;
     }
 
-    /* HTML 태그 자체에 배경색 지정 (Notch 영역 커버) */
+    /* [MODIFIED] HTML 태그 자체에 배경색 및 트랜지션 지정 */
     html {
         background-color: var(--bg-body);
         height: 100%;
         -webkit-text-size-adjust: 100%;
+        /* 상단 노치 영역의 색상 전환 속도를 Body와 일치시킴 */
+        transition: background-color 0.3s ease;
     }
 
     :root {
@@ -795,7 +797,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.12.4</span>
+        <span class="footer-item">ver. 0.12.5</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
