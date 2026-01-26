@@ -15,13 +15,10 @@
           mode = 'dark';
         }
 
-        // HTML 태그에 클래스 즉시 주입
         if (mode === 'dark') {
           document.documentElement.classList.add('dark-mode');
         }
 
-        // 테마 컬러 즉시 설정 (브라우저 UI 색상 - 하단 탭바와 일치)
-        // Dark: #000000 (OLED Black), Light: #F0F0F0 (탭바 배경색)
         var themeColor = (mode === 'dark') ? '#000000' : '#F0F0F0';
         document.write('<meta name="theme-color" id="meta-theme-color" content="' + themeColor + '">');
       } catch(e) {
@@ -36,6 +33,9 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
+    /* [NEW] 모바일 탭 하이라이트 박스 제거 */
+    * { -webkit-tap-highlight-color: transparent; }
+
     /* 더블 탭 확대 방지 */
     html, body, button, a, input, select, textarea, .btn, .nav-item, .mobile-nav-item {
         touch-action: manipulation;
@@ -46,7 +46,6 @@
         background-color: var(--bg-body);
         height: 100%;
         -webkit-text-size-adjust: 100%;
-        /* 상단 노치 영역의 색상 전환 속도를 Body와 일치시킴 */
         transition: background-color 0.3s ease;
     }
 
@@ -72,23 +71,19 @@
       --disabled-bg: #e0e0e0;
       --disabled-text: #9e9e9e;
       
-      /* 오버레이 배경도 변수로 관리 */
       --overlay-bg: rgba(255, 255, 255, 0.95);
       
-      /* 하단 탭바 불투명 단색 (Light) */
       --nav-bg: #F0F0F0; 
       --nav-text: #424242;
       --nav-text-active: #009688;
       --nav-border: rgba(0, 0, 0, 0.1);
       --nav-shadow: 0 -1px 5px rgba(0,0,0,0.05);
 
-      /* Color Variables for Table */
       --bg-odd-row: #80cbc4; 
       --text-table-light: #424242;
       --text-table-dark: #333333; 
     }
 
-    /* html.dark-mode 사용 */
     html.dark-mode {
       --bg-body: #121212;
       --bg-surface: #1e1e1e;
@@ -113,7 +108,6 @@
       
       --overlay-bg: rgba(18, 18, 18, 0.9);
 
-      /* 하단 탭바 완전한 검정색 (Dark) */
       --nav-bg: #000000;
       --nav-text: #9e9e9e;
       --nav-text-active: #4db6ac;
@@ -131,12 +125,10 @@
         transition: background-color 0.3s, color 0.3s, padding-left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
         padding-left: 0;
         padding-top: env(safe-area-inset-top); 
-        /* Body 최소 높이 보장 */
         min-height: 100vh;
         margin: 0;
     }
     
-    /* Page Entry Table Styles */
     .page-entry-table {
         width: 100%;
         max-width: 700px;
@@ -159,7 +151,6 @@
         overflow: hidden; 
     }
 
-    /* Input & Select Styles */
     .page-entry-table input, 
     .page-entry-table select {
         width: 100% !important;
@@ -199,7 +190,6 @@
         opacity: 1 !important;
     }
 
-    /* Odd Entry */
     .entry-group.odd {
         background-color: var(--bg-odd-row);
         color: var(--text-table-light);
@@ -208,7 +198,6 @@
     .entry-group.odd select { color: inherit; } 
     .entry-group.odd option { color: var(--text-primary); background: var(--bg-surface); } 
 
-    /* Even Entry */
     .entry-group.even {
         background-color: var(--primary-light);
         color: var(--text-table-light);
@@ -243,8 +232,10 @@
         cursor: pointer;
         border-bottom: 1px dotted currentColor;
     }
-    .card-link:hover {
-        opacity: 0.7;
+    
+    /* [MODIFIED] Hover Fix: Card Link */
+    @media (hover: hover) {
+        .card-link:hover { opacity: 0.7; }
     }
 
     .add-row-btn-cell {
@@ -272,11 +263,16 @@
         justify-content: center;
         gap: 20px;
     }
-    .add-page-row-btn:hover {
-        background-color: var(--bg-surface);
-        color: var(--primary-color);
-        border-color: var(--primary-color);
+    
+    /* [MODIFIED] Hover Fix: Add Row Btn */
+    @media (hover: hover) {
+        .add-page-row-btn:hover {
+            background-color: var(--bg-surface);
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
     }
+    
     html.dark-mode .add-page-row-btn {
         background-color: var(--bg-sub);
         border-color: rgba(255,255,255,0.1);
@@ -306,13 +302,18 @@
         transition: background-color 0.2s;
         user-select: none;
     }
-    .ctrl-btn:hover {
-        background-color: rgba(0,0,0,0.1);
-        color: var(--primary-color);
+    
+    /* [MODIFIED] Hover Fix: Control Btn */
+    @media (hover: hover) {
+        .ctrl-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+            color: var(--primary-color);
+        }
+        html.dark-mode .ctrl-btn:hover {
+            background-color: rgba(255,255,255,0.2);
+        }
     }
-    html.dark-mode .ctrl-btn:hover {
-        background-color: rgba(255,255,255,0.2);
-    }
+    
     .ctrl-val {
         min-width: 20px;
         text-align: center;
@@ -338,10 +339,15 @@
         transition: all 0.2s;
         vertical-align: middle;
     }
-    .col-delete:hover {
-        background-color: rgba(0,0,0,0.05);
-        color: var(--error-red);
+    
+    /* [MODIFIED] Hover Fix: Delete Btn */
+    @media (hover: hover) {
+        .col-delete:hover {
+            background-color: rgba(0,0,0,0.05);
+            color: var(--error-red);
+        }
     }
+    
     .col-delete.disabled {
         pointer-events: none;
         opacity: 0.3;
@@ -362,7 +368,12 @@
         transform: translateX(0); 
     }
     .nav-item { display: flex; align-items: center; padding: 16px 24px; color: var(--nav-text); cursor: pointer; transition: background-color 0.2s, color 0.2s; text-decoration: none; border-left: 4px solid transparent; }
-    .nav-item:hover { background-color: rgba(128,128,128,0.1); color: var(--nav-text-active); }
+    
+    /* [MODIFIED] Hover Fix: Sidebar Item */
+    @media (hover: hover) {
+        .nav-item:hover { background-color: rgba(128,128,128,0.1); color: var(--nav-text-active); }
+    }
+    
     .nav-item.active { color: var(--nav-text-active); background-color: rgba(128,128,128,0.15); border-left: 4px solid var(--primary-color); font-weight: 700; }
     .nav-item i { margin-right: 16px; font-size: 24px; }
     .nav-text { font-size: 0.95rem; font-weight: 600; white-space: nowrap; opacity: 1; transition: opacity 0.2s; }
@@ -370,13 +381,10 @@
     /* Mobile Nav */
     .mobile-nav-container { 
         display: flex; position: fixed; bottom: 0; left: 0; right: 0; width: 100%; 
-        /* Safe Area Padding & Height Calc */
         height: calc(60px + env(safe-area-inset-bottom)); 
         padding-bottom: env(safe-area-inset-bottom);
         z-index: 1050; justify-content: space-around; align-items: center; 
-        
         background-color: var(--nav-bg); 
-        
         border-top: 1px solid var(--nav-border); 
         box-shadow: var(--nav-shadow);
         transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), background-color 0.3s ease; 
@@ -385,21 +393,24 @@
     .nav-capsule, .nav-circle { display: none; }
     .mobile-nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--nav-text); font-size: 0.65rem; cursor: pointer; flex: 1; height: 100%; transition: color 0.2s, transform 0.1s; font-weight: 500; min-width: 48px; padding: 6px 0; }
     .mobile-nav-item:active { transform: scale(0.95); }
-    .mobile-nav-item:hover { color: var(--nav-text-active); }
+    
+    /* [MODIFIED] Hover Fix: Mobile Nav Item */
+    @media (hover: hover) {
+        .mobile-nav-item:hover { color: var(--nav-text-active); }
+    }
+    
     .mobile-nav-item.active { color: var(--nav-text-active); font-weight: 700; }
     .mobile-nav-item i { font-size: 24px; margin-bottom: 3px; }
 
-    /* [MODIFIED] 로딩 중일 때 탭바를 오버레이 위로 올림 (색상 샘플링 유도) */
     body.is-loading .mobile-nav-container {
-        z-index: 11001 !important; /* 오버레이(11000) 보다 높게 */
-        pointer-events: none; /* 로딩 중 터치 방지 */
+        z-index: 11001 !important; 
+        pointer-events: none; 
     }
 
     @media only screen and (min-width: 993px) { body { padding-left: 240px; } }
     @media only screen and (min-width: 601px) and (max-width: 992px) { body { padding-left: 72px; } .app-sidebar { width: 72px; } .nav-text { opacity: 0; display: none; } .nav-item { justify-content: center; padding: 16px 0; border-left: 4px solid transparent; border-right: 0; } .nav-item i { margin-right: 0; } .nav-item.active { border-left: 4px solid var(--primary-color); border-right: 0; } }
     @media only screen and (max-width: 600px) { 
         body { padding-bottom: 80px; padding-left: 0; } 
-        /* 사이드바 1px 잔상 제거 (그림자 및 테두리 제거) */
         .app-sidebar { width: 72px !important; transform: translateX(-100%); overflow: hidden; box-shadow: none !important; border: none !important; } 
         .nav-text { display: none !important; } 
         .mobile-nav-container { transform: translateY(0); pointer-events: auto; } 
@@ -407,10 +418,9 @@
         .container { margin-left: 0 !important; margin-right: 0 !important; } 
     }
 
-    /* Header Right Safe Area */
     .header-right-container { 
         position: absolute; top: 8px; right: 12px; display: flex; align-items: center; gap: 10px; z-index: 1100; 
-        top: calc(8px + env(safe-area-inset-top)); /* Safe area offset */
+        top: calc(8px + env(safe-area-inset-top)); 
     }
     
     .theme-switch-wrapper { display: flex; align-items: center; gap: 8px; height: 18px !important; }
@@ -429,7 +439,11 @@
     .region-dropdown-list { display: none; position: absolute; top: 100%; right: 0; left: 0; background-color: var(--bg-surface); border: 1px solid var(--border-color); border-top: 1px solid #eee; border-radius: 0 0 12px 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); list-style: none; margin: 0; padding: 5px 0; width: 100%; z-index: 1003; text-align: center; }
     html.dark-mode .region-dropdown-list { border-top: 1px solid #444; }
     .region-dropdown-list li { padding: 8px 0; font-size: 0.8rem; color: var(--text-primary); cursor: pointer; white-space: nowrap; }
-    .region-dropdown-list li:hover { background-color: var(--bg-sub); color: var(--primary-color); font-weight: 700; }
+    
+    /* [MODIFIED] Hover Fix: Dropdown Item */
+    @media (hover: hover) {
+        .region-dropdown-list li:hover { background-color: var(--bg-sub); color: var(--primary-color); font-weight: 700; }
+    }
 
     .container { margin-top: 30px; width: auto !important; max-width: 100% !important; min-height: 60vh; margin-left: 15px !important; margin-right: 15px !important; transition: margin 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
     #dynamic-header-wrapper { position: relative; width: 100%; height: 220px; margin-top: 20px; margin-bottom: 20px; transition: height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); z-index: 100; overflow: visible; max-width: 100%; }
@@ -466,7 +480,12 @@
     #result-area th { background: var(--primary-color); color: white; border-color: var(--primary-dark); }
     .help-trigger-btn { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 4px; transition: color 0.2s; height: 18px !important; line-height: 1 !important; }
     .help-trigger-btn i { font-size: 0.8rem; transform: translateY(-1px); }
-    .help-trigger-btn:hover { color: var(--primary-color); }
+    
+    /* [MODIFIED] Hover Fix: Help Btn */
+    @media (hover: hover) {
+        .help-trigger-btn:hover { color: var(--primary-color); }
+    }
+    
     .search-input-wrapper { flex: 1; position: relative; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 24px; padding: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: border-radius 0.2s ease, box-shadow 0.2s ease; z-index: 1001; }
     .search-input-wrapper.active { border-radius: 24px 24px 0 0; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-bottom: 1px solid transparent; }
     #search-btn { border-radius: 50px !important; width: 80px; height: 45px; padding: 0; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -474,31 +493,62 @@
     input#card-search::placeholder { color: var(--text-muted); }
     html.dark-mode ::placeholder { color: #757575 !important; }
     .clear-search-btn { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: rgba(0,0,0,0.25); display: none; z-index: 5; transition: color 0.2s; }
-    .clear-search-btn:hover { color: rgba(0,0,0,0.6); }
+    
+    /* [MODIFIED] Hover Fix: Clear Btn */
+    @media (hover: hover) {
+        .clear-search-btn:hover { color: rgba(0,0,0,0.6); }
+        html.dark-mode .clear-search-btn:hover { color: rgba(255,255,255,0.7); }
+    }
+    
     html.dark-mode .clear-search-btn { color: rgba(255,255,255,0.25); }
-    html.dark-mode .clear-search-btn:hover { color: rgba(255,255,255,0.7); }
+    
     .btn.cyan-theme { background-color: var(--primary-color) !important; font-weight: 600; color: #fff; }
     .btn.cyan-theme.disabled, .btn.cyan-theme:disabled { background-color: var(--disabled-bg) !important; color: var(--disabled-text) !important; }
     .custom-dropdown { position: absolute; top: 100%; left: -1px; right: -1px; background-color: var(--bg-surface); border: 1px solid var(--border-color); border-top: 1px solid #eee; border-radius: 0 0 24px 24px; z-index: 1000; max-height: 250px; overflow-y: auto; display: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin: 0; padding: 5px 0 10px 0; list-style: none; }
     html.dark-mode .custom-dropdown { border-top: 1px solid #444; }
     .custom-dropdown li { padding: 8px 20px; cursor: pointer; border-bottom: none; font-size: 0.95rem; color: var(--text-primary); display: block; white-space: normal; transition: background-color 0.1s; }
-    .custom-dropdown li:hover, .custom-dropdown li.active { background-color: var(--bg-sub); }
+    
+    /* [MODIFIED] Hover Fix: Custom Dropdown */
+    @media (hover: hover) {
+        .custom-dropdown li:hover, .custom-dropdown li.active { background-color: var(--bg-sub); }
+    }
+    
     .custom-dropdown li.text-suggest { color: var(--primary-color) !important; font-weight: 700 !important; }
     .custom-dropdown li .text-match { color: var(--text-primary) !important; font-weight: 400 !important; }
     .custom-dropdown li.no-result-item { font-style: italic; color: var(--text-muted) !important; cursor: default; pointer-events: none; font-weight: 400 !important; text-align: center; padding: 15px; }
     .dropdown-header { display: flex !important; align-items: center; justify-content: space-between !important; padding: 8px 15px !important; background-color: var(--bg-header) !important; cursor: default !important; }
     .dropdown-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; }
     .delete-icon { cursor: pointer; color: var(--text-muted); font-size: 1.1rem; transition: color 0.2s; }
-    .delete-icon:hover { color: var(--error-red); }
+    
+    /* [MODIFIED] Hover Fix: Delete Icon */
+    @media (hover: hover) {
+        .delete-icon:hover { color: var(--error-red); }
+    }
+    
     .recent-header-item { display: flex !important; align-items: center; justify-content: space-between !important; padding: 8px 20px !important; cursor: default !important; margin-bottom: 5px; }
-    .recent-header-item:hover { background-color: transparent !important; }
+    
+    /* [MODIFIED] Hover Fix: Recent Header */
+    @media (hover: hover) {
+        .recent-header-item:hover { background-color: transparent !important; }
+    }
+    
     .recent-title { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
     .clear-all-btn { font-size: 0.8rem; color: var(--text-muted); cursor: pointer; text-decoration: underline; }
-    .clear-all-btn:hover { color: var(--error-red); }
+    
+    /* [MODIFIED] Hover Fix: Clear All */
+    @media (hover: hover) {
+        .clear-all-btn:hover { color: var(--error-red); }
+    }
+    
     .recent-item-row { display: flex !important; align-items: center; justify-content: space-between !important; }
     .recent-text { flex: 1; }
     .item-delete-btn { color: var(--text-muted); font-size: 1rem; padding: 4px; cursor: pointer; display: flex; align-items: center; }
-    .item-delete-btn:hover { color: var(--error-red); }
+    
+    /* [MODIFIED] Hover Fix: Item Delete */
+    @media (hover: hover) {
+        .item-delete-btn:hover { color: var(--error-red); }
+    }
+    
     .url-input-container { position: relative; display: flex; align-items: center; margin-top: 20px; margin-bottom: 5px; }
     .url-input-container input { margin-bottom: 0 !important; padding-right: 40px !important; color: var(--text-primary); border-bottom: 1px solid var(--text-muted) !important; }
     .valid-icon { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: none; }
@@ -520,12 +570,11 @@
     #settings-modal .modal-footer { border-top: none !important; }
     #add-result-modal { width: 95% !important; max-width: 1000px !important; }
     
-    /* [MODIFIED] Loading Overlay - Full Screen Forced with dvh */
     #loading-overlay { 
       display: none; 
       position: fixed; 
       top: 0; left: 0; width: 100%;
-      height: 100dvh; /* Dynamic Viewport Height for full coverage */
+      height: 100dvh; 
       background: var(--overlay-bg); 
       z-index: 11000; 
       flex-direction: column; align-items: center; justify-content: center; 
@@ -544,7 +593,12 @@
     .summary-label-cell { background-color: var(--bg-sub); color: var(--text-secondary); font-weight: 600; width: 50%; }
     .summary-value-cell { width: 50%; font-weight: 500; }
     .show-more-btn { width: 100%; background-color: var(--bg-sub); color: var(--primary-dark); font-weight: 600; padding: 8px 0; border: none; border-top: 1px solid var(--border-color); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; transition: background-color 0.2s; }
-    .show-more-btn:hover { background-color: var(--border-color); }
+    
+    /* [MODIFIED] Hover Fix: Show More Btn */
+    @media (hover: hover) {
+        .show-more-btn:hover { background-color: var(--border-color); }
+    }
+    
     html.dark-mode .show-more-btn { color: var(--primary-color); }
     .detail-slide-wrapper { max-height: 0; overflow-y: hidden; overflow-x: auto; transition: max-height 0.4s ease-in-out; border-top: none; }
     .split-table-wrapper { display: flex; width: 100%; border-top: 1px solid var(--border-color); }
@@ -555,7 +609,12 @@
     .split-table td { padding: 8px 4px; font-size: 0.85rem; border-top: none !important; border-left: none !important; border-bottom: 1px solid var(--border-color); border-right: 1px solid var(--border-color); white-space: nowrap; height: 35px; box-sizing: border-box; text-align: center; color: var(--text-primary); }
     .split-table th:last-child, .split-table td:last-child { border-right: none; }
     .btn-flat-action { background-color: transparent !important; color: var(--text-secondary) !important; font-weight: 600; box-shadow: none !important; border: 1px solid var(--border-color); }
-    .btn-flat-action:hover { background-color: var(--bg-header) !important; }
+    
+    /* [MODIFIED] Hover Fix: Btn Flat Action */
+    @media (hover: hover) {
+        .btn-flat-action:hover { background-color: var(--bg-header) !important; }
+    }
+    
     #intro-area { text-align: center; color: var(--text-secondary); padding-top: 40px; padding-bottom: 40px; margin: 0; line-height: 1.8; font-size: 0.95rem; }
     #intro-area a { color: var(--primary-color); font-weight: 700; text-decoration: underline; cursor: pointer; }
     .centered-content-area { text-align: center; padding-top: 50px; padding-bottom: 50px; margin: 0; }
@@ -566,7 +625,12 @@
     .footer-item { white-space: nowrap; }
     .footer-separator { margin: 0 8px; user-select: none; opacity: 0.5; }
     #main-footer a.maker-link { color: var(--text-muted); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; transition: color 0.2s; font-weight: 600; }
-    #main-footer a.maker-link:hover { color: #f44336; }
+    
+    /* [MODIFIED] Hover Fix: Maker Link */
+    @media (hover: hover) {
+        #main-footer a.maker-link:hover { color: #f44336; }
+    }
+    
     @media only screen and (max-width: 600px) { .footer-separator.mobile-hide { display: none; } .footer-item.copyright { width: 100%; margin-top: 4px; } }
     .sheet-name-display { display: inline-block; max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; color: var(--text-muted); font-size: 0.8rem; margin-left: 8px; }
     @media only screen and (max-width: 600px) { .sheet-name-display { max-width: 100px; } }
@@ -799,7 +863,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.12.6</span>
+        <span class="footer-item">ver. 0.12.7</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -1584,276 +1648,4 @@
               allLocations = res.locations.sort(); 
               localCardDatabase = res.allCards; 
               rarityMap = res.rarityMap || {}; 
-              rarityMappingRaw = res.rarityMappingRaw || []; 
-              clientCache = res.clientCache || {}; 
-              nameDb = res.nameDb || {}; 
-              if (res.sheetName) document.getElementById('connected-sheet-name').innerText = `연결됨("${res.sheetName}")`; 
-              
-              const datalist = document.getElementById('loc-datalist');
-              datalist.innerHTML = allLocations.map(l => `<option value="${l}">`).join('');
-
-              cidLookup = {}; 
-              Object.keys(nameDb).forEach(nameKey => { const entry = nameDb[nameKey]; if (entry && entry.id) { if (!cidLookup[entry.id]) cidLookup[entry.id] = new Set(); cidLookup[entry.id].add(nameKey); } }); 
-              const expandedSet = new Set(allNames); 
-              allNames.forEach(name => { const entry = nameDb[name]; if (entry && entry.id) { const siblings = cidLookup[entry.id]; if (siblings) { siblings.forEach(sName => expandedSet.add(sName)); } } }); 
-              allNames = Array.from(expandedSet).sort(); 
-              rarityLookup = {}; 
-              rarityMappingRaw.forEach((row, index) => { Object.values(row).forEach(val => { const key = String(val).trim(); if(key) { rarityLookup[key] = { data: row, index: index }; } }); }); 
-          } 
-      } catch (e) { showLoading(false); } 
-  }
-  
-  function startSearch() { 
-      if (!localStorage.getItem(STORAGE_KEY)) { openGuideFromMain(); return; } 
-      const name = document.getElementById('card-search').value; 
-      if(!name || !isAppConfigured) return; 
-
-      saveRecentSearch(name); 
-
-      let targetNames = new Set(); 
-      if (nameDb[name] && nameDb[name].id) { 
-          const cid = nameDb[name].id; 
-          if (cidLookup[cid]) { targetNames = cidLookup[cid]; } else { targetNames.add(name); } 
-      } else { targetNames.add(name); } 
-
-      const filteredRows = localCardDatabase.filter(row => targetNames.has(String(row[0]))); 
-      
-      if (currentMode === 'search') {
-          const wrapper = document.getElementById('content-slider-wrapper');
-          const contentWrapper = document.getElementById('result-content-wrapper');
-          const resultArea = document.getElementById('result-area');
-
-          const oldHeight = wrapper.offsetHeight;
-          wrapper.style.height = oldHeight + 'px';
-
-          const ghost = resultArea.cloneNode(true);
-          ghost.id = 'result-ghost';
-          ghost.style.position = 'absolute';
-          ghost.style.top = '0';
-          ghost.style.left = '0';
-          ghost.style.right = '0';
-          ghost.style.marginLeft = 'auto';
-          ghost.style.marginRight = 'auto';
-          ghost.style.marginTop = '0';
-          ghost.style.paddingTop = '30px';
-          ghost.style.width = '100%';
-          ghost.style.maxWidth = '700px';
-          ghost.style.zIndex = '5';
-          ghost.style.transition = 'opacity 0.4s ease';
-          
-          wrapper.appendChild(ghost);
-
-          renderTable(filteredRows); 
-
-          resultArea.style.opacity = '0';
-          resultArea.style.transition = 'opacity 0.4s ease';
-          
-          const newHeight = resultArea.offsetHeight;
-
-          requestAnimationFrame(() => {
-              wrapper.style.height = newHeight + 'px';
-              ghost.style.opacity = '0';
-              resultArea.style.opacity = '1';
-          });
-
-          setTimeout(() => {
-              if(ghost.parentNode) ghost.parentNode.removeChild(ghost);
-              wrapper.style.height = ''; 
-              resultArea.style.opacity = '';
-              resultArea.style.transition = '';
-          }, 400);
-
-      } else {
-          renderTable(filteredRows); 
-          switchToMode('search'); 
-      }
-
-      document.getElementById('custom-dropdown').style.display = 'none'; 
-      toggleSearchWrapper(false); 
-      checkClearBtn(); 
-      showLoading(false); 
-  }
-  
-  function findMappingRow(key) { if (!rarityMappingRaw || rarityMappingRaw.length === 0) return null; return rarityMappingRaw.find(row => Object.values(row).includes(key)); }
-  function getLocalizedRarity(key) { if (!key) return ""; const info = rarityLookup[key]; if (info && info.data[currentRegion]) { return info.data[currentRegion]; } return key; }
-  
-  function renderTable(rows) { 
-      const resultArea = document.getElementById('result-area'); 
-      if (rows.length === 0) { 
-          resultArea.innerHTML = "<p class='center'>결과 없음</p>"; 
-          return; 
-      } 
-      const groups = {}; 
-      rows.forEach(r => { const cardNo = String(r[1]), proc = String(r[2]), qty = parseInt(r[3]) || 0, loc = String(r[4]), another = String(r[5] || "").trim(); if (!groups[cardNo]) groups[cardNo] = { locations: {}, anotherGroups: {} }; if (!groups[cardNo].locations[loc]) groups[cardNo].locations[loc] = { total: 0, procs: {} }; groups[cardNo].locations[loc].total += qty; groups[cardNo].locations[loc].procs[proc] = (groups[cardNo].locations[loc].procs[proc] || 0) + qty; if (another) { const aKey = `${another}|${loc}`; if (!groups[cardNo].anotherGroups[aKey]) groups[cardNo].anotherGroups[aKey] = { another, loc, total: 0, procs: {} }; groups[cardNo].anotherGroups[aKey].total += qty; groups[cardNo].anotherGroups[aKey].procs[proc] = (groups[cardNo].anotherGroups[aKey].procs[proc] || 0) + qty; } }); 
-      let newHtml = ""; 
-      Object.keys(groups).forEach(cardNo => { const rowId = `row-${cardNo}`.replace(/[^a-zA-Z0-9]/g, ''); const cardRows = rows.filter(r => String(r[1]) === cardNo); const totalQty = cardRows.reduce((sum, r) => sum + (parseInt(r[3]) || 0), 0); const locSet = new Set(cardRows.map(r => String(r[4])).filter(l => l)); const distinctKeys = [...new Set(cardRows.map(r => String(r[2]).trim()).filter(k => k))]; distinctKeys.sort((a, b) => { const infoA = rarityLookup[a]; const infoB = rarityLookup[b]; const idxA = infoA ? infoA.index : 999999; const idxB = infoB ? infoB.index : 999999; return idxA - idxB || a.localeCompare(b); }); const displayNamesForSummary = [...new Set(distinctKeys.map(k => rarityMap[k] || k))]; const procStr = displayNamesForSummary.join(", "); const locStr = [...locSet].join(", "); const anotherGroups = {}; cardRows.forEach(r => { const another = String(r[5] || "").trim(); const displayAnother = another === "" ? "기본" : another; if(!anotherGroups[displayAnother]) anotherGroups[displayAnother] = []; anotherGroups[displayAnother].push(r); }); let leftTableHtml = `<table class="split-table"><thead><tr><th class="fp-col-1">일러스트</th><th class="fp-col-2">보관 위치</th><th class="fp-col-3">총 수량</th></tr></thead><tbody>`; let rightTableHtml = `<table class="split-table"><thead><tr>`; distinctKeys.forEach(key => { const info = rarityLookup[key]; let displayName = key; let tooltipContent = key; if (info) { displayName = info.data.display || key; tooltipContent = info.data[currentRegion] || key; } tooltipContent = tooltipContent.replace(/\(/g, '<br>('); rightTableHtml += `<th class="sp-col tooltipped" data-position="top" data-tooltip="${tooltipContent}">${displayName}</th>`; }); rightTableHtml += `</tr></thead><tbody>`; const anotherKeys = Object.keys(anotherGroups).sort((a, b) => { if (a === "기본") return -1; if (b === "기본") return 1; return a.localeCompare(b, undefined, { numeric: true }); }); anotherKeys.forEach(another => { const grpRows = anotherGroups[another]; const locGroups = {}; grpRows.forEach(r => { const loc = String(r[4]); const proc = String(r[2]); const qty = parseInt(r[3]) || 0; if(!locGroups[loc]) locGroups[loc] = { total: 0, procs: {} }; locGroups[loc].total += qty; locGroups[loc].procs[proc] = (locGroups[loc].procs[proc] || 0) + qty; }); const locKeys = Object.keys(locGroups); locKeys.forEach((loc, idx) => { const d = locGroups[loc]; leftTableHtml += `<tr>`; if(idx === 0) leftTableHtml += `<td rowspan="${locKeys.length}">${another}</td>`; leftTableHtml += `<td>${loc}</td><td>${d.total}</td></tr>`; rightTableHtml += `<tr>`; distinctKeys.forEach(key => { const val = d.procs[key] || 0; rightTableHtml += `<td>${val}</td>`; }); rightTableHtml += `</tr>`; }); }); leftTableHtml += `</tbody></table>`; rightTableHtml += `</tbody></table>`; newHtml += ` <div class="new-card-box"> <div class="summary-split-wrapper"> <div class="summary-left">${cardNo}</div> <div class="summary-right"> <table class="summary-table"> <tr><td class="summary-label-cell">보관 위치</td><td class="summary-label-cell">수량</td></tr> <tr><td class="summary-value-cell">${locStr}</td><td class="summary-value-cell">${totalQty}</td></tr> <tr><td class="summary-label-cell border-double-top">보유 레어도</td><td class="summary-value-cell border-double-top">${procStr}</td></tr> </table> </div> </div> <div id="detail-${rowId}" class="detail-slide-wrapper"> <div class="split-table-wrapper"> <div class="fixed-side">${leftTableHtml}</div> <div class="scroll-side">${rightTableHtml}</div> </div> </div> <button class="show-more-btn" onclick="toggleNewDetail('detail-${rowId}')"><span>자세히 보기</span><i class="material-icons tiny">keyboard_arrow_down</i></button> </div> `; }); 
-      resultArea.innerHTML = newHtml; 
-      M.Tooltip.init(resultArea.querySelectorAll('.tooltipped'), { html: true, margin: 3 }); 
-  }
-  function toggleNewDetail(detailId) { const content = document.getElementById(detailId); const btn = content.nextElementSibling; const textSpan = btn.querySelector('span'); const icon = btn.querySelector('i'); if (content.style.maxHeight) { content.style.maxHeight = null; textSpan.innerText = '자세히 보기'; icon.innerText = 'keyboard_arrow_down'; } else { content.style.maxHeight = content.scrollHeight + "px"; textSpan.innerText = '간략히 보기'; icon.innerText = 'keyboard_arrow_up'; } }
-  function showResultModal(count, totalQty, detailLog, fatalError = null) { 
-      const el = document.getElementById('add-result-modal');
-      let modal = M.Modal.getInstance(el);
-      if (!modal) modal = M.Modal.init(el, { dismissible: false, onCloseEnd: handleContinueRegistration }); 
-      
-      const iconArea = document.getElementById('result-icon-area');
-      const successText = document.getElementById('result-success-text');
-      const failText = document.getElementById('result-fail-text');
-      const tableBody = document.getElementById('result-summary-body');
-      
-      let state = 'SUCCESS';
-      const failCount = detailLog.filter(l => l.status === 'fail').length;
-      
-      if (fatalError) state = 'FATAL';
-      else if (count === 0 && failCount > 0) state = 'FAIL';
-      else if (count > 0 && failCount > 0) state = 'PARTIAL';
-      
-      let iconHtml = '';
-      let mainMsg = '';
-      let subMsg = '';
-      
-      if (state === 'SUCCESS') {
-          iconHtml = `<i class="material-icons green-text text-accent-4">check_circle</i>`;
-          mainMsg = `카드 ${totalQty}장을 등록 완료했습니다.`;
-      } else if (state === 'PARTIAL') {
-          iconHtml = `<i class="material-icons amber-text text-accent-4">warning</i>`; 
-          mainMsg = `카드 ${totalQty}장을 등록 완료했습니다.`;
-          subMsg = `${failCount}종의 카드 등록을 실패했습니다.`;
-      } else if (state === 'FAIL') {
-          iconHtml = `<i class="material-icons red-text text-accent-4">cancel</i>`;
-          mainMsg = `카드 등록에 실패했습니다.`;
-      } else if (state === 'FATAL') {
-          iconHtml = `<i class="material-icons red-text text-accent-4">cancel</i>`;
-          mainMsg = `카드 등록에 실패했습니다.`;
-          subMsg = `<span class="grey-text text-darken-1" style="font-size:0.8rem;">[오류] ${fatalError}</span>`;
-      }
-      
-      iconArea.innerHTML = iconHtml;
-      successText.innerHTML = mainMsg;
-      failText.innerHTML = subMsg;
-      
-      let summaryHtml = ""; 
-      
-      const successLogs = detailLog.filter(l => l.status === 'success');
-      if (successLogs.length > 0) { 
-          const nameAgg = {}; 
-          successLogs.forEach(l => { 
-              if(!nameAgg[l.name]) nameAgg[l.name] = 0;
-              nameAgg[l.name] += l.qty;
-          }); 
-          for(const [name, qty] of Object.entries(nameAgg)) {
-              summaryHtml += `<tr class="success-row"><td>${name}</td><td>${qty}장</td></tr>`;
-          }
-      } 
-      
-      const failLogs = detailLog.filter(l => l.status === 'fail' && l.failReason !== 'invalid_no');
-      failLogs.forEach((l) => { 
-          let reason = l.name;
-          if(l.failReason === "no_proc" || l.failReason === "no_loc") reason = `${l.failReason === "no_proc" ? "레어도" : "보관 위치"} 미선택`;
-          else if(l.failReason === "no_another") reason = "일러스트 미선택";
-          summaryHtml += `<tr class="fail-row"><td style="color:var(--error-red);">${l.name}</td><td style="color:var(--error-red); font-size:0.8rem;">실패</td></tr>`; 
-      });
-
-      const invalidLogs = detailLog.filter(l => l.status === 'fail' && l.failReason === 'invalid_no');
-      invalidLogs.forEach((l) => {
-          summaryHtml += `<tr class="fail-row"><td style="color:var(--error-red);">번호 오류</td><td style="color:var(--error-red); font-size:0.8rem;">실패</td></tr>`;
-      });
-      
-      const tableHead = document.querySelector('#result-detail-box thead tr');
-      if(tableHead) tableHead.innerHTML = `<th style="width:10%;">No</th><th style="width:20%;">카드 이름</th><th style="width:15%;">카드 번호</th><th style="width:15%;">일러스트</th><th style="width:15%;">레어도</th><th style="width:15%;">보관 위치</th><th style="width:10%;">수량</th>`; 
-      
-      tableBody.innerHTML = summaryHtml; 
-      
-      let detailHtml = detailLog.map(l => { 
-          const rowClass = l.status === 'success' ? 'success-row' : 'fail-row'; 
-          
-          let procTxt = l.proc;
-          let locTxt = l.loc;
-          let qtyTxt = l.qty;
-          let anotherTxt = (l.another === "DEFAULT" || !l.another) ? "기본" : l.another;
-
-          if (l.status === 'fail') {
-              if (l.failReason === 'invalid_no') {
-                  procTxt = "-"; locTxt = "-"; qtyTxt = "-"; anotherTxt = "-";
-              } else if (l.failReason === 'no_proc') {
-                  procTxt = "미선택"; locTxt = "-"; qtyTxt = "-";
-              } else if (l.failReason === 'no_loc') {
-                  locTxt = "미선택"; qtyTxt = "-";
-              } else if (l.failReason === 'no_another') {
-                  anotherTxt = "미선택"; procTxt = "-"; locTxt = "-"; qtyTxt = "-";
-              }
-          }
-
-          const nameStyle = (l.status === 'fail' && (l.failReason === 'invalid_no' || l.failReason === 'error')) ? 'color:var(--error-red); font-weight:700;' : '';
-          const anotherStyle = (l.status === 'fail' && l.failReason === 'no_another') ? 'color:var(--error-red); font-weight:700;' : '';
-          const procStyle = (l.status === 'fail' && l.failReason === 'no_proc') ? 'color:var(--error-red); font-weight:700;' : '';
-          const locStyle = (l.status === 'fail' && l.failReason === 'no_loc') ? 'color:var(--error-red); font-weight:700;' : '';
-          const qtyStyle = (l.status === 'fail' && l.failReason === 'invalid_qty') ? 'color:var(--error-red); font-weight:700;' : '';
-
-          return `<tr class="${rowClass}"><td>${l.no}</td><td style="${nameStyle}">${l.name}</td><td>${l.cardNo}</td><td style="${anotherStyle}">${anotherTxt}</td><td style="${procStyle}">${procTxt}</td><td style="${locStyle}">${locTxt}</td><td style="${qtyStyle}">${qtyTxt}</td></tr>`; 
-      }).join(''); 
-      
-      document.getElementById('result-detail-body').innerHTML = detailHtml; 
-      
-      document.getElementById('result-detail-box').style.display = 'none'; 
-      document.getElementById('toggle-icon').innerText = 'keyboard_arrow_down'; 
-      
-      hasRegisteredInSession = true; 
-      modal.open(); 
-  }
-  
-  function toggleResultDetail() { const box = document.getElementById('result-detail-box'); const icon = document.getElementById('toggle-icon'); const isHidden = box.style.display === 'none'; box.style.display = isHidden ? 'block' : 'none'; icon.innerText = isHidden ? 'keyboard_arrow_up' : 'keyboard_arrow_down'; }
-  async function handleContinueRegistration() { 
-      M.Modal.getInstance(document.getElementById('add-result-modal')).close(); 
-      const tbody = document.getElementById('page-add-tbody'); 
-      const rows = Array.from(tbody.children); 
-      let hasFailures = false; 
-      let hasSuccess = false; 
-
-      for (let i = rows.length - 2; i >= 0; i -= 2) {
-          const topRow = rows[i];
-          const bottomRow = rows[i+1];
-          
-          if (topRow.dataset.status === 'success') {
-              tbody.removeChild(topRow);
-              tbody.removeChild(bottomRow);
-              hasSuccess = true; 
-          } else {
-              hasFailures = true;
-              delete topRow.dataset.status; 
-          }
-      }
-
-      if (!hasFailures) { 
-          addPageEntry(); 
-      }
-      
-      reindexRows();
-
-      if (hasSuccess) {
-          await refreshInitialData();
-      }
-  }
-  function saveSettings() { const url = document.getElementById('sheet-url').value; const match = url.match(/[-\w]{25,}/); if (match) { localStorage.setItem(STORAGE_KEY, match[0]); location.reload(); } }
-  function disconnectSheet() { localStorage.removeItem(STORAGE_KEY); location.reload(); }
-  function saveRecentSearch(name) { let recent = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]'); recent = [name, ...recent.filter(n => n !== name)].slice(0, 5); localStorage.setItem(RECENT_KEY, JSON.stringify(recent)); }
-  function clearAllHistory() { localStorage.removeItem(RECENT_KEY); } 
-  function quickSearch(name) { document.getElementById('card-search').value = name; startSearch(); }
-  
-  // [MODIFIED] showLoading: 로딩 상태에 따라 Body 클래스 토글 (CSS 연동)
-  function showLoading(show, text) { 
-      const overlay = document.getElementById('loading-overlay');
-      const loadingText = document.getElementById('loading-text');
-      
-      if (show) {
-          overlay.style.display = 'flex';
-          loadingText.innerText = text;
-          document.body.classList.add('is-loading');
-      } else {
-          overlay.style.display = 'none';
-          document.body.classList.remove('is-loading');
-      }
-  }
-</script>
-</body>
-</html>
+              rarityMappingRaw = res.rarityMappingRaw
