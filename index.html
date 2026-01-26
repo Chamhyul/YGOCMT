@@ -33,7 +33,6 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
-    /* 전역 설정: 탭 하이라이트 제거, 더블 탭 방지, 박스 모델 강제 */
     * {
         -webkit-tap-highlight-color: transparent;
         touch-action: manipulation;
@@ -114,18 +113,16 @@
 
     body, input, button, table, .btn, .modal-content, select { font-family: 'Pretendard', sans-serif !important; }
     
-    /* [MODIFIED] Flexbox Layout 적용 (마진 병합 방지 및 Sticky Footer) */
     body { 
         background-color: var(--bg-body); 
         color: var(--text-primary); 
         transition: background-color 0.3s, color 0.3s, padding-left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
         padding-left: 0;
         padding-top: env(safe-area-inset-top); 
-        min-height: 100dvh; /* 동적 뷰포트 단위 */
+        min-height: 100dvh;
         margin: 0;
-        
-        display: flex; /* Flex Container 설정 */
-        flex-direction: column; /* 세로 정렬 */
+        display: flex; 
+        flex-direction: column;
     }
     
     .page-entry-table {
@@ -134,22 +131,99 @@
         margin: 0 auto 20px auto;
         border-collapse: collapse; 
         border-spacing: 0;
-        border-style: hidden; 
         box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         border-radius: 8px;
         overflow: hidden;
+        border-style: hidden;
     }
 
+    /* 테두리 색상 보존 (기존 투명도 있는 흰색) */
     .page-entry-table td {
         padding: 0 !important; 
         margin: 0 !important;
-        border: 1px solid rgba(255, 255, 255, 0.3); 
         vertical-align: middle;
-        height: 42px;
         box-sizing: border-box;
-        overflow: hidden; 
+        border: 1px solid rgba(255, 255, 255, 0.3);
     }
 
+    .page-entry-table .no-cell {
+        width: 40px;
+        text-align: center;
+        font-weight: 800;
+        font-size: 1.1rem;
+        background-color: rgba(0,0,0,0.1);
+        color: inherit;
+        border-right: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .col-delete {
+        width: 40px;
+        text-align: center;
+        cursor: pointer;
+        color: var(--text-muted);
+        transition: all 0.2s;
+        border-left: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    @media (hover: hover) {
+        .col-delete:hover {
+            background-color: rgba(0,0,0,0.05);
+            color: var(--error-red);
+        }
+    }
+    .col-delete.disabled { pointer-events: none; opacity: 0.3; cursor: default; }
+    
+    .content-cell {
+        padding: 0;
+        border: none !important; 
+    }
+
+    .entry-row-top {
+        display: flex;
+        width: 100%;
+        height: 42px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    /* [MODIFIED] 카드 이름 중앙 정렬 복구 */
+    .name-area {
+        flex: 1; 
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center; /* Flex 중앙 정렬 추가 */
+        border-right: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    .no-area {
+        width: 110px; 
+        flex-shrink: 0;
+        /* 카드 번호 input은 전역 text-align: center 상속 */
+    }
+
+    .entry-row-bottom {
+        display: flex;
+        width: 100%;
+        height: 42px;
+    }
+    
+    .input-wrap {
+        flex: 1 1 0px; 
+        width: 0; 
+        border-right: 1px solid rgba(255, 255, 255, 0.3);
+        transition: flex 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    .input-wrap:last-child {
+        border-right: none;
+    }
+
+    /* 모바일 환경 비율 보존 (1.1:1:1.2:0.7) */
+    @media only screen and (max-width: 600px) {
+        .w-img { flex: 1.1 !important; }
+        .w-rare { flex: 1 !important; }
+        .w-loc { flex: 1.2 !important; }
+        .w-qty { flex: 0.7 !important; }
+    }
+
+    /* 전역 인풋 스타일 (1행 중앙 정렬용) */
     .page-entry-table input, 
     .page-entry-table select {
         width: 100% !important;
@@ -165,9 +239,17 @@
         display: block;
         cursor: pointer;
         color: var(--text-table-light); 
-        outline: none !important; 
+        outline: none !important;
+        text-align: center; /* 1행(카드번호)는 이 설정을 따름 */
     }
     
+    /* [MODIFIED] 2행(하단) 인풋/셀렉트 좌측 정렬 및 패딩 조정 */
+    .entry-row-bottom input,
+    .entry-row-bottom select {
+        text-align: left !important;
+        padding: 0 5px !important; /* 좌우 여백 확보 */
+    }
+
     html.dark-mode .page-entry-table input,
     html.dark-mode .page-entry-table select,
     html.dark-mode .card-name-disp,
@@ -176,51 +258,29 @@
         color: var(--text-table-dark) !important;
     }
 
-    .page-entry-table input:focus,
-    .page-entry-table select:focus {
+    .page-entry-table input:focus, .page-entry-table select:focus {
         background-color: rgba(0,0,0,0.05) !important;
-        outline: none !important;
-        border-bottom: none !important; 
-        box-shadow: none !important; 
     }
     
-    .page-entry-table input::placeholder {
-        color: inherit !important;
-        opacity: 1 !important;
-    }
-
-    .entry-group.odd {
-        background-color: var(--bg-odd-row);
-        color: var(--text-table-light);
-    }
+    .entry-group.odd { background-color: var(--bg-odd-row); color: var(--text-table-light); }
     .entry-group.odd select { color: inherit; } 
     .entry-group.odd option { color: var(--text-primary); background: var(--bg-surface); } 
 
-    .entry-group.even {
-        background-color: var(--primary-light);
-        color: var(--text-table-light);
-    }
+    .entry-group.even { background-color: var(--primary-light); color: var(--text-table-light); }
     .entry-group.even select { color: inherit; }
 
-    .page-entry-table .no-cell {
-        width: 40px;
-        text-align: center;
-        font-weight: 800;
-        font-size: 1.1rem;
-        border-right: 1px solid rgba(255,255,255,0.3);
-        background-color: rgba(0,0,0,0.1);
-        color: inherit;
-    }
-    
     .card-name-disp {
         padding: 0 10px;
-        line-height: 42px;
-        overflow: hidden;
         white-space: nowrap;
+        overflow: hidden;
         text-overflow: ellipsis;
         font-weight: 700;
         font-size: 0.9rem;
         color: inherit;
+        width: 100%;
+        line-height: 42px;
+        /* 카드 이름 텍스트 중앙 정렬 */
+        text-align: center; 
     }
 
     .card-link {
@@ -229,9 +289,7 @@
         cursor: pointer;
         border-bottom: 1px dotted currentColor;
     }
-    @media (hover: hover) {
-        .card-link:hover { opacity: 0.7; }
-    }
+    @media (hover: hover) { .card-link:hover { opacity: 0.7; } }
 
     .add-row-btn-cell {
         text-align: center;
@@ -259,17 +317,9 @@
         gap: 20px;
     }
     @media (hover: hover) {
-        .add-page-row-btn:hover {
-            background-color: var(--bg-surface);
-            color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
+        .add-page-row-btn:hover { background-color: var(--bg-surface); color: var(--primary-color); border-color: var(--primary-color); }
     }
-    html.dark-mode .add-page-row-btn {
-        background-color: var(--bg-sub);
-        border-color: rgba(255,255,255,0.1);
-        color: var(--text-muted);
-    }
+    html.dark-mode .add-page-row-btn { background-color: var(--bg-sub); border-color: rgba(255,255,255,0.1); color: var(--text-muted); }
     
     .qty-control-box {
         display: flex;
@@ -279,72 +329,18 @@
         padding: 2px 4px;
         gap: 8px;
     }
-    html.dark-mode .qty-control-box {
-        background: rgba(255,255,255,0.1);
-    }
+    html.dark-mode .qty-control-box { background: rgba(255,255,255,0.1); }
     .ctrl-btn {
-        width: 24px;
-        height: 24px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        cursor: pointer;
-        font-weight: 800;
-        transition: background-color 0.2s;
-        user-select: none;
+        width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; cursor: pointer; font-weight: 800; transition: background-color 0.2s; user-select: none;
     }
     @media (hover: hover) {
-        .ctrl-btn:hover {
-            background-color: rgba(0,0,0,0.1);
-            color: var(--primary-color);
-        }
-        html.dark-mode .ctrl-btn:hover {
-            background-color: rgba(255,255,255,0.2);
-        }
+        .ctrl-btn:hover { background-color: rgba(0,0,0,0.1); color: var(--primary-color); }
+        html.dark-mode .ctrl-btn:hover { background-color: rgba(255,255,255,0.2); }
     }
-    .ctrl-val {
-        min-width: 20px;
-        text-align: center;
-        font-weight: 700;
-    }
+    .ctrl-val { min-width: 20px; text-align: center; font-weight: 700; }
 
-    .page-btn-container {
-        max-width: 700px;
-        margin: 0 auto;
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-        padding-bottom: 40px;
-        margin-top: 20px; 
-    }
+    .page-btn-container { max-width: 700px; margin: 0 auto; display: flex; justify-content: flex-end; gap: 10px; padding-bottom: 40px; margin-top: 20px; }
     
-    .col-delete {
-        width: 40px;
-        text-align: center;
-        border-left: 1px solid rgba(255,255,255,0.3);
-        cursor: pointer;
-        color: var(--text-muted);
-        transition: all 0.2s;
-        vertical-align: middle;
-    }
-    @media (hover: hover) {
-        .col-delete:hover {
-            background-color: rgba(0,0,0,0.05);
-            color: var(--error-red);
-        }
-    }
-    .col-delete.disabled {
-        pointer-events: none;
-        opacity: 0.3;
-        cursor: default;
-    }
-    .col-delete i {
-        font-size: 1.2rem;
-        vertical-align: middle;
-    }
-
-    /* Navigation & Layout */
     .app-sidebar {
         position: fixed; left: 0; top: 0; bottom: 0; width: 240px;
         background-color: var(--nav-bg); z-index: 900; display: flex; flex-direction: column;
@@ -354,14 +350,11 @@
         transform: translateX(0); 
     }
     .nav-item { display: flex; align-items: center; padding: 16px 24px; color: var(--nav-text); cursor: pointer; transition: background-color 0.2s, color 0.2s; text-decoration: none; border-left: 4px solid transparent; }
-    @media (hover: hover) {
-        .nav-item:hover { background-color: rgba(128,128,128,0.1); color: var(--nav-text-active); }
-    }
+    @media (hover: hover) { .nav-item:hover { background-color: rgba(128,128,128,0.1); color: var(--nav-text-active); } }
     .nav-item.active { color: var(--nav-text-active); background-color: rgba(128,128,128,0.15); border-left: 4px solid var(--primary-color); font-weight: 700; }
     .nav-item i { margin-right: 16px; font-size: 24px; }
     .nav-text { font-size: 0.95rem; font-weight: 600; white-space: nowrap; opacity: 1; transition: opacity 0.2s; }
 
-    /* Mobile Nav */
     .mobile-nav-container { 
         display: flex; position: fixed; bottom: 0; left: 0; right: 0; width: 100%; 
         height: calc(60px + env(safe-area-inset-bottom)); 
@@ -376,17 +369,11 @@
     .nav-capsule, .nav-circle { display: none; }
     .mobile-nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--nav-text); font-size: 0.65rem; cursor: pointer; flex: 1; height: 100%; transition: color 0.2s, transform 0.1s; font-weight: 500; min-width: 48px; padding: 6px 0; }
     .mobile-nav-item:active { transform: scale(0.95); }
-    @media (hover: hover) {
-        .mobile-nav-item:hover { color: var(--nav-text-active); }
-    }
+    @media (hover: hover) { .mobile-nav-item:hover { color: var(--nav-text-active); } }
     .mobile-nav-item.active { color: var(--nav-text-active); font-weight: 700; }
     .mobile-nav-item i { font-size: 24px; margin-bottom: 3px; }
 
-    /* 로딩 중일 때 탭바를 오버레이 위로 올림 */
-    body.is-loading .mobile-nav-container {
-        z-index: 11001 !important; 
-        pointer-events: none; 
-    }
+    body.is-loading .mobile-nav-container { z-index: 11001 !important; pointer-events: none; }
 
     @media only screen and (min-width: 993px) { body { padding-left: 240px; } }
     @media only screen and (min-width: 601px) and (max-width: 992px) { body { padding-left: 72px; } .app-sidebar { width: 72px; } .nav-text { opacity: 0; display: none; } .nav-item { justify-content: center; padding: 16px 0; border-left: 4px solid transparent; border-right: 0; } .nav-item i { margin-right: 0; } .nav-item.active { border-left: 4px solid var(--primary-color); border-right: 0; } }
@@ -424,21 +411,14 @@
         .region-dropdown-list li:hover { background-color: var(--bg-sub); color: var(--primary-color); font-weight: 700; }
     }
 
-    /* [MODIFIED] Flex Item 설정 (Sticky Footer) */
     .container { 
-        margin-top: 30px; 
-        width: auto !important; 
-        max-width: 100% !important; 
-        min-height: 60vh; 
-        margin-left: 15px !important; 
-        margin-right: 15px !important; 
+        margin-top: 30px; width: auto !important; max-width: 100% !important; min-height: 60vh; 
+        margin-left: 15px !important; margin-right: 15px !important; 
         transition: margin 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-        
-        flex: 1 0 auto; /* 남은 공간 차지 */
+        flex: 1 0 auto; 
     }
     
     #dynamic-header-wrapper { position: relative; width: 100%; height: 220px; margin-top: 20px; margin-bottom: 20px; transition: height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); z-index: 100; overflow: visible; max-width: 100%; }
-    
     .app-title-container { position: absolute; display: flex; justify-content: center; align-items: center; z-index: 2; width: 220px; top: 30px; left: calc(50% - 110px); margin: 0 !important; transform: none; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
     .synapse-logo-container { position: relative; display: inline-block; max-width: 250px; overflow: hidden; white-space: nowrap; transition: max-width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); vertical-align: middle; }
     .synapse-text-logo { position: relative; z-index: 2; font-size: 2.6rem; font-weight: 900; color: #000000; letter-spacing: 2px; line-height: 1; transition: color 0.3s, opacity 0.3s; }
@@ -471,9 +451,7 @@
     #result-area th { background: var(--primary-color); color: white; border-color: var(--primary-dark); }
     .help-trigger-btn { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 4px; transition: color 0.2s; height: 18px !important; line-height: 1 !important; }
     .help-trigger-btn i { font-size: 0.8rem; transform: translateY(-1px); }
-    @media (hover: hover) {
-        .help-trigger-btn:hover { color: var(--primary-color); }
-    }
+    @media (hover: hover) { .help-trigger-btn:hover { color: var(--primary-color); } }
     .search-input-wrapper { flex: 1; position: relative; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 24px; padding: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: border-radius 0.2s ease, box-shadow 0.2s ease; z-index: 1001; }
     .search-input-wrapper.active { border-radius: 24px 24px 0 0; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-bottom: 1px solid transparent; }
     #search-btn { border-radius: 50px !important; width: 80px; height: 45px; padding: 0; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -481,43 +459,30 @@
     input#card-search::placeholder { color: var(--text-muted); }
     html.dark-mode ::placeholder { color: #757575 !important; }
     .clear-search-btn { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: rgba(0,0,0,0.25); display: none; z-index: 5; transition: color 0.2s; }
-    @media (hover: hover) {
-        .clear-search-btn:hover { color: rgba(0,0,0,0.6); }
-        html.dark-mode .clear-search-btn:hover { color: rgba(255,255,255,0.7); }
-    }
+    @media (hover: hover) { .clear-search-btn:hover { color: rgba(0,0,0,0.6); } html.dark-mode .clear-search-btn:hover { color: rgba(255,255,255,0.7); } }
     html.dark-mode .clear-search-btn { color: rgba(255,255,255,0.25); }
     .btn.cyan-theme { background-color: var(--primary-color) !important; font-weight: 600; color: #fff; }
     .btn.cyan-theme.disabled, .btn.cyan-theme:disabled { background-color: var(--disabled-bg) !important; color: var(--disabled-text) !important; }
     .custom-dropdown { position: absolute; top: 100%; left: -1px; right: -1px; background-color: var(--bg-surface); border: 1px solid var(--border-color); border-top: 1px solid #eee; border-radius: 0 0 24px 24px; z-index: 1000; max-height: 250px; overflow-y: auto; display: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin: 0; padding: 5px 0 10px 0; list-style: none; }
     html.dark-mode .custom-dropdown { border-top: 1px solid #444; }
     .custom-dropdown li { padding: 8px 20px; cursor: pointer; border-bottom: none; font-size: 0.95rem; color: var(--text-primary); display: block; white-space: normal; transition: background-color 0.1s; }
-    @media (hover: hover) {
-        .custom-dropdown li:hover, .custom-dropdown li.active { background-color: var(--bg-sub); }
-    }
+    @media (hover: hover) { .custom-dropdown li:hover, .custom-dropdown li.active { background-color: var(--bg-sub); } }
     .custom-dropdown li.text-suggest { color: var(--primary-color) !important; font-weight: 700 !important; }
     .custom-dropdown li .text-match { color: var(--text-primary) !important; font-weight: 400 !important; }
     .custom-dropdown li.no-result-item { font-style: italic; color: var(--text-muted) !important; cursor: default; pointer-events: none; font-weight: 400 !important; text-align: center; padding: 15px; }
     .dropdown-header { display: flex !important; align-items: center; justify-content: space-between !important; padding: 8px 15px !important; background-color: var(--bg-header) !important; cursor: default !important; }
     .dropdown-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; }
     .delete-icon { cursor: pointer; color: var(--text-muted); font-size: 1.1rem; transition: color 0.2s; }
-    @media (hover: hover) {
-        .delete-icon:hover { color: var(--error-red); }
-    }
+    @media (hover: hover) { .delete-icon:hover { color: var(--error-red); } }
     .recent-header-item { display: flex !important; align-items: center; justify-content: space-between !important; padding: 8px 20px !important; cursor: default !important; margin-bottom: 5px; }
-    @media (hover: hover) {
-        .recent-header-item:hover { background-color: transparent !important; }
-    }
+    @media (hover: hover) { .recent-header-item:hover { background-color: transparent !important; } }
     .recent-title { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
     .clear-all-btn { font-size: 0.8rem; color: var(--text-muted); cursor: pointer; text-decoration: underline; }
-    @media (hover: hover) {
-        .clear-all-btn:hover { color: var(--error-red); }
-    }
+    @media (hover: hover) { .clear-all-btn:hover { color: var(--error-red); } }
     .recent-item-row { display: flex !important; align-items: center; justify-content: space-between !important; }
     .recent-text { flex: 1; }
     .item-delete-btn { color: var(--text-muted); font-size: 1rem; padding: 4px; cursor: pointer; display: flex; align-items: center; }
-    @media (hover: hover) {
-        .item-delete-btn:hover { color: var(--error-red); }
-    }
+    @media (hover: hover) { .item-delete-btn:hover { color: var(--error-red); } }
     .url-input-container { position: relative; display: flex; align-items: center; margin-top: 20px; margin-bottom: 5px; }
     .url-input-container input { margin-bottom: 0 !important; padding-right: 40px !important; color: var(--text-primary); border-bottom: 1px solid var(--text-muted) !important; }
     .valid-icon { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: none; }
@@ -527,17 +492,6 @@
     .guide-btn.active i { transform: rotate(90deg); }
     .guide-content { background: var(--bg-sub); padding: 18px; border-radius: 8px; font-size: 0.95rem; border: 1px solid var(--border-color); display: none; margin-bottom: 15px; color: var(--text-primary); }
     html.dark-mode .guide-content { color: #b0b0b0; }
-    table { background: var(--bg-surface); font-size: 0.85rem; table-layout: fixed; width: 100%; border-collapse: collapse; color: var(--text-primary); }
-    th { background: var(--bg-header); color: var(--text-secondary); font-weight: 700; padding: 10px 4px; text-align: center; border: 1px solid var(--border-color); font-size: 0.8rem; word-break: break-all; }
-    td { border: 1px solid var(--border-color); text-align: center; padding: 6px 4px; position: relative; word-break: break-all; color: var(--text-primary); }
-    .col-card-no { width: 180px; } .col-loc { width: 110px; } .col-total { width: 60px; } .col-proc { width: 70px; } 
-    .expand-btn { cursor: pointer; color: var(--primary-color); position: absolute; right: 4px; top: 50%; transform: translateY(-50%); font-size: 1.3rem; }
-    .sub-row { width: 100%; max-width: 800px; display: flex; justify-content: flex-start; align-items: flex-start; margin-top: 5px; min-height: 20px; } 
-    .modal { border-radius: 12px; width: 95% !important; max-width: 600px !important; background-color: var(--bg-surface); color: var(--text-primary); }
-    .modal .modal-content { background-color: var(--bg-surface); }
-    .modal .modal-footer { background-color: var(--bg-surface); border-top: 1px solid var(--border-color); }
-    #settings-modal .modal-footer { border-top: none !important; }
-    #add-result-modal { width: 95% !important; max-width: 1000px !important; }
     
     #loading-overlay { 
       display: none; 
@@ -562,9 +516,7 @@
     .summary-label-cell { background-color: var(--bg-sub); color: var(--text-secondary); font-weight: 600; width: 50%; }
     .summary-value-cell { width: 50%; font-weight: 500; }
     .show-more-btn { width: 100%; background-color: var(--bg-sub); color: var(--primary-dark); font-weight: 600; padding: 8px 0; border: none; border-top: 1px solid var(--border-color); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; transition: background-color 0.2s; }
-    @media (hover: hover) {
-        .show-more-btn:hover { background-color: var(--border-color); }
-    }
+    @media (hover: hover) { .show-more-btn:hover { background-color: var(--border-color); } }
     html.dark-mode .show-more-btn { color: var(--primary-color); }
     .detail-slide-wrapper { max-height: 0; overflow-y: hidden; overflow-x: auto; transition: max-height 0.4s ease-in-out; border-top: none; }
     .split-table-wrapper { display: flex; width: 100%; border-top: 1px solid var(--border-color); }
@@ -575,9 +527,7 @@
     .split-table td { padding: 8px 4px; font-size: 0.85rem; border-top: none !important; border-left: none !important; border-bottom: 1px solid var(--border-color); border-right: 1px solid var(--border-color); white-space: nowrap; height: 35px; box-sizing: border-box; text-align: center; color: var(--text-primary); }
     .split-table th:last-child, .split-table td:last-child { border-right: none; }
     .btn-flat-action { background-color: transparent !important; color: var(--text-secondary) !important; font-weight: 600; box-shadow: none !important; border: 1px solid var(--border-color); }
-    @media (hover: hover) {
-        .btn-flat-action:hover { background-color: var(--bg-header) !important; }
-    }
+    @media (hover: hover) { .btn-flat-action:hover { background-color: var(--bg-header) !important; } }
     #intro-area { text-align: center; color: var(--text-secondary); padding-top: 40px; padding-bottom: 40px; margin: 0; line-height: 1.8; font-size: 0.95rem; }
     #intro-area a { color: var(--primary-color); font-weight: 700; text-decoration: underline; cursor: pointer; }
     .centered-content-area { text-align: center; padding-top: 50px; padding-bottom: 50px; margin: 0; }
@@ -588,9 +538,7 @@
     .footer-item { white-space: nowrap; }
     .footer-separator { margin: 0 8px; user-select: none; opacity: 0.5; }
     #main-footer a.maker-link { color: var(--text-muted); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; transition: color 0.2s; font-weight: 600; }
-    @media (hover: hover) {
-        #main-footer a.maker-link:hover { color: #f44336; }
-    }
+    @media (hover: hover) { #main-footer a.maker-link:hover { color: #f44336; } }
     @media only screen and (max-width: 600px) { .footer-separator.mobile-hide { display: none; } .footer-item.copyright { width: 100%; margin-top: 4px; } }
     .sheet-name-display { display: inline-block; max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; color: var(--text-muted); font-size: 0.8rem; margin-left: 8px; }
     @media only screen and (max-width: 600px) { .sheet-name-display { max-width: 100px; } }
@@ -614,11 +562,7 @@
     .result-summary, .result-fail-summary { text-align: center; }
     .toggle-result-btn { display: flex; justify-content: center; width: 100%; cursor: pointer; } 
     
-    #result-summary-table-box { 
-        max-width: 300px; 
-        margin: 0 auto 20px auto; 
-    }
-    
+    #result-summary-table-box { max-width: 300px; margin: 0 auto 20px auto; }
     #result-summary-body td:first-child { width: 80%; } 
     #result-summary-body td:last-child { width: 20%; white-space: nowrap; }
 
@@ -782,10 +726,10 @@
 
           <table id="page-add-table" class="page-entry-table">
               <tbody id="page-add-tbody">
-                  </tbody>
+              </tbody>
               <tfoot id="page-add-tfoot">
                   <tr>
-                      <td colspan="6" class="add-row-btn-cell">
+                      <td colspan="3" class="add-row-btn-cell">
                           <button class="add-page-row-btn" onclick="addMultipleRows()">
                               <span style="font-weight: 700;">카드 추가 등록</span>
                               <div class="qty-control-box" onclick="event.stopPropagation()">
@@ -823,7 +767,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.12.10</span>
+        <span class="footer-item">ver. 0.12.14</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -1109,13 +1053,12 @@
       targets.forEach(el => el.classList.add('active'));
   }
 
-  // 동적 테마 컬러 적용 함수 (색상 코드 일치화)
   function updateMetaThemeColor(mode) {
       const meta = document.getElementById('meta-theme-color');
       if (mode === 'light') {
-          meta.setAttribute('content', '#F0F0F0'); // Light Nav BG Color
+          meta.setAttribute('content', '#F0F0F0'); 
       } else {
-          meta.setAttribute('content', '#000000'); // Dark Nav BG Color (Pure Black)
+          meta.setAttribute('content', '#000000'); 
       }
   }
 
@@ -1131,7 +1074,6 @@
       const body = document.body;
       const searchInput = document.getElementById('card-search');
       
-      // 모드 전환 시 포커스 해제 (잔상 방지)
       if (document.activeElement) {
           document.activeElement.blur();
       }
@@ -1280,50 +1222,52 @@
       }
   }
 
+  // [MODIFIED] New HTML Structure Generation with Classes
   function addPageEntry() {
       const tbody = document.getElementById('page-add-tbody');
       
-      const currentSets = tbody.querySelectorAll('tr').length / 2;
-      const nextNum = currentSets + 1;
+      const currentCount = tbody.querySelectorAll('tr').length;
+      const nextNum = currentCount + 1;
       
       const isOdd = nextNum % 2 !== 0;
       const groupClass = isOdd ? 'odd' : 'even';
 
-      const trTop = document.createElement('tr');
-      trTop.className = `entry-row top-row entry-group ${groupClass}`;
-      trTop.innerHTML = `
-          <td rowspan="2" class="no-cell">${nextNum}</td>
-          <td colspan="3" style="position: relative;"><div class="card-name-disp">카드 번호 입력</div></td>
-          <td style="width: 110px;"><input type="text" class="page-card-no" oninput="handleCardNoInput(this)" onblur="fetchCardNameForPage(this)" onkeydown="if(event.key==='Enter') fetchCardNameForPage(this)" placeholder="카드 번호"></td>
-          <td rowspan="2" class="col-delete" onclick="deletePageEntry(this)"><i class="material-icons">delete</i></td>
-      `;
-
-      const trBottom = document.createElement('tr');
-      trBottom.className = `entry-row bottom-row entry-group ${groupClass}`;
-      trBottom.innerHTML = `
-          <td><select class="browser-default page-card-another" disabled><option value="" selected>일러스트</option></select></td>
-          <td><select class="browser-default page-card-proc" disabled><option value="" disabled selected>레어도</option>${allProcessingTypes.map(p => `<option value="${p}">${getLocalizedRarity(p)}</option>`).join('')}</select></td>
-          <td>
-            <input type="text" class="page-card-loc" list="loc-datalist" disabled placeholder="보관 위치">
+      const tr = document.createElement('tr');
+      tr.className = `entry-row entry-group ${groupClass}`;
+      
+      // Added classes: w-img, w-rare, w-loc, w-qty for mobile resizing
+      tr.innerHTML = `
+          <td class="no-cell">${nextNum}</td>
+          <td class="content-cell">
+              <div class="entry-row-top">
+                  <div class="name-area"><div class="card-name-disp">카드 번호 입력</div></div>
+                  <div class="no-area"><input type="text" class="page-card-no" oninput="handleCardNoInput(this)" onblur="fetchCardNameForPage(this)" onkeydown="if(event.key==='Enter') fetchCardNameForPage(this)" placeholder="카드 번호"></div>
+              </div>
+              <div class="entry-row-bottom">
+                  <div class="input-wrap w-img"><select class="browser-default page-card-another" disabled><option value="" selected>일러스트</option></select></div>
+                  <div class="input-wrap w-rare"><select class="browser-default page-card-proc" disabled><option value="" disabled selected>레어도</option>${allProcessingTypes.map(p => `<option value="${p}">${getLocalizedRarity(p)}</option>`).join('')}</select></div>
+                  <div class="input-wrap w-loc"><input type="text" class="page-card-loc" list="loc-datalist" disabled placeholder="보관위치"></div>
+                  <div class="input-wrap w-qty"><input type="number" class="page-card-qty" min="1" disabled placeholder="수량" onfocus="if(this.value=='0')this.value=''" onblur="if(this.value=='')this.value='0'"></div>
+              </div>
           </td>
-          <td style="width: 110px;"><input type="number" class="page-card-qty" min="1" disabled placeholder="수량" onfocus="if(this.value=='0')this.value=''" onblur="if(this.value=='')this.value='0'"></td>
+          <td class="col-delete" onclick="deletePageEntry(this)"><i class="material-icons">delete</i></td>
       `;
 
-      tbody.appendChild(trTop);
-      tbody.appendChild(trBottom);
+      tbody.appendChild(tr);
       
       reindexRows();
 
-      const locInput = trBottom.querySelector('.page-card-loc');
+      // Auto Copy Logic
+      const locInput = tr.querySelector('.page-card-loc');
       locInput.addEventListener('input', function() {
           if (!isAutoCopyEnabled) return;
           
           const val = this.value;
-          const rows = document.getElementById('page-add-tbody').querySelectorAll('tr.bottom-row');
+          const rows = document.getElementById('page-add-tbody').querySelectorAll('tr');
           let startCopy = false;
           
           rows.forEach(row => {
-              if (row === trBottom) {
+              if (row === tr) {
                   startCopy = true;
                   return; 
               }
@@ -1348,44 +1292,35 @@
   }
   
   function deletePageEntry(btn) {
-      const topRow = btn.parentNode;
-      const bottomRow = topRow.nextElementSibling;
+      const row = btn.closest('tr');
       const tbody = document.getElementById('page-add-tbody');
       
-      if (tbody.querySelectorAll('tr').length <= 2) return;
+      if (tbody.querySelectorAll('tr').length <= 1) return;
 
-      tbody.removeChild(topRow);
-      tbody.removeChild(bottomRow);
-      
+      tbody.removeChild(row);
       reindexRows();
   }
 
   function reindexRows() {
       const tbody = document.getElementById('page-add-tbody');
       const rows = tbody.querySelectorAll('tr');
-      const totalSets = rows.length / 2;
       
-      for (let i = 0; i < rows.length; i += 2) {
-          const topRow = rows[i];
-          const bottomRow = rows[i+1];
-          const setIndex = (i / 2) + 1;
-          
-          const noCell = topRow.querySelector('.no-cell');
-          if (noCell) noCell.innerText = setIndex;
+      rows.forEach((row, index) => {
+          const num = index + 1;
+          const noCell = row.querySelector('.no-cell');
+          if (noCell) noCell.innerText = num;
 
-          topRow.classList.remove('odd', 'even');
-          bottomRow.classList.remove('odd', 'even');
-          const groupClass = (setIndex % 2 !== 0) ? 'odd' : 'even';
-          topRow.classList.add(groupClass);
-          bottomRow.classList.add(groupClass);
+          row.classList.remove('odd', 'even');
+          const groupClass = (num % 2 !== 0) ? 'odd' : 'even';
+          row.classList.add(groupClass);
           
-          const delBtn = topRow.querySelector('.col-delete');
-          if (totalSets <= 1) {
+          const delBtn = row.querySelector('.col-delete');
+          if (rows.length <= 1) {
               delBtn.classList.add('disabled');
           } else {
               delBtn.classList.remove('disabled');
           }
-      }
+      });
   }
 
   function handleCardNoInput(input) {
@@ -1395,20 +1330,19 @@
   }
 
   async function fetchCardNameForPage(input) {
-      const topRow = input.closest('tr');
-      const bottomRow = topRow.nextElementSibling; 
-
+      const row = input.closest('tr');
+      
       const cardNo = input.value.trim();
       const prevCardNo = input.dataset.prevCardNo;
 
       if (prevCardNo === cardNo) return; 
       input.dataset.prevCardNo = cardNo; 
 
-      const nameDiv = topRow.querySelector('.card-name-disp'); 
-      const anotherSel = bottomRow.querySelector('.page-card-another');
-      const procSel = bottomRow.querySelector('.page-card-proc');
-      const locInput = bottomRow.querySelector('.page-card-loc'); 
-      const qtyInput = bottomRow.querySelector('.page-card-qty');
+      const nameDiv = row.querySelector('.card-name-disp'); 
+      const anotherSel = row.querySelector('.page-card-another');
+      const procSel = row.querySelector('.page-card-proc');
+      const locInput = row.querySelector('.page-card-loc'); 
+      const qtyInput = row.querySelector('.page-card-qty');
 
       procSel.disabled = true; procSel.value = "";
       locInput.disabled = true; locInput.value = "";
@@ -1430,7 +1364,7 @@
           } else {
               nameDiv.innerText = cached.name;
           }
-          applyPageCardDataToRows(cached, topRow, bottomRow);
+          applyPageCardDataToRows(cached, row);
           return;
       }
 
@@ -1450,7 +1384,7 @@
               const url = "https://www.db.yugioh-card.com" + linkId + "&request_locale=" + linkLocale;
               nameDiv.innerHTML = `<a href="${url}" target="_blank" class="card-link" onclick="event.stopPropagation()">${res.name}</a>`;
               
-              applyPageCardDataToRows(res, topRow, bottomRow);
+              applyPageCardDataToRows(res, row);
           }
       } catch (e) {
           if (input.value.trim() !== cardNo) return;
@@ -1458,10 +1392,10 @@
       }
   }
 
-  function applyPageCardDataToRows(data, topRow, bottomRow) {
-      const anotherSel = bottomRow.querySelector('.page-card-another');
-      const procSel = bottomRow.querySelector('.page-card-proc');
-      const locInput = bottomRow.querySelector('.page-card-loc'); 
+  function applyPageCardDataToRows(data, row) {
+      const anotherSel = row.querySelector('.page-card-another');
+      const procSel = row.querySelector('.page-card-proc');
+      const locInput = row.querySelector('.page-card-loc'); 
 
       const count = data.anotherCount || 1;
       let optionsHtml = '';
@@ -1493,7 +1427,7 @@
       locInput.disabled = false; 
       
       locInput.oninput = function() {
-          const qtyInp = bottomRow.querySelector('.page-card-qty');
+          const qtyInp = row.querySelector('.page-card-qty');
           if(this.value.trim().length > 0) {
               qtyInp.disabled = false;
               if(!qtyInp.value) qtyInp.value = "1";
@@ -1512,23 +1446,20 @@
       let successCount = 0; 
       let successQty = 0;
 
-      for (let i = 0; i < rows.length; i += 2) {
-          const topRow = rows[i];
-          const bottomRow = rows[i+1];
-
-          const no = topRow.querySelector('.no-cell').innerText;
-          const cardNo = topRow.querySelector('.page-card-no').value.trim();
-          let nameText = topRow.querySelector('.card-name-disp').innerText;
+      rows.forEach(row => {
+          const no = row.querySelector('.no-cell').innerText;
+          const cardNo = row.querySelector('.page-card-no').value.trim();
+          let nameText = row.querySelector('.card-name-disp').innerText;
           
-          if (!cardNo) continue; 
+          if (!cardNo) return; 
 
-          let another = bottomRow.querySelector('.page-card-another').value;
-          const isAnotherDisabled = bottomRow.querySelector('.page-card-another').disabled;
+          let another = row.querySelector('.page-card-another').value;
+          const isAnotherDisabled = row.querySelector('.page-card-another').disabled;
 
-          let proc = bottomRow.querySelector('.page-card-proc').value;
-          let loc = bottomRow.querySelector('.page-card-loc').value.trim();
+          let proc = row.querySelector('.page-card-proc').value;
+          let loc = row.querySelector('.page-card-loc').value.trim();
           
-          const qtyVal = bottomRow.querySelector('.page-card-qty').value;
+          const qtyVal = row.querySelector('.page-card-qty').value;
           const qty = parseInt(qtyVal);
 
           let failReason = null;
@@ -1542,16 +1473,16 @@
 
           if (failReason) {
               detailLog.push({ no, name: nameText, cardNo, another, proc: proc||"미선택", loc: loc||"미선택", qty: qty||0, status: 'fail', failReason });
-              topRow.dataset.status = 'fail'; 
+              row.dataset.status = 'fail'; 
           } else {
               const submitAnother = (another === "DEFAULT") ? "" : another;
               validRows.push([nameText, cardNo, proc, qty, loc, submitAnother]);
               detailLog.push({ no, name: nameText, cardNo, another, proc, loc, qty, status: 'success' });
               successCount++;
               successQty += qty;
-              topRow.dataset.status = 'success'; 
+              row.dataset.status = 'success'; 
           }
-      }
+      });
 
       if (validRows.length > 0) {
           showLoading(true, "등록 중...");
@@ -1721,7 +1652,6 @@
   }
   function toggleNewDetail(detailId) { const content = document.getElementById(detailId); const btn = content.nextElementSibling; const textSpan = btn.querySelector('span'); const icon = btn.querySelector('i'); if (content.style.maxHeight) { content.style.maxHeight = null; textSpan.innerText = '자세히 보기'; icon.innerText = 'keyboard_arrow_down'; } else { content.style.maxHeight = content.scrollHeight + "px"; textSpan.innerText = '간략히 보기'; icon.innerText = 'keyboard_arrow_up'; } }
   
-  // [MODIFIED] showLoading: 로딩 상태에 따라 Body 클래스 토글 (CSS 연동)
   function showLoading(show, text) { 
       const overlay = document.getElementById('loading-overlay');
       const loadingText = document.getElementById('loading-text');
@@ -1733,6 +1663,35 @@
       } else {
           overlay.style.display = 'none';
           document.body.classList.remove('is-loading');
+      }
+  }
+  // [MODIFIED] handleContinueRegistration updated for single row structure
+  async function handleContinueRegistration() { 
+      M.Modal.getInstance(document.getElementById('add-result-modal')).close(); 
+      const tbody = document.getElementById('page-add-tbody'); 
+      const rows = Array.from(tbody.children); 
+      let hasFailures = false; 
+      let hasSuccess = false; 
+
+      for (let i = rows.length - 1; i >= 0; i--) {
+          const row = rows[i];
+          if (row.dataset.status === 'success') {
+              tbody.removeChild(row);
+              hasSuccess = true; 
+          } else {
+              hasFailures = true;
+              delete row.dataset.status; 
+          }
+      }
+
+      if (!hasFailures) { 
+          addPageEntry(); 
+      }
+      
+      reindexRows();
+
+      if (hasSuccess) {
+          await refreshInitialData();
       }
   }
 </script>
