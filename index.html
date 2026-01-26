@@ -125,7 +125,6 @@
         flex-direction: column;
     }
     
-    /* [MODIFIED] New Page Entry Table Styles (Nested Layout) */
     .page-entry-table {
         width: 100%;
         max-width: 700px;
@@ -138,16 +137,15 @@
         border-style: hidden;
     }
 
-    /* Common Cell Styles */
+    /* [MODIFIED] 테두리 색상 변수 적용 (기존 rgba 하드코딩 제거) */
     .page-entry-table td {
         padding: 0 !important; 
         margin: 0 !important;
         vertical-align: middle;
         box-sizing: border-box;
-        border: 1px solid rgba(255, 255, 255, 0.3);
+        border: 1px solid var(--border-color);
     }
 
-    /* Index Cell */
     .page-entry-table .no-cell {
         width: 40px;
         text-align: center;
@@ -155,17 +153,16 @@
         font-size: 1.1rem;
         background-color: rgba(0,0,0,0.1);
         color: inherit;
-        border-right: 1px solid rgba(255, 255, 255, 0.3);
+        border-right: 1px solid var(--border-color);
     }
 
-    /* Delete Cell */
     .col-delete {
         width: 40px;
         text-align: center;
         cursor: pointer;
         color: var(--text-muted);
         transition: all 0.2s;
-        border-left: 1px solid rgba(255, 255, 255, 0.3);
+        border-left: 1px solid var(--border-color);
     }
     @media (hover: hover) {
         .col-delete:hover {
@@ -175,47 +172,52 @@
     }
     .col-delete.disabled { pointer-events: none; opacity: 0.3; cursor: default; }
     
-    /* Content Cell (Wrapper) */
     .content-cell {
         padding: 0;
-        border: none !important; /* 내부 Div가 Border 담당 */
+        border: none !important; 
     }
 
-    /* Row 1: Name & No */
     .entry-row-top {
         display: flex;
         width: 100%;
         height: 42px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        border-bottom: 1px solid var(--border-color); /* 테두리 색상 통일 */
     }
     .name-area {
-        flex: 1; /* 남은 공간 차지 */
+        flex: 1; 
         min-width: 0;
         display: flex;
         align-items: center;
-        border-right: 1px solid rgba(255, 255, 255, 0.3);
+        border-right: 1px solid var(--border-color); /* 테두리 색상 통일 */
     }
     .no-area {
-        width: 110px; /* 고정 너비 */
+        width: 110px; 
         flex-shrink: 0;
     }
 
-    /* Row 2: 4 Items Equal Width */
     .entry-row-bottom {
         display: flex;
         width: 100%;
         height: 42px;
     }
+    
     .input-wrap {
-        flex: 1 1 0px; /* [핵심] 균등 분할 (width: 0px basis) */
-        width: 0; /* Fallback */
-        border-right: 1px solid rgba(255, 255, 255, 0.3);
+        flex: 1 1 0px; 
+        width: 0; 
+        border-right: 1px solid var(--border-color); /* 테두리 색상 통일 */
     }
     .input-wrap:last-child {
         border-right: none;
     }
 
-    /* Inputs Common */
+    /* [MODIFIED] 모바일 환경에서의 2행 너비 최적화 */
+    @media only screen and (max-width: 600px) {
+        .w-img { flex: 1.2 !important; }  /* 일러스트: 조금 더 넓게 */
+        .w-rare { flex: 0.9 !important; } /* 레어도: 조금 좁게 */
+        .w-loc { flex: 1.3 !important; }  /* 보관위치: 가장 넓게 (잘림 방지) */
+        .w-qty { flex: 0.6 !important; }  /* 수량: 가장 좁게 (숫자만 표시) */
+    }
+
     .page-entry-table input, 
     .page-entry-table select {
         width: 100% !important;
@@ -232,10 +234,9 @@
         cursor: pointer;
         color: var(--text-table-light); 
         outline: none !important;
-        text-align: center; /* 하단 4개 셀 중앙 정렬 */
+        text-align: center; 
     }
     
-    /* 예외: 카드 번호 입력창은 좌측 정렬이 나을 수 있음 (선택 사항) */
     .no-area input { text-align: left; }
 
     html.dark-mode .page-entry-table input,
@@ -753,7 +754,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.12.11</span>
+        <span class="footer-item">ver. 0.12.12</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -1208,7 +1209,7 @@
       }
   }
 
-  // [MODIFIED] New HTML Structure Generation
+  // [MODIFIED] New HTML Structure Generation with Classes
   function addPageEntry() {
       const tbody = document.getElementById('page-add-tbody');
       
@@ -1221,6 +1222,7 @@
       const tr = document.createElement('tr');
       tr.className = `entry-row entry-group ${groupClass}`;
       
+      // Added classes: w-img, w-rare, w-loc, w-qty for mobile resizing
       tr.innerHTML = `
           <td class="no-cell">${nextNum}</td>
           <td class="content-cell">
@@ -1229,10 +1231,10 @@
                   <div class="no-area"><input type="text" class="page-card-no" oninput="handleCardNoInput(this)" onblur="fetchCardNameForPage(this)" onkeydown="if(event.key==='Enter') fetchCardNameForPage(this)" placeholder="카드 번호"></div>
               </div>
               <div class="entry-row-bottom">
-                  <div class="input-wrap"><select class="browser-default page-card-another" disabled><option value="" selected>일러스트</option></select></div>
-                  <div class="input-wrap"><select class="browser-default page-card-proc" disabled><option value="" disabled selected>레어도</option>${allProcessingTypes.map(p => `<option value="${p}">${getLocalizedRarity(p)}</option>`).join('')}</select></div>
-                  <div class="input-wrap"><input type="text" class="page-card-loc" list="loc-datalist" disabled placeholder="보관 위치"></div>
-                  <div class="input-wrap"><input type="number" class="page-card-qty" min="1" disabled placeholder="수량" onfocus="if(this.value=='0')this.value=''" onblur="if(this.value=='')this.value='0'"></div>
+                  <div class="input-wrap w-img"><select class="browser-default page-card-another" disabled><option value="" selected>일러스트</option></select></div>
+                  <div class="input-wrap w-rare"><select class="browser-default page-card-proc" disabled><option value="" disabled selected>레어도</option>${allProcessingTypes.map(p => `<option value="${p}">${getLocalizedRarity(p)}</option>`).join('')}</select></div>
+                  <div class="input-wrap w-loc"><input type="text" class="page-card-loc" list="loc-datalist" disabled placeholder="보관위치"></div>
+                  <div class="input-wrap w-qty"><input type="number" class="page-card-qty" min="1" disabled placeholder="수량" onfocus="if(this.value=='0')this.value=''" onblur="if(this.value=='')this.value='0'"></div>
               </div>
           </td>
           <td class="col-delete" onclick="deletePageEntry(this)"><i class="material-icons">delete</i></td>
@@ -1276,7 +1278,6 @@
       });
   }
   
-  // [MODIFIED] Delete Single Row
   function deletePageEntry(btn) {
       const row = btn.closest('tr');
       const tbody = document.getElementById('page-add-tbody');
@@ -1287,7 +1288,6 @@
       reindexRows();
   }
 
-  // [MODIFIED] Reindex Single Rows
   function reindexRows() {
       const tbody = document.getElementById('page-add-tbody');
       const rows = tbody.querySelectorAll('tr');
@@ -1316,7 +1316,6 @@
       input.setSelectionRange(start, start);
   }
 
-  // [MODIFIED] Fetch Logic for new structure
   async function fetchCardNameForPage(input) {
       const row = input.closest('tr');
       
@@ -1380,7 +1379,6 @@
       }
   }
 
-  // [MODIFIED] Apply Data Logic for new structure
   function applyPageCardDataToRows(data, row) {
       const anotherSel = row.querySelector('.page-card-another');
       const procSel = row.querySelector('.page-card-proc');
@@ -1427,7 +1425,6 @@
       };
   }
 
-  // [MODIFIED] Submit Logic for new structure
   async function submitPageEntries() {
       const tbody = document.getElementById('page-add-tbody');
       const rows = tbody.querySelectorAll('tr'); 
