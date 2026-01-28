@@ -243,7 +243,7 @@
         /* [v0.13.7] 기본값(flex) 제거 -> 아래 w-* 클래스에서 기본값 정의 */
         width: 0; 
         border-right: 1px solid var(--table-border-specific) !important;
-        /* 딜레이 없이 즉시 반응 */
+        /* [v0.13.9] 딜레이 없음 (기본 상태는 즉시 반응) */
         transition: flex 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
     .input-wrap:last-child {
@@ -258,7 +258,12 @@
 
     /* [v0.13.7] 컨테이너가 440px 초과(충분히 넓음)일 때만 Desktop(1:1:1:1) 적용 */
     @container cell-context (min-width: 441px) {
-        .input-wrap { flex: 1 1 0px !important; }
+        /* [v0.13.9] 튕김 방지 핵심: Desktop 비율로 '진입'할 때만 0.45s 지연 */
+        /* 사이드바 애니메이션(0.4s) 동안 일시적으로 넓어져도 즉시 변하지 않음 */
+        .input-wrap { 
+            flex: 1 1 0px !important; 
+            transition-delay: 0.45s; 
+        }
     }
 
     /* [v0.13.9] 안전 구간 확장: 625px까지 강제 모바일 비율 적용 */
@@ -445,7 +450,9 @@
     .mobile-nav-item.active { color: var(--nav-text-active); font-weight: 700; }
     .mobile-nav-item i { font-size: 24px; margin-bottom: 3px; }
 
+    /* [NEW v0.13.10] 로딩 시 사이드바 상위 노출 및 입력 차단 */
     body.is-loading .mobile-nav-container { z-index: 11001 !important; pointer-events: none; }
+    body.is-loading .app-sidebar { z-index: 11001 !important; pointer-events: none; }
 
     @media only screen and (min-width: 993px) { body { padding-left: 240px; } }
     @media only screen and (min-width: 601px) and (max-width: 992px) { body { padding-left: 72px; } .app-sidebar { width: 72px; } .nav-text { opacity: 0; display: none; } .nav-item { justify-content: center; padding: 16px 0; border-left: 4px solid transparent; border-right: 0; } .nav-item i { margin-right: 0; } .nav-item.active { border-left: 4px solid var(--primary-color); border-right: 0; } }
@@ -584,7 +591,18 @@
       background: var(--overlay-bg); 
       z-index: 11000; 
       flex-direction: column; align-items: center; justify-content: center; 
-      backdrop-filter: blur(2px); 
+      backdrop-filter: blur(2px);
+      /* [NEW v0.13.10] 오버레이 패딩 애니메이션 (body와 동기화) */
+      transition: padding-left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      padding-left: 0; /* 기본 모바일 */
+    }
+
+    /* [NEW v0.13.10] 미디어 쿼리에 따른 오버레이 패딩 조정 */
+    @media only screen and (min-width: 993px) {
+        #loading-overlay { padding-left: 240px; }
+    }
+    @media only screen and (min-width: 601px) and (max-width: 992px) {
+        #loading-overlay { padding-left: 72px; }
     }
     
     html.dark-mode #loading-text { color: var(--primary-color) !important; }
@@ -854,7 +872,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.13.9</span>
+        <span class="footer-item">ver. 0.13.10</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
