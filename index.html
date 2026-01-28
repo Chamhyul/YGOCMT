@@ -201,7 +201,7 @@
         /* v0.13.5: td에서 container-type 제거 (Wrapper로 이동) */
     }
 
-    /* [NEW] v0.13.5: Safari 이슈 해결을 위한 컨테이너 래퍼 */
+    /* [v0.13.5] Safari 이슈 해결을 위한 컨테이너 래퍼 */
     .content-wrapper {
         width: 100%;
         height: 100%;
@@ -249,7 +249,15 @@
         border-right: none;
     }
 
-    /* 컨테이너 쿼리 적용 (셀 너비 440px 기준) */
+    /* [NEW] v0.13.6: 모바일 기기 강제 적용 (화면 폭 600px 이하) */
+    @media only screen and (max-width: 600px) {
+        .w-img { flex: 1.1 !important; }
+        .w-rare { flex: 1 !important; }
+        .w-loc { flex: 1.2 !important; }
+        .w-qty { flex: 0.7 !important; }
+    }
+
+    /* [Existing] 데스크탑 가변 대응 (컨테이너 폭 440px 이하) */
     @container cell-context (max-width: 440px) {
         .w-img { flex: 1.1 !important; }
         .w-rare { flex: 1 !important; }
@@ -840,7 +848,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.13.5</span>
+        <span class="footer-item">ver. 0.13.6</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
