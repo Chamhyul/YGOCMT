@@ -183,8 +183,11 @@
     }
     .col-delete.disabled { pointer-events: none; opacity: 0.3; cursor: default; }
     
+    /* [MODIFIED] 가운데 셀: 양옆 테두리 제거 (중첩 및 겹침 방지) */
     .content-cell {
         padding: 0;
+        border-left: none !important;
+        border-right: none !important;
     }
 
     .entry-row-top {
@@ -559,7 +562,9 @@
     .border-double-top { border-top: 3px double var(--border-color) !important; background-clip: padding-box; position: relative; z-index: 1; }
     .summary-label-cell { background-color: var(--bg-sub); color: var(--text-secondary); font-weight: 600; width: 50%; }
     .summary-value-cell { width: 50%; font-weight: 500; }
-    .show-more-btn { width: 100%; background-color: var(--bg-sub); color: var(--primary-dark); font-weight: 600; padding: 8px 0; border: none; border-top: 1px solid var(--border-color); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; transition: background-color 0.2s; }
+    
+    /* [MODIFIED] 자세히 보기 버튼: 전환 속도 통일 (0.2s -> 0.3s) */
+    .show-more-btn { width: 100%; background-color: var(--bg-sub); color: var(--primary-dark); font-weight: 600; padding: 8px 0; border: none; border-top: 1px solid var(--border-color); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; transition: background-color 0.3s; }
     @media (hover: hover) { .show-more-btn:hover { background-color: var(--border-color); } }
     html.dark-mode .show-more-btn { color: var(--primary-color); }
     .detail-slide-wrapper { max-height: 0; overflow-y: hidden; overflow-x: auto; transition: max-height 0.4s ease-in-out; border-top: none; }
@@ -813,7 +818,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.13.1</span>
+        <span class="footer-item">ver. 0.13.2</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
