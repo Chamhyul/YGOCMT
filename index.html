@@ -249,20 +249,17 @@
         border-right: none;
     }
 
-    /* [NEW] v0.13.6: 모바일 기기 강제 적용 (화면 폭 600px 이하) */
-    @media only screen and (max-width: 600px) {
-        .w-img { flex: 1.1 !important; }
-        .w-rare { flex: 1 !important; }
-        .w-loc { flex: 1.2 !important; }
-        .w-qty { flex: 0.7 !important; }
-    }
+    /* [NEW v0.13.7] 기본값을 모바일 비율로 설정 (Mobile First) */
+    .w-img { flex: 1.1 !important; }
+    .w-rare { flex: 1 !important; }
+    .w-loc { flex: 1.2 !important; }
+    .w-qty { flex: 0.7 !important; }
 
-    /* [Existing] 데스크탑 가변 대응 (컨테이너 폭 440px 이하) */
-    @container cell-context (max-width: 440px) {
-        .w-img { flex: 1.1 !important; }
-        .w-rare { flex: 1 !important; }
-        .w-loc { flex: 1.2 !important; }
-        .w-qty { flex: 0.7 !important; }
+    /* [NEW v0.13.7] 데스크탑 오버라이드: 컨테이너가 441px 이상일 때만 1:1:1:1 적용 */
+    @container cell-context (min-width: 441px) {
+        .w-img, .w-rare, .w-loc, .w-qty {
+            flex: 1 1 0px !important;
+        }
     }
 
     /* datalist 화살표(Indicator) 제거 */
@@ -848,7 +845,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.13.6</span>
+        <span class="footer-item">ver. 0.13.7</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
