@@ -78,7 +78,7 @@
       --text-table-light: #424242;
       --text-table-dark: #333333; 
       
-      /* [NEW] 테이블 전용 불투명 테두리 색상 (Light Mode) */
+      /* [v0.13.3] 테이블 전용 불투명 테두리 색상 (Light Mode) */
       --table-border-specific: rgb(200, 240, 240);
     }
 
@@ -113,7 +113,7 @@
       
       --bg-odd-row: #56B0AB; 
       
-      /* [NEW] 테이블 전용 불투명 테두리 색상 (Dark Mode) */
+      /* [v0.13.3] 테이블 전용 불투명 테두리 색상 (Dark Mode) */
       --table-border-specific: rgb(180, 220, 220);
     }
 
@@ -131,7 +131,7 @@
         flex-direction: column;
     }
     
-    /* [MODIFIED] 테이블 래퍼: 외곽선(Frame) 및 라운딩 담당 */
+    /* 테이블 래퍼: 외곽선(Frame) 및 라운딩 담당 */
     .table-wrapper {
         width: 100%;
         max-width: 700px;
@@ -140,22 +140,22 @@
         overflow: hidden;   /* 내용 넘침 방지 */
         box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         
-        /* [핵심] 래퍼에 직접 테두리를 그려서 끊김 없는 외곽선 구현 */
+        /* 래퍼에 직접 테두리를 그려서 끊김 없는 외곽선 구현 */
         border: 1px solid rgba(255, 255, 255, 0.3); 
     }
 
-    /* [MODIFIED] 테이블 본체: 바깥 테두리 숨김 (내부 격자만 유지) */
+    /* 테이블 본체: 바깥 테두리 숨김 (내부 격자만 유지) */
     .page-entry-table {
         width: 100%;
         border-collapse: collapse; 
         border-spacing: 0;
         margin: 0; 
         
-        /* [핵심] 테이블의 가장 바깥쪽 테두리를 숨겨서 래퍼와 겹치지 않게 함 */
+        /* 테이블의 가장 바깥쪽 테두리를 숨겨서 래퍼와 겹치지 않게 함 */
         border-style: hidden; 
     }
 
-    /* [MODIFIED] 불투명 테두리 적용 및 직각화 */
+    /* 불투명 테두리 적용 및 직각화 */
     .page-entry-table td {
         padding: 0 !important; 
         margin: 0 !important;
@@ -165,7 +165,7 @@
         border-radius: 0px !important; /* 라운딩 제거 */
     }
 
-    /* [NEW] 표의 외곽선(상하좌우) 제거 - Wrapper와 겹침 방지 */
+    /* 표의 외곽선(상하좌우) 제거 - Wrapper와 겹침 방지 */
     .page-entry-table tbody tr:first-child td { border-top: none !important; }    /* 맨 윗줄 상단 제거 */
     .page-entry-table tbody tr:last-child td { border-bottom: none !important; } /* 맨 아랫줄 하단 제거 */
     .page-entry-table tr td:first-child { border-left: none !important; }        /* 맨 왼쪽 좌측 제거 */
@@ -196,11 +196,19 @@
     }
     .col-delete.disabled { pointer-events: none; opacity: 0.3; cursor: default; }
     
-    /* [MODIFIED] 가운데 셀: 컨테이너 쿼리 적용 대상 선언 */
     .content-cell {
         padding: 0;
-        /* [NEW] 컨테이너 쿼리를 위해 컨테이너 타입 지정 */
-        container-type: inline-size;
+        /* v0.13.5: td에서 container-type 제거 (Wrapper로 이동) */
+    }
+
+    /* [NEW] v0.13.5: Safari 이슈 해결을 위한 컨테이너 래퍼 */
+    .content-wrapper {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        container-type: inline-size; /* 여기서 컨테이너 선언 */
         container-name: cell-context;
     }
 
@@ -241,7 +249,7 @@
         border-right: none;
     }
 
-    /* [MODIFIED] 컨테이너 쿼리 적용 (셀 너비 440px 기준) */
+    /* 컨테이너 쿼리 적용 (셀 너비 440px 기준) */
     @container cell-context (max-width: 440px) {
         .w-img { flex: 1.1 !important; }
         .w-rare { flex: 1 !important; }
@@ -349,7 +357,7 @@
         box-shadow: none !important;
     }
 
-    /* [MODIFIED] 카드 추가 등록 버튼: 테두리 및 라운딩 완전 제거 */
+    /* 카드 추가 등록 버튼: 테두리 및 라운딩 완전 제거 */
     .add-page-row-btn {
         width: 100%;
         padding: 8px 12px;
@@ -577,7 +585,7 @@
     .summary-label-cell { background-color: var(--bg-sub); color: var(--text-secondary); font-weight: 600; width: 50%; }
     .summary-value-cell { width: 50%; font-weight: 500; }
     
-    /* [MODIFIED] 자세히 보기 버튼: 전환 속도 통일 (0.2s -> 0.3s) */
+    /* 자세히 보기 버튼: 전환 속도 통일 (0.3s) */
     .show-more-btn { width: 100%; background-color: var(--bg-sub); color: var(--primary-dark); font-weight: 600; padding: 8px 0; border: none; border-top: 1px solid var(--border-color); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; transition: background-color 0.3s; }
     @media (hover: hover) { .show-more-btn:hover { background-color: var(--border-color); } }
     html.dark-mode .show-more-btn { color: var(--primary-color); }
@@ -832,7 +840,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.13.4</span>
+        <span class="footer-item">ver. 0.13.5</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -1300,19 +1308,21 @@
       const tr = document.createElement('tr');
       tr.className = `entry-row entry-group ${groupClass}`;
       
-      // Added classes: w-img, w-rare, w-loc, w-qty for mobile resizing
+      // [MODIFIED] v0.13.5: content-wrapper 추가로 Safari 컨테이너 쿼리 이슈 해결
       tr.innerHTML = `
           <td class="no-cell">${nextNum}</td>
           <td class="content-cell">
-              <div class="entry-row-top">
-                  <div class="name-area"><div class="card-name-disp">카드 번호 입력</div></div>
-                  <div class="no-area"><input type="text" class="page-card-no" oninput="handleCardNoInput(this)" onblur="fetchCardNameForPage(this)" onkeydown="if(event.key==='Enter') fetchCardNameForPage(this)" placeholder="카드 번호"></div>
-              </div>
-              <div class="entry-row-bottom">
-                  <div class="input-wrap w-img"><select class="browser-default page-card-another" disabled><option value="" selected>일러스트</option></select></div>
-                  <div class="input-wrap w-rare"><select class="browser-default page-card-proc" disabled><option value="" disabled selected>레어도</option>${allProcessingTypes.map(p => `<option value="${p}">${getLocalizedRarity(p)}</option>`).join('')}</select></div>
-                  <div class="input-wrap w-loc"><input type="text" class="page-card-loc" list="loc-datalist" disabled placeholder="보관위치"></div>
-                  <div class="input-wrap w-qty"><input type="number" class="page-card-qty" min="1" disabled placeholder="수량" onfocus="if(this.value=='0')this.value=''" onblur="if(this.value=='')this.value='0'"></div>
+              <div class="content-wrapper">
+                  <div class="entry-row-top">
+                      <div class="name-area"><div class="card-name-disp">카드 번호 입력</div></div>
+                      <div class="no-area"><input type="text" class="page-card-no" oninput="handleCardNoInput(this)" onblur="fetchCardNameForPage(this)" onkeydown="if(event.key==='Enter') fetchCardNameForPage(this)" placeholder="카드 번호"></div>
+                  </div>
+                  <div class="entry-row-bottom">
+                      <div class="input-wrap w-img"><select class="browser-default page-card-another" disabled><option value="" selected>일러스트</option></select></div>
+                      <div class="input-wrap w-rare"><select class="browser-default page-card-proc" disabled><option value="" disabled selected>레어도</option>${allProcessingTypes.map(p => `<option value="${p}">${getLocalizedRarity(p)}</option>`).join('')}</select></div>
+                      <div class="input-wrap w-loc"><input type="text" class="page-card-loc" list="loc-datalist" disabled placeholder="보관위치"></div>
+                      <div class="input-wrap w-qty"><input type="number" class="page-card-qty" min="1" disabled placeholder="수량" onfocus="if(this.value=='0')this.value=''" onblur="if(this.value=='')this.value='0'"></div>
+                  </div>
               </div>
           </td>
           <td class="col-delete" onclick="deletePageEntry(this)"><i class="material-icons">delete</i></td>
