@@ -260,8 +260,15 @@
         .input-wrap { flex: 1 1 0px !important; }
     }
 
+    /* [v0.13.8] NEW: 태블릿 경계선(601px ~ 800px)에서만 레이아웃 변경 지연 (0.45s) */
+    /* 사이드바 애니메이션(0.4s) 동안 일시적으로 너비가 늘어나도 비율이 변하지 않도록 방어 */
+    @media only screen and (min-width: 601px) and (max-width: 800px) {
+        @container cell-context (min-width: 441px) {
+            .input-wrap { transition-delay: 0.45s; }
+        }
+    }
+
     /* [v0.13.6] 모바일 기기(600px 이하)에서는 항상 모바일 비율 강제 (컨테이너 쿼리 오버라이드) */
-    /* 중요: CSS 우선순위상 @media가 @container보다 뒤에 와야 안전하게 덮어쓸 수 있음 */
     @media only screen and (max-width: 600px) {
         .w-img { flex: 1.1 !important; }
         .w-rare { flex: 1 !important; }
@@ -852,7 +859,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.13.7</span>
+        <span class="footer-item">ver. 0.13.8</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
