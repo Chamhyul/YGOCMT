@@ -243,13 +243,14 @@
         /* [v0.13.7] 기본값(flex) 제거 -> 아래 w-* 클래스에서 기본값 정의 */
         width: 0; 
         border-right: 1px solid var(--table-border-specific) !important;
+        /* 딜레이 없이 즉시 반응 */
         transition: flex 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
     .input-wrap:last-child {
         border-right: none;
     }
 
-    /* [v0.13.7] 기본값(Base)을 모바일 비율로 설정 (튕김 방지) */
+    /* [v0.13.7] 기본값(Base)을 모바일 비율로 설정 (튕김 방지 및 초기화) */
     .w-img { flex: 1.1 !important; }
     .w-rare { flex: 1 !important; }
     .w-loc { flex: 1.2 !important; }
@@ -260,16 +261,10 @@
         .input-wrap { flex: 1 1 0px !important; }
     }
 
-    /* [v0.13.8] NEW: 태블릿 경계선(601px ~ 800px)에서만 레이아웃 변경 지연 (0.45s) */
-    /* 사이드바 애니메이션(0.4s) 동안 일시적으로 너비가 늘어나도 비율이 변하지 않도록 방어 */
-    @media only screen and (min-width: 601px) and (max-width: 800px) {
-        @container cell-context (min-width: 441px) {
-            .input-wrap { transition-delay: 0.45s; }
-        }
-    }
-
-    /* [v0.13.6] 모바일 기기(600px 이하)에서는 항상 모바일 비율 강제 (컨테이너 쿼리 오버라이드) */
-    @media only screen and (max-width: 600px) {
+    /* [v0.13.9] 안전 구간 확장: 625px까지 강제 모바일 비율 적용 */
+    /* 사이드바 애니메이션 등으로 인해 600px ~ 625px 구간에서 컨테이너 너비가 일시적으로 넓어져도 */
+    /* 미디어 쿼리가 우선순위를 가져서 모바일 비율을 유지함 (튕김 방지) */
+    @media only screen and (max-width: 625px) {
         .w-img { flex: 1.1 !important; }
         .w-rare { flex: 1 !important; }
         .w-loc { flex: 1.2 !important; }
@@ -859,7 +854,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.13.8</span>
+        <span class="footer-item">ver. 0.13.9</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
