@@ -125,23 +125,28 @@
         flex-direction: column;
     }
     
-    /* [MODIFIED] 테이블 래퍼: 라운딩과 그림자 담당 */
+    /* [MODIFIED] 테이블 래퍼: 외곽선(Frame) 및 라운딩 담당 */
     .table-wrapper {
         width: 100%;
         max-width: 700px;
         margin: 0 auto 20px auto;
-        border-radius: 8px; /* 바깥쪽 네 모서리 라운딩 */
-        overflow: hidden;   /* 내부 내용이 둥근 모서리를 넘지 않도록 */
+        border-radius: 8px; /* 둥근 모서리 */
+        overflow: hidden;   /* 내용 넘침 방지 */
         box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        
+        /* [핵심] 래퍼에 직접 테두리를 그려서 끊김 없는 외곽선 구현 */
+        border: 1px solid rgba(255, 255, 255, 0.3); 
     }
 
-    /* [MODIFIED] 테이블 본체: 라운딩 제거, 테두리 병합 */
+    /* [MODIFIED] 테이블 본체: 바깥 테두리 숨김 (내부 격자만 유지) */
     .page-entry-table {
         width: 100%;
         border-collapse: collapse; 
         border-spacing: 0;
-        margin: 0; /* Wrapper가 마진 담당 */
-        /* border-style: hidden; <-- 제거 (테두리 씹힘 방지) */
+        margin: 0; 
+        
+        /* [핵심] 테이블의 가장 바깥쪽 테두리를 숨겨서 래퍼와 겹치지 않게 함 */
+        border-style: hidden; 
     }
 
     .page-entry-table td {
@@ -178,17 +183,15 @@
     }
     .col-delete.disabled { pointer-events: none; opacity: 0.3; cursor: default; }
     
-    /* [MODIFIED] content-cell의 테두리 제거 속성 삭제 -> td 테두리 복구 */
     .content-cell {
         padding: 0;
-        /* border: none !important; <-- 삭제됨 */
     }
 
     .entry-row-top {
         display: flex;
         width: 100%;
         height: 42px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.3); /* 내부 가로선 */
+        border-bottom: 1px solid rgba(255, 255, 255, 0.3);
     }
     
     .name-area {
@@ -205,12 +208,10 @@
         flex-shrink: 0;
     }
 
-    /* [MODIFIED] 하단부: 별도 border-bottom 제거 (td 테두리 사용) */
     .entry-row-bottom {
         display: flex;
         width: 100%;
         height: 42px;
-        /* border-bottom 삭제됨 */
     }
     
     .input-wrap {
@@ -252,7 +253,7 @@
         cursor: pointer;
         color: var(--text-table-light); 
         outline: none !important;
-        text-align: center; 
+        text-align: center; /* 기본은 중앙 */
     }
     
     .entry-row-bottom input,
@@ -272,6 +273,7 @@
         text-align: left !important;
     }
 
+    /* 플레이스홀더 색상 통합 관리 */
     .page-entry-table input::placeholder {
         color: #616161 !important; 
         opacity: 1 !important;
@@ -811,7 +813,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.12.20</span>
+        <span class="footer-item">ver. 0.12.21</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
