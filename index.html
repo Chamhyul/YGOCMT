@@ -125,16 +125,23 @@
         flex-direction: column;
     }
     
-    .page-entry-table {
+    /* [MODIFIED] 테이블 래퍼: 라운딩과 그림자 담당 */
+    .table-wrapper {
         width: 100%;
         max-width: 700px;
         margin: 0 auto 20px auto;
+        border-radius: 8px; /* 바깥쪽 네 모서리 라운딩 */
+        overflow: hidden;   /* 내부 내용이 둥근 모서리를 넘지 않도록 */
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    /* [MODIFIED] 테이블 본체: 라운딩 제거, 테두리 병합 */
+    .page-entry-table {
+        width: 100%;
         border-collapse: collapse; 
         border-spacing: 0;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        border-radius: 8px;
-        overflow: hidden;
-        border-style: hidden;
+        margin: 0; /* Wrapper가 마진 담당 */
+        /* border-style: hidden; <-- 제거 (테두리 씹힘 방지) */
     }
 
     .page-entry-table td {
@@ -171,19 +178,19 @@
     }
     .col-delete.disabled { pointer-events: none; opacity: 0.3; cursor: default; }
     
+    /* [MODIFIED] content-cell의 테두리 제거 속성 삭제 -> td 테두리 복구 */
     .content-cell {
         padding: 0;
-        border: none !important; 
+        /* border: none !important; <-- 삭제됨 */
     }
 
     .entry-row-top {
         display: flex;
         width: 100%;
         height: 42px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.3); /* 내부 가로선 */
     }
     
-    /* 1행: 이름(3) : 번호(1) 비율 */
     .name-area {
         flex: 3; 
         min-width: 0;
@@ -198,12 +205,12 @@
         flex-shrink: 0;
     }
 
-    /* [MODIFIED] 하단 테두리 추가 (누락된 border-bottom 복구) */
+    /* [MODIFIED] 하단부: 별도 border-bottom 제거 (td 테두리 사용) */
     .entry-row-bottom {
         display: flex;
         width: 100%;
         height: 42px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.3); /* 복구됨 */
+        /* border-bottom 삭제됨 */
     }
     
     .input-wrap {
@@ -229,7 +236,6 @@
         display: none !important;
     }
 
-    /* 전역 인풋 스타일 (1행 중앙 정렬용) */
     .page-entry-table input, 
     .page-entry-table select {
         width: 100% !important;
@@ -246,17 +252,15 @@
         cursor: pointer;
         color: var(--text-table-light); 
         outline: none !important;
-        text-align: center; /* 기본은 중앙 */
+        text-align: center; 
     }
     
-    /* 2행(하단) 인풋/셀렉트 기본: 좌측 정렬 */
     .entry-row-bottom input,
     .entry-row-bottom select {
         text-align: left !important;
         padding: 0 5px !important; 
     }
 
-    /* 보관위치 & 수량: 플레이스홀더만 중앙 정렬 */
     .entry-row-bottom input.page-card-loc:placeholder-shown,
     .entry-row-bottom input.page-card-qty:placeholder-shown {
         text-align: center !important;
@@ -268,7 +272,6 @@
         text-align: left !important;
     }
 
-    /* 플레이스홀더 색상 통합 관리 (opacity:1 강제) */
     .page-entry-table input::placeholder {
         color: #616161 !important; 
         opacity: 1 !important;
@@ -763,24 +766,26 @@
               </label>
           </div>
 
-          <table id="page-add-table" class="page-entry-table">
-              <tbody id="page-add-tbody">
-              </tbody>
-              <tfoot id="page-add-tfoot">
-                  <tr>
-                      <td colspan="3" class="add-row-btn-cell">
-                          <button class="add-page-row-btn" onclick="addMultipleRows()">
-                              <span style="font-weight: 700;">카드 추가 등록</span>
-                              <div class="qty-control-box" onclick="event.stopPropagation()">
-                                  <span class="ctrl-btn" onclick="adjustAddCount(-1)">-</span>
-                                  <span id="add-row-count" class="ctrl-val">1장</span>
-                                  <span class="ctrl-btn" onclick="adjustAddCount(1)">+</span>
-                              </div>
-                          </button>
-                      </td>
-                  </tr>
-              </tfoot>
-          </table>
+          <div class="table-wrapper">
+              <table id="page-add-table" class="page-entry-table">
+                  <tbody id="page-add-tbody">
+                  </tbody>
+                  <tfoot id="page-add-tfoot">
+                      <tr>
+                          <td colspan="3" class="add-row-btn-cell">
+                              <button class="add-page-row-btn" onclick="addMultipleRows()">
+                                  <span style="font-weight: 700;">카드 추가 등록</span>
+                                  <div class="qty-control-box" onclick="event.stopPropagation()">
+                                      <span class="ctrl-btn" onclick="adjustAddCount(-1)">-</span>
+                                      <span id="add-row-count" class="ctrl-val">1장</span>
+                                      <span class="ctrl-btn" onclick="adjustAddCount(1)">+</span>
+                                  </div>
+                              </button>
+                          </td>
+                      </tr>
+                  </tfoot>
+              </table>
+          </div>
 
           <div class="page-btn-container">
               <button class="btn cyan-theme waves-effect waves-light" onclick="submitPageEntries()">등록</button>
@@ -806,7 +811,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.12.19</span>
+        <span class="footer-item">ver. 0.12.20</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
