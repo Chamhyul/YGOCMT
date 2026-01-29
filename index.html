@@ -133,19 +133,20 @@
         flex-direction: column;
     }
 
-    /* === HEADER & ANIMATION LOGIC (SINGLE COORDINATE SYSTEM) === */
-    /* 모바일/PC 구분 없이 단일 로직 사용. transform 제거로 직선 이동 보장. */
+    /* === HEADER & ANIMATION LOGIC (FIXED CANVAS 700) === */
+    /* 부모 컨테이너를 항상 700px(또는 100%) 중앙에 고정하고, 내부 요소만 이동시킵니다. */
     
     #dynamic-header-wrapper { 
         position: relative; 
         width: 100%; 
+        /* The Canvas: Always max 700px and Centered */
+        max-width: 700px;
+        margin: 20px auto; 
+        
         height: 220px; 
-        margin-top: 20px; 
-        margin-bottom: 20px; 
-        transition: height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); 
+        transition: height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), margin-top 0.4s ease; 
         z-index: 100; 
         overflow: visible; 
-        max-width: 100%; 
     }
 
     /* 1. Logo Container */
@@ -158,10 +159,10 @@
         width: 220px; 
         margin: 0 !important; 
         
-        /* Home Mode: Center */
+        /* Home Mode: Center of 700px Canvas */
         top: 30px;
-        /* v0.10.11 Logic: Absolute calc for center */
-        left: calc(50% - 110px); 
+        left: 50%;
+        margin-left: -110px; /* Width/2 to center */
         
         transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); 
     }
@@ -178,21 +179,19 @@
         z-index: 1; 
         margin: 0 !important; 
         
-        /* Home Mode: Center */
+        /* Home Mode: Center of 700px Canvas */
         top: 130px;
-        width: min(95%, 700px); 
-        
-        /* v0.10.11 Logic: Auto-clamp between 2.5% and Center */
-        /* 화면이 좁으면 2.5% 고정, 넓으면 중앙(50% - 350px) 고정. 자동으로 모바일 대응됨. */
-        left: max(2.5%, calc(50% - 350px)); 
+        left: 50%;
+        width: 95%; /* 95% of 700px */
+        margin-left: -47.5%; /* Half of 95% to center */
         
         transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); 
-        will-change: top, left, width; 
+        will-change: top, left, width, margin-left; 
     }
 
     .search-header-row { width: 100%; max-width: 700px; margin: 0 auto; display: flex; justify-content: flex-start; padding-left: 5px; margin-bottom: 5px; transition: opacity 0.3s ease; }
     
-    /* [Locking] Prevent Wrapping */
+    /* Flex Locking */
     .search-row { 
         display: flex; 
         align-items: center; 
@@ -201,25 +200,25 @@
         gap: 8px; 
         max-width: 700px !important; 
         margin: 0 auto; 
-        flex-wrap: nowrap; /* CRITICAL: No wrapping allowed */
+        flex-wrap: nowrap; 
         transition: margin 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), max-width 0.4s; 
     }
 
-    /* === COMPACT MODE (GLOBAL) === */
-    /* 모바일이든 PC든 동일한 절대 좌표로 이동 */
+    /* === COMPACT MODE (UNIFIED) === */
+    /* 부모는 그대로 700px(또는 100%)이며, 내부 요소만 왼쪽으로 이동 */
     
     body.mode-compact #dynamic-header-wrapper { 
         height: 70px; 
         margin-top: 0; 
-        max-width: 700px; 
-        margin-left: auto; 
-        margin-right: auto; 
+        /* max-width: 700px & margin: 0 auto maintained from default */
     }
 
     body.mode-compact .app-title-container { 
         top: 27px; 
         /* Compact: Fixed Left */
         left: 10px; 
+        margin-left: 0; /* Reset Center Offset */
+        
         width: 3.9rem !important; 
     }
 
@@ -227,6 +226,8 @@
         top: 22px; 
         /* Compact: Fixed Left next to logo */
         left: 80px; 
+        margin-left: 0; /* Reset Center Offset */
+        
         /* Compact: Width fills rest */
         width: calc(100% - 90px); 
         align-items: flex-start; 
@@ -240,8 +241,6 @@
     body.mode-compact .synapse-text-logo { opacity: 0; }
     body.mode-compact .title-ygo, body.mode-compact .title-beta { display: none !important; }
     body.mode-compact .search-header-row { opacity: 0; pointer-events: none; height: 0; margin: 0; }
-
-    /* NO MOBILE EXCEPTIONS (@media max-width: 600px REMOVED for Header) */
 
     /* Common Styles */
     .synapse-logo-container { position: relative; display: inline-block; max-width: 250px; overflow: hidden; white-space: nowrap; transition: max-width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); vertical-align: middle; }
@@ -619,13 +618,13 @@
     @media (hover: hover) { .help-trigger-btn:hover { color: var(--primary-color); } }
     .search-input-wrapper { 
         flex: 1; 
-        min-width: 0; /* [v0.14.3] Allow shrinking below content size */
+        min-width: 0; /* [v0.14.4] Allow shrinking below content size */
         position: relative; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 24px; padding: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: border-radius 0.2s ease, box-shadow 0.2s ease; z-index: 1001; 
     }
     .search-input-wrapper.active { border-radius: 24px 24px 0 0; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-bottom: 1px solid transparent; }
     #search-btn { 
         border-radius: 50px !important; width: 80px; height: 45px; padding: 0; display: flex; align-items: center; justify-content: center; 
-        flex-shrink: 0; /* [v0.14.3] Prevent button shrink */
+        flex-shrink: 0; /* [v0.14.4] Prevent button shrink */
     }
     input#card-search { text-align: left !important; font-size: 1.1rem; padding-left: 20px !important; padding-right: 40px !important; box-sizing: border-box; color: var(--text-primary); border-bottom: none !important; box-shadow: none !important; height: 46px !important; margin: 0 !important; width: 100%; display: block; }
     input#card-search::placeholder { color: var(--text-muted); }
@@ -965,7 +964,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.14.3</span>
+        <span class="footer-item">ver. 0.14.4</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
