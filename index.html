@@ -78,7 +78,7 @@
       --text-table-light: #424242;
       --text-table-dark: #333333; 
       
-      /* [v0.13.3] 테이블 전용 불투명 테두리 색상 (Light Mode) */
+      /* [NEW] 테이블 전용 불투명 테두리 색상 (Light Mode) */
       --table-border-specific: rgb(200, 240, 240);
     }
 
@@ -113,13 +113,8 @@
       
       --bg-odd-row: #56B0AB; 
       
-      /* [v0.13.3] 테이블 전용 불투명 테두리 색상 (Dark Mode) */
+      /* [NEW] 테이블 전용 불투명 테두리 색상 (Dark Mode) */
       --table-border-specific: rgb(180, 220, 220);
-    }
-
-    /* [v0.14.0] 다크 모드 버튼 텍스트 가독성 개선 */
-    html.dark-mode .btn.cyan-theme {
-        color: #282828 !important;
     }
 
     body, input, button, table, .btn, .modal-content, select { font-family: 'Pretendard', sans-serif !important; }
@@ -136,7 +131,7 @@
         flex-direction: column;
     }
     
-    /* 테이블 래퍼: 외곽선(Frame) 및 라운딩 담당 */
+    /* [MODIFIED] 테이블 래퍼: 외곽선(Frame) 및 라운딩 담당 */
     .table-wrapper {
         width: 100%;
         max-width: 700px;
@@ -145,22 +140,22 @@
         overflow: hidden;   /* 내용 넘침 방지 */
         box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         
-        /* 래퍼에 직접 테두리를 그려서 끊김 없는 외곽선 구현 */
+        /* [핵심] 래퍼에 직접 테두리를 그려서 끊김 없는 외곽선 구현 */
         border: 1px solid rgba(255, 255, 255, 0.3); 
     }
 
-    /* 테이블 본체: 바깥 테두리 숨김 (내부 격자만 유지) */
+    /* [MODIFIED] 테이블 본체: 바깥 테두리 숨김 (내부 격자만 유지) */
     .page-entry-table {
         width: 100%;
         border-collapse: collapse; 
         border-spacing: 0;
         margin: 0; 
         
-        /* 테이블의 가장 바깥쪽 테두리를 숨겨서 래퍼와 겹치지 않게 함 */
+        /* [핵심] 테이블의 가장 바깥쪽 테두리를 숨겨서 래퍼와 겹치지 않게 함 */
         border-style: hidden; 
     }
 
-    /* 불투명 테두리 적용 및 직각화 */
+    /* [MODIFIED] 불투명 테두리 적용 및 직각화 */
     .page-entry-table td {
         padding: 0 !important; 
         margin: 0 !important;
@@ -170,7 +165,7 @@
         border-radius: 0px !important; /* 라운딩 제거 */
     }
 
-    /* 표의 외곽선(상하좌우) 제거 - Wrapper와 겹침 방지 */
+    /* [NEW] 표의 외곽선(상하좌우) 제거 - Wrapper와 겹침 방지 */
     .page-entry-table tbody tr:first-child td { border-top: none !important; }    /* 맨 윗줄 상단 제거 */
     .page-entry-table tbody tr:last-child td { border-bottom: none !important; } /* 맨 아랫줄 하단 제거 */
     .page-entry-table tr td:first-child { border-left: none !important; }        /* 맨 왼쪽 좌측 제거 */
@@ -191,7 +186,7 @@
         text-align: center;
         cursor: pointer;
         color: var(--text-muted);
-        transition: all 0.3s; /* 전역 속도 통일 */
+        transition: all 0.2s;
     }
     @media (hover: hover) {
         .col-delete:hover {
@@ -201,17 +196,9 @@
     }
     .col-delete.disabled { pointer-events: none; opacity: 0.3; cursor: default; }
     
+    /* [MODIFIED] 내부 테두리 복구 (이전 좌우 제거 코드 삭제) */
     .content-cell {
         padding: 0;
-    }
-
-    /* [v0.14.0] 컨테이너 쿼리 로직 제거 후 단순 래퍼로 변경 */
-    .content-wrapper {
-        width: 100%;
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
     }
 
     .entry-row-top {
@@ -242,7 +229,7 @@
     }
     
     .input-wrap {
-        /* [v0.14.0] 기본값 (모바일 우선) */
+        flex: 1 1 0px; 
         width: 0; 
         border-right: 1px solid var(--table-border-specific) !important;
         transition: flex 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -251,22 +238,12 @@
         border-right: none;
     }
 
-    /* [v0.14.0] 모바일 비율 (기본) */
-    .w-img { flex: 1.1; }
-    .w-rare { flex: 1; }
-    .w-loc { flex: 1.2; }
-    .w-qty { flex: 0.7; }
-
-    /* [v0.14.0] 태블릿 및 데스크탑 뷰 (≥ 601px) 레이아웃 재설계 */
-    @media only screen and (min-width: 601px) {
-        /* 1:1:1:1 비율 강제 */
-        .input-wrap { 
-            flex: 1 !important; 
-        }
-        /* 수량 셀 최소 너비 확보 */
-        .w-qty {
-            min-width: 110px !important;
-        }
+    /* 모바일 환경 비율 보존 */
+    @media only screen and (max-width: 600px) {
+        .w-img { flex: 1.1 !important; }
+        .w-rare { flex: 1 !important; }
+        .w-loc { flex: 1.2 !important; }
+        .w-qty { flex: 0.7 !important; }
     }
 
     /* datalist 화살표(Indicator) 제거 */
@@ -369,7 +346,7 @@
         box-shadow: none !important;
     }
 
-    /* 카드 추가 등록 버튼: 테두리 및 라운딩 완전 제거 */
+    /* [MODIFIED] 카드 추가 등록 버튼: 테두리 및 라운딩 완전 제거 */
     .add-page-row-btn {
         width: 100%;
         padding: 8px 12px;
@@ -378,7 +355,7 @@
         color: #212121; 
         font-weight: 700;
         cursor: pointer;
-        transition: all 0.3s; /* 전역 속도 통일 */
+        transition: all 0.2s;
         border-radius: 0px !important; /* 라운딩 제거 */
         margin-top: 0; 
         display: flex;
@@ -401,7 +378,7 @@
     }
     html.dark-mode .qty-control-box { background: rgba(255,255,255,0.1); }
     .ctrl-btn {
-        width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; cursor: pointer; font-weight: 800; transition: background-color 0.3s; user-select: none;
+        width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; cursor: pointer; font-weight: 800; transition: background-color 0.2s; user-select: none;
     }
     @media (hover: hover) {
         .ctrl-btn:hover { background-color: rgba(0,0,0,0.1); color: var(--primary-color); }
@@ -419,11 +396,11 @@
         transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), background-color 0.3s ease;
         transform: translateX(0); 
     }
-    .nav-item { display: flex; align-items: center; padding: 16px 24px; color: var(--nav-text); cursor: pointer; transition: background-color 0.3s, color 0.3s; text-decoration: none; border-left: 4px solid transparent; }
+    .nav-item { display: flex; align-items: center; padding: 16px 24px; color: var(--nav-text); cursor: pointer; transition: background-color 0.2s, color 0.2s; text-decoration: none; border-left: 4px solid transparent; }
     @media (hover: hover) { .nav-item:hover { background-color: rgba(128,128,128,0.1); color: var(--nav-text-active); } }
     .nav-item.active { color: var(--nav-text-active); background-color: rgba(128,128,128,0.15); border-left: 4px solid var(--primary-color); font-weight: 700; }
     .nav-item i { margin-right: 16px; font-size: 24px; }
-    .nav-text { font-size: 0.95rem; font-weight: 600; white-space: nowrap; opacity: 1; transition: opacity 0.3s; }
+    .nav-text { font-size: 0.95rem; font-weight: 600; white-space: nowrap; opacity: 1; transition: opacity 0.2s; }
 
     .mobile-nav-container { 
         display: flex; position: fixed; bottom: 0; left: 0; right: 0; width: 100%; 
@@ -437,15 +414,13 @@
         transform: translateY(100%); pointer-events: none; 
     }
     .nav-capsule, .nav-circle { display: none; }
-    .mobile-nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--nav-text); font-size: 0.65rem; cursor: pointer; flex: 1; height: 100%; transition: color 0.3s, transform 0.3s; font-weight: 500; min-width: 48px; padding: 6px 0; }
+    .mobile-nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--nav-text); font-size: 0.65rem; cursor: pointer; flex: 1; height: 100%; transition: color 0.2s, transform 0.1s; font-weight: 500; min-width: 48px; padding: 6px 0; }
     .mobile-nav-item:active { transform: scale(0.95); }
     @media (hover: hover) { .mobile-nav-item:hover { color: var(--nav-text-active); } }
     .mobile-nav-item.active { color: var(--nav-text-active); font-weight: 700; }
     .mobile-nav-item i { font-size: 24px; margin-bottom: 3px; }
 
-    /* [NEW v0.13.10] 로딩 시 사이드바 상위 노출 및 입력 차단 */
     body.is-loading .mobile-nav-container { z-index: 11001 !important; pointer-events: none; }
-    body.is-loading .app-sidebar { z-index: 11001 !important; pointer-events: none; }
 
     @media only screen and (min-width: 993px) { body { padding-left: 240px; } }
     @media only screen and (min-width: 601px) and (max-width: 992px) { body { padding-left: 72px; } .app-sidebar { width: 72px; } .nav-text { opacity: 0; display: none; } .nav-item { justify-content: center; padding: 16px 0; border-left: 4px solid transparent; border-right: 0; } .nav-item i { margin-right: 0; } .nav-item.active { border-left: 4px solid var(--primary-color); border-right: 0; } }
@@ -584,18 +559,7 @@
       background: var(--overlay-bg); 
       z-index: 11000; 
       flex-direction: column; align-items: center; justify-content: center; 
-      backdrop-filter: blur(2px);
-      /* [NEW v0.13.10] 오버레이 패딩 애니메이션 (body와 동기화) */
-      transition: padding-left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-      padding-left: 0; /* 기본 모바일 */
-    }
-
-    /* [NEW v0.13.10] 미디어 쿼리에 따른 오버레이 패딩 조정 */
-    @media only screen and (min-width: 993px) {
-        #loading-overlay { padding-left: 240px; }
-    }
-    @media only screen and (min-width: 601px) and (max-width: 992px) {
-        #loading-overlay { padding-left: 72px; }
+      backdrop-filter: blur(2px); 
     }
     
     html.dark-mode #loading-text { color: var(--primary-color) !important; }
@@ -610,7 +574,7 @@
     .summary-label-cell { background-color: var(--bg-sub); color: var(--text-secondary); font-weight: 600; width: 50%; }
     .summary-value-cell { width: 50%; font-weight: 500; }
     
-    /* 자세히 보기 버튼: 전환 속도 통일 (0.3s) */
+    /* [MODIFIED] 자세히 보기 버튼: 전환 속도 통일 (0.2s -> 0.3s) */
     .show-more-btn { width: 100%; background-color: var(--bg-sub); color: var(--primary-dark); font-weight: 600; padding: 8px 0; border: none; border-top: 1px solid var(--border-color); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; transition: background-color 0.3s; }
     @media (hover: hover) { .show-more-btn:hover { background-color: var(--border-color); } }
     html.dark-mode .show-more-btn { color: var(--primary-color); }
@@ -865,7 +829,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.14.0</span>
+        <span class="footer-item">ver. 0.13.3</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -1333,21 +1297,19 @@
       const tr = document.createElement('tr');
       tr.className = `entry-row entry-group ${groupClass}`;
       
-      // [MODIFIED] v0.13.5: content-wrapper 추가로 Safari 컨테이너 쿼리 이슈 해결
+      // Added classes: w-img, w-rare, w-loc, w-qty for mobile resizing
       tr.innerHTML = `
           <td class="no-cell">${nextNum}</td>
           <td class="content-cell">
-              <div class="content-wrapper">
-                  <div class="entry-row-top">
-                      <div class="name-area"><div class="card-name-disp">카드 번호 입력</div></div>
-                      <div class="no-area"><input type="text" class="page-card-no" oninput="handleCardNoInput(this)" onblur="fetchCardNameForPage(this)" onkeydown="if(event.key==='Enter') fetchCardNameForPage(this)" placeholder="카드 번호"></div>
-                  </div>
-                  <div class="entry-row-bottom">
-                      <div class="input-wrap w-img"><select class="browser-default page-card-another" disabled><option value="" selected>일러스트</option></select></div>
-                      <div class="input-wrap w-rare"><select class="browser-default page-card-proc" disabled><option value="" disabled selected>레어도</option>${allProcessingTypes.map(p => `<option value="${p}">${getLocalizedRarity(p)}</option>`).join('')}</select></div>
-                      <div class="input-wrap w-loc"><input type="text" class="page-card-loc" list="loc-datalist" disabled placeholder="보관위치"></div>
-                      <div class="input-wrap w-qty"><input type="number" class="page-card-qty" min="1" disabled placeholder="수량" onfocus="if(this.value=='0')this.value=''" onblur="if(this.value=='')this.value='0'"></div>
-                  </div>
+              <div class="entry-row-top">
+                  <div class="name-area"><div class="card-name-disp">카드 번호 입력</div></div>
+                  <div class="no-area"><input type="text" class="page-card-no" oninput="handleCardNoInput(this)" onblur="fetchCardNameForPage(this)" onkeydown="if(event.key==='Enter') fetchCardNameForPage(this)" placeholder="카드 번호"></div>
+              </div>
+              <div class="entry-row-bottom">
+                  <div class="input-wrap w-img"><select class="browser-default page-card-another" disabled><option value="" selected>일러스트</option></select></div>
+                  <div class="input-wrap w-rare"><select class="browser-default page-card-proc" disabled><option value="" disabled selected>레어도</option>${allProcessingTypes.map(p => `<option value="${p}">${getLocalizedRarity(p)}</option>`).join('')}</select></div>
+                  <div class="input-wrap w-loc"><input type="text" class="page-card-loc" list="loc-datalist" disabled placeholder="보관위치"></div>
+                  <div class="input-wrap w-qty"><input type="number" class="page-card-qty" min="1" disabled placeholder="수량" onfocus="if(this.value=='0')this.value=''" onblur="if(this.value=='')this.value='0'"></div>
               </div>
           </td>
           <td class="col-delete" onclick="deletePageEntry(this)"><i class="material-icons">delete</i></td>
