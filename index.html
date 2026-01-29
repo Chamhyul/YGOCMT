@@ -133,8 +133,8 @@
         flex-direction: column;
     }
 
-    /* === HEADER & ANIMATION LOGIC (FIXED CANVAS 700) === */
-    /* 부모 컨테이너를 항상 700px(또는 100%) 중앙에 고정하고, 내부 요소만 이동시킵니다. */
+    /* === HEADER & ANIMATION LOGIC (EDGE-TO-EDGE ANCHOR) === */
+    /* 부모를 700px로 고정하고, 자식 요소는 좌우 여백(left, width)으로 위치를 잡습니다. */
     
     #dynamic-header-wrapper { 
         position: relative; 
@@ -160,9 +160,10 @@
         margin: 0 !important; 
         
         /* Home Mode: Center of 700px Canvas */
+        /* Fixed Size Element -> Use 50% + Negative Margin for perfect center */
         top: 30px;
         left: 50%;
-        margin-left: -110px; /* Width/2 to center */
+        margin-left: -110px !important; 
         
         transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); 
     }
@@ -179,14 +180,15 @@
         z-index: 1; 
         margin: 0 !important; 
         
-        /* Home Mode: Center of 700px Canvas */
+        /* Home Mode: Edge-to-Edge Centering */
         top: 130px;
-        left: 50%;
-        width: 95%; /* 95% of 700px */
-        margin-left: -47.5%; /* Half of 95% to center */
+        
+        left: 10px; /* 10px from Left Edge */
+        width: calc(100% - 20px); /* 10px from Right Edge */
+        margin-left: 0 !important; /* No negative margin needed */
         
         transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); 
-        will-change: top, left, width, margin-left; 
+        will-change: top, left, width; 
     }
 
     .search-header-row { width: 100%; max-width: 700px; margin: 0 auto; display: flex; justify-content: flex-start; padding-left: 5px; margin-bottom: 5px; transition: opacity 0.3s ease; }
@@ -210,14 +212,14 @@
     body.mode-compact #dynamic-header-wrapper { 
         height: 70px; 
         margin-top: 0; 
-        /* max-width: 700px & margin: 0 auto maintained from default */
+        /* max-width & margin maintained */
     }
 
     body.mode-compact .app-title-container { 
         top: 27px; 
         /* Compact: Fixed Left */
         left: 10px; 
-        margin-left: 0; /* Reset Center Offset */
+        margin-left: 0 !important; /* Reset Center Offset */
         
         width: 3.9rem !important; 
     }
@@ -226,9 +228,9 @@
         top: 22px; 
         /* Compact: Fixed Left next to logo */
         left: 80px; 
-        margin-left: 0; /* Reset Center Offset */
+        margin-left: 0 !important; 
         
-        /* Compact: Width fills rest */
+        /* Compact: Width fills rest (10px right margin maintained) */
         width: calc(100% - 90px); 
         align-items: flex-start; 
     }
@@ -618,13 +620,13 @@
     @media (hover: hover) { .help-trigger-btn:hover { color: var(--primary-color); } }
     .search-input-wrapper { 
         flex: 1; 
-        min-width: 0; /* [v0.14.4] Allow shrinking below content size */
+        min-width: 0; /* [v0.14.5] Allow shrinking below content size */
         position: relative; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 24px; padding: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: border-radius 0.2s ease, box-shadow 0.2s ease; z-index: 1001; 
     }
     .search-input-wrapper.active { border-radius: 24px 24px 0 0; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-bottom: 1px solid transparent; }
     #search-btn { 
         border-radius: 50px !important; width: 80px; height: 45px; padding: 0; display: flex; align-items: center; justify-content: center; 
-        flex-shrink: 0; /* [v0.14.4] Prevent button shrink */
+        flex-shrink: 0; /* [v0.14.5] Prevent button shrink */
     }
     input#card-search { text-align: left !important; font-size: 1.1rem; padding-left: 20px !important; padding-right: 40px !important; box-sizing: border-box; color: var(--text-primary); border-bottom: none !important; box-shadow: none !important; height: 46px !important; margin: 0 !important; width: 100%; display: block; }
     input#card-search::placeholder { color: var(--text-muted); }
@@ -964,7 +966,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.14.4</span>
+        <span class="footer-item">ver. 0.14.5</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
