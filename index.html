@@ -18,8 +18,7 @@
       --text-secondary: #666666;
       --text-muted: #9e9e9e;
       --primary-color: #009688;
-      --primary-rgb: 0, 150, 136;
-      --primary-light: #b2dfdb; 
+      --primary-rgb: 0, 150, 136; /* RGB for gradient opacity */
       --primary-dark: #00796b;
       --border-color: #ddd;
       --error-red: #f44336;
@@ -32,6 +31,7 @@
       --disabled-text: #9e9e9e;
       --overlay-bg: rgba(255, 255, 255, 0.85);
       
+      /* Navigation Colors (Default: Light Mode - Grey) */
       --nav-bg: #cfcfcf; 
       --nav-text: #424242;
       --nav-text-active: #009688;
@@ -48,8 +48,7 @@
       --text-secondary: #b0b0b0;
       --text-muted: #757575;
       --primary-color: #4db6ac;
-      --primary-rgb: 77, 182, 172;
-      --primary-light: #80cbc4; 
+      --primary-rgb: 77, 182, 172; /* RGB for gradient opacity in Dark Mode */
       --primary-dark: #26a69a;
       --border-color: #424242;
       --error-red: #ef5350;
@@ -62,6 +61,7 @@
       --disabled-text: #757575;
       --overlay-bg: rgba(0, 0, 0, 0.6);
 
+      /* Navigation Colors (Dark Mode - Black) */
       --nav-bg: rgba(0, 0, 0, 0.85);
       --nav-text: #9e9e9e;
       --nav-text-active: #4db6ac;
@@ -74,309 +74,736 @@
     body { 
         background-color: var(--bg-body); 
         color: var(--text-primary); 
-        transition: background-color 0.3s, color 0.3s, padding-left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-        padding-left: 0;
+        transition: background-color 0.3s, color 0.3s, padding-left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); 
     }
     
-    /* [MODIFIED] Page Entry Table Styles - v0.11.0 */
-    .page-entry-table {
-        width: 100%;
-        max-width: 700px;
-        margin: 0 auto 20px auto;
-        border-collapse: collapse; /* 셀 간격 제거 */
-        border-spacing: 0;
-        border-style: hidden; /* 모서리 둥글게 처리를 위해 숨김 */
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        border-radius: 8px;
-        overflow: hidden;
-    }
-
-    .page-entry-table tbody {
-        /* 기존 box-shadow 등 제거, table 자체에 적용 */
-    }
-
-    /* [MODIFIED] Cell Styles */
-    .page-entry-table td {
-        padding: 0 !important; /* 입력창 꽉 차게 */
-        margin: 0 !important;
-        border: 1px solid rgba(255, 255, 255, 0.2); /* 구분선 */
-        vertical-align: middle;
-        height: 42px;
-        box-sizing: border-box;
-    }
-
-    /* [MODIFIED] Input & Select Styles */
-    .page-entry-table input, 
-    .page-entry-table select {
-        width: 100% !important;
-        height: 100% !important;
-        border: none !important;
-        background-color: transparent !important;
-        border-radius: 0 !important;
-        margin: 0 !important;
-        font-size: 0.95rem !important;
-        padding: 0 10px !important;
-        box-shadow: none !important;
-        color: inherit;
-        box-sizing: border-box;
-        display: block;
-        cursor: pointer;
-    }
-    
-    .page-entry-table input:focus,
-    .page-entry-table select:focus {
-        background-color: rgba(0,0,0,0.05) !important;
-        outline: none !important;
-    }
-    
-    /* Odd Entry (Primary Color) */
-    .entry-group.odd {
-        background-color: var(--primary-color);
-        color: #ffffff;
-    }
-    .entry-group.odd input::placeholder { color: rgba(255, 255, 255, 0.7); }
-    .entry-group.odd select { color: #ffffff; }
-    .entry-group.odd option { color: var(--text-primary); } /* 옵션창은 기본색 */
-
-    /* Even Entry (Primary Light Color) */
-    .entry-group.even {
-        background-color: var(--primary-light);
-        color: var(--text-primary); 
-    }
-    body.dark-mode .entry-group.even {
-        color: #121212; 
-    }
-    .entry-group.even input::placeholder { color: rgba(0, 0, 0, 0.4); }
-    .entry-group.even select { color: var(--text-primary); }
-
-    .page-entry-table .no-cell {
-        width: 40px;
-        text-align: center;
-        font-weight: 800;
-        font-size: 1.1rem;
-        border-right: 1px solid rgba(255,255,255,0.3);
-        background-color: rgba(0,0,0,0.1);
-    }
-    
-    .card-name-disp {
-        padding: 0 10px;
-        line-height: 42px;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        font-weight: 700;
-        font-size: 0.9rem;
-    }
-
-    .add-row-btn-cell {
-        text-align: center;
-        padding: 0 !important;
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-    }
-
-    .add-page-row-btn {
-        width: 100%;
-        padding: 12px;
-        background-color: var(--bg-sub);
-        border: 1px dashed var(--border-color);
-        color: var(--text-muted);
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.2s;
-        border-radius: 8px;
-        margin-top: 10px;
-    }
-    .add-page-row-btn:hover {
-        background-color: var(--bg-surface);
-        color: var(--primary-color);
-        border-color: var(--primary-color);
-    }
-
-    /* Page Button Container */
-    .page-btn-container {
-        max-width: 700px;
-        margin: 0 auto;
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-        padding-bottom: 40px;
-    }
-
-    /* Navigation & Layout (Existing) */
+    /* --- Navigation Styles Start --- */
     .app-sidebar {
-        position: fixed; left: 0; top: 0; bottom: 0; width: 240px;
-        background-color: var(--nav-bg); z-index: 900; display: flex; flex-direction: column;
-        padding-top: 80px; box-shadow: 1px 0 0 var(--nav-border);
-        backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-        transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), background-color 0.3s ease;
+        position: fixed;
+        left: 0; top: 0; bottom: 0;
+        width: 240px;
+        background-color: var(--nav-bg);
+        z-index: 900;
+        display: flex;
+        flex-direction: column;
+        padding-top: 80px;
+        box-shadow: 1px 0 0 var(--nav-border);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        
+        transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), 
+                    transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), 
+                    background-color 0.3s ease;
         transform: translateX(0); 
     }
-    .nav-item { display: flex; align-items: center; padding: 16px 24px; color: var(--nav-text); cursor: pointer; transition: background-color 0.2s, color 0.2s; text-decoration: none; border-left: 4px solid transparent; }
-    .nav-item:hover { background-color: rgba(128,128,128,0.1); color: var(--nav-text-active); }
-    .nav-item.active { color: var(--nav-text-active); background-color: rgba(128,128,128,0.15); border-left: 4px solid var(--primary-color); font-weight: 700; }
-    .nav-item i { margin-right: 16px; font-size: 24px; }
-    .nav-text { font-size: 0.95rem; font-weight: 600; white-space: nowrap; opacity: 1; transition: opacity 0.2s; }
 
-    .mobile-nav-container { display: flex; position: fixed; bottom: 0; left: 0; right: 0; width: 100%; height: 60px; z-index: 1050; justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom); background-color: var(--nav-bg); border-top: 1px solid var(--nav-border); box-shadow: 0 -2px 10px rgba(0,0,0,0.05); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); transform: translateY(100%); pointer-events: none; }
+    .nav-item {
+        display: flex;
+        align-items: center;
+        padding: 16px 24px;
+        color: var(--nav-text);
+        cursor: pointer;
+        transition: background-color 0.2s, color 0.2s;
+        text-decoration: none;
+        border-left: 4px solid transparent; /* Indicator strip */
+    }
+
+    .nav-item:hover {
+        background-color: rgba(128,128,128,0.1);
+        color: var(--nav-text-active);
+    }
+    
+    .nav-item.active {
+        color: var(--nav-text-active);
+        background-color: rgba(128,128,128,0.15);
+        border-left: 4px solid var(--primary-color);
+        font-weight: 700;
+    }
+
+    .nav-item i {
+        margin-right: 16px;
+        font-size: 24px;
+    }
+
+    .nav-text {
+        font-size: 0.95rem;
+        font-weight: 600;
+        white-space: nowrap;
+        opacity: 1;
+        transition: opacity 0.2s;
+    }
+
+    /* [MODIFIED] Bottom Navigation Bar (Fixed Style) */
+    .mobile-nav-container {
+        display: flex; 
+        position: fixed;
+        bottom: 0; 
+        left: 0; 
+        right: 0;
+        width: 100%;
+        height: 60px;
+        z-index: 1050;
+        justify-content: space-around;
+        align-items: center;
+        padding-bottom: env(safe-area-inset-bottom);
+        padding-left: 0;
+        padding-right: 0;
+        
+        background-color: var(--bg-surface); /* Changed to surface for visibility */
+        border-top: 1px solid var(--border-color);
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        
+        transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        transform: translateY(100%); /* Hidden by default on PC */
+        pointer-events: none; 
+    }
+    
+    /* Remove old capsule/circle styles */
     .nav-capsule, .nav-circle { display: none; }
-    .mobile-nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--nav-text); font-size: 0.65rem; cursor: pointer; flex: 1; height: 100%; transition: color 0.2s, transform 0.1s; font-weight: 500; min-width: 48px; padding: 6px 0; }
+
+    .mobile-nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-muted); /* Inactive color */
+        font-size: 0.65rem;
+        cursor: pointer;
+        flex: 1;
+        height: 100%;
+        transition: color 0.2s, transform 0.1s;
+        font-weight: 500;
+        min-width: 48px;
+        padding: 6px 0;
+    }
+    
     .mobile-nav-item:active { transform: scale(0.95); }
-    .mobile-nav-item:hover { color: var(--nav-text-active); }
-    .mobile-nav-item.active { color: var(--nav-text-active); font-weight: 700; }
+    .mobile-nav-item:hover { color: var(--text-secondary); }
+    
+    .mobile-nav-item.active {
+        color: var(--primary-color);
+        font-weight: 700;
+    }
+    
     .mobile-nav-item i { font-size: 24px; margin-bottom: 3px; }
 
-    @media only screen and (min-width: 993px) { body { padding-left: 240px; } }
-    @media only screen and (min-width: 601px) and (max-width: 992px) { body { padding-left: 72px; } .app-sidebar { width: 72px; } .nav-text { opacity: 0; display: none; } .nav-item { justify-content: center; padding: 16px 0; border-left: 4px solid transparent; border-right: 0; } .nav-item i { margin-right: 0; } .nav-item.active { border-left: 4px solid var(--primary-color); border-right: 0; } }
-    @media only screen and (max-width: 600px) { body { padding-bottom: 80px; padding-left: 0; } .app-sidebar { width: 72px !important; transform: translateX(-100%); overflow: hidden; } .nav-text { display: none !important; } .mobile-nav-container { transform: translateY(0); pointer-events: auto; } .header-right-container { top: 8px; } .container { margin-left: 0 !important; margin-right: 0 !important; } }
+    /* Responsive Breakpoints */
+    
+    @media only screen and (min-width: 993px) { 
+        body { padding-left: 240px; } 
+    }
+    
+    @media only screen and (min-width: 601px) and (max-width: 992px) {
+        body { padding-left: 72px; }
+        .app-sidebar { width: 72px; }
+        .nav-text { opacity: 0; display: none; } 
+        .nav-item { justify-content: center; padding: 16px 0; border-left: 0; border-right: 4px solid transparent; }
+        .nav-item i { margin-right: 0; }
+        .nav-item.active { border-right: 4px solid var(--primary-color); }
+    }
+    
+    @media only screen and (max-width: 600px) {
+        body { padding-bottom: 80px; padding-left: 0; } /* Adjusted padding-bottom for nav bar */
+        
+        .app-sidebar { 
+            width: 72px !important;
+            transform: translateX(-100%);
+            overflow: hidden; 
+        }
+        
+        .nav-text { display: none !important; }
+        
+        .mobile-nav-container { 
+            transform: translateY(0); 
+            pointer-events: auto;
+        }
+        
+        .header-right-container { top: 8px; }
+        
+        .container { 
+            margin-left: 0 !important; 
+            margin-right: 0 !important; 
+        }
+    }
+    /* --- Navigation Styles End --- */
 
-    .header-right-container { position: absolute; top: 8px; right: 12px; display: flex; align-items: center; gap: 10px; z-index: 1100; }
+    .header-right-container {
+        position: absolute; top: 8px; right: 12px;
+        display: flex; align-items: center; 
+        gap: 10px; 
+        z-index: 1100;
+    }
+
     .theme-switch-wrapper { display: flex; align-items: center; gap: 8px; height: 18px !important; }
     #theme-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; line-height: 1 !important; }
+    
     .theme-switch { display: inline-block; position: relative; margin-bottom: 0; height: 18px !important; width: 36px !important; line-height: 1 !important; vertical-align: middle; }
     .theme-switch input { display: none; }
+    
     .slider { background-color: #ccc; position: absolute; cursor: pointer; top: 0; left: 0; width: 36px; height: 18px; transition: .4s; border-radius: 34px; }
     .slider:before { background-color: white; content: ""; position: absolute; height: 14px; width: 14px; left: 2px; bottom: 2px; transition: .4s; border-radius: 50%; }
     input:checked + .slider { background-color: var(--primary-color); }
     input:checked + .slider:before { transform: translateX(18px); }
-    .region-container { position: relative; z-index: 1002; width: 88px; }
-    .region-capsule { display: flex; align-items: center; gap: 0; background-color: var(--bg-surface); border: 1px solid var(--border-color); padding: 4px 6px; border-radius: 24px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); height: 30px; box-sizing: border-box; cursor: pointer; transition: border-radius 0.1s, box-shadow 0.2s; }
-    .region-capsule.active { border-radius: 12px 12px 0 0; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-bottom: 1px solid transparent; }
+    
+    .region-container {
+        position: relative;
+        z-index: 1002;
+        width: 88px;
+    }
+
+    .region-capsule {
+        display: flex; 
+        align-items: center;
+        gap: 0;
+        background-color: var(--bg-surface);
+        border: 1px solid var(--border-color);
+        padding: 4px 6px;
+        border-radius: 24px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        height: 30px; 
+        box-sizing: border-box;
+        cursor: pointer;
+        transition: border-radius 0.1s, box-shadow 0.2s;
+    }
+    
+    .region-capsule.active {
+        border-radius: 12px 12px 0 0; 
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        border-bottom: 1px solid transparent; 
+    }
+
     .region-icon { color: var(--text-muted); font-size: 1rem; flex-shrink: 0; }
-    .region-text { color: var(--text-primary); font-size: 0.75rem; font-weight: 700; white-space: nowrap; user-select: none; flex: 1; text-align: center; margin-right: 3px; }
-    .region-dropdown-list { display: none; position: absolute; top: 100%; right: 0; left: 0; background-color: var(--bg-surface); border: 1px solid var(--border-color); border-top: 1px solid #eee; border-radius: 0 0 12px 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); list-style: none; margin: 0; padding: 5px 0; width: 100%; z-index: 1003; text-align: center; }
+    
+    .region-text {
+        color: var(--text-primary); 
+        font-size: 0.75rem; 
+        font-weight: 700; 
+        white-space: nowrap;
+        user-select: none;
+        flex: 1;
+        text-align: center;
+        margin-right: 3px;
+    }
+
+    .region-dropdown-list {
+        display: none;
+        position: absolute;
+        top: 100%; right: 0; left: 0;
+        background-color: var(--bg-surface);
+        border: 1px solid var(--border-color);
+        border-top: 1px solid #eee;
+        border-radius: 0 0 12px 12px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        list-style: none;
+        margin: 0;
+        padding: 5px 0;
+        width: 100%;
+        z-index: 1003;
+        text-align: center;
+    }
+    
     body.dark-mode .region-dropdown-list { border-top: 1px solid #444; }
-    .region-dropdown-list li { padding: 8px 0; font-size: 0.8rem; color: var(--text-primary); cursor: pointer; white-space: nowrap; }
+
+    .region-dropdown-list li {
+        padding: 8px 0;
+        font-size: 0.8rem;
+        color: var(--text-primary);
+        cursor: pointer;
+        white-space: nowrap;
+    }
+    
     .region-dropdown-list li:hover { background-color: var(--bg-sub); color: var(--primary-color); font-weight: 700; }
 
-    .container { margin-top: 30px; width: auto !important; max-width: 100% !important; min-height: 60vh; margin-left: 15px !important; margin-right: 15px !important; transition: margin 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
-    #dynamic-header-wrapper { position: relative; width: 100%; height: 220px; margin-top: 20px; margin-bottom: 20px; transition: height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); z-index: 100; overflow: visible; max-width: 100%; }
+    .container { 
+        margin-top: 30px; 
+        width: auto !important; 
+        max-width: 100% !important; 
+        min-height: 60vh;
+        margin-left: 15px !important;
+        margin-right: 15px !important;
+        transition: margin 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
     
-    .app-title-container { position: absolute; display: flex; justify-content: center; align-items: center; z-index: 2; width: 220px; top: 30px; left: calc(50% - 110px); margin: 0 !important; transform: none; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
-    .synapse-logo-container { position: relative; display: inline-block; max-width: 250px; overflow: hidden; white-space: nowrap; transition: max-width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); vertical-align: middle; }
-    .synapse-text-logo { position: relative; z-index: 2; font-size: 2.6rem; font-weight: 900; color: #000000; letter-spacing: 2px; line-height: 1; transition: color 0.3s, opacity 0.3s; }
-    body.dark-mode .synapse-text-logo { color: #ffffff; }
-    .logo-bg-wrapper { position: absolute; top: 1px; bottom: 1px; left: 0; right: 0; z-index: 1; }
-    .bg-triangle-top { position: absolute; top: 0; left: 0; width: 100%; height: 100%; clip-path: polygon(0 0, 100% 0, 100% 100%); background: linear-gradient(to right, rgba(var(--primary-rgb), 0.8), rgba(var(--primary-rgb), 0.6) 50%, rgba(var(--primary-rgb), 0)); }
-    .bg-triangle-bottom { position: absolute; top: 0; left: 0; width: 100%; height: 100%; clip-path: polygon(0 0, 100% 100%, 0 100%); background: linear-gradient(to left, rgba(var(--primary-rgb), 0.8), rgba(var(--primary-rgb), 0.6) 50%, rgba(var(--primary-rgb), 0)); }
-    .title-ygo { position: absolute; top: -20px; left: 0; width: 100%; text-align: center; font-size: 1rem; font-weight: 700; color: var(--text-primary); letter-spacing: 2px; opacity: 0.8; transition: opacity 0.3s ease; }
-    .title-beta { position: absolute; bottom: -25px; left: 0; width: 100%; text-align: center; font-size: 0.85rem; font-weight: 700; color: var(--error-red); letter-spacing: 3px; transition: opacity 0.3s ease; }
+    #dynamic-header-wrapper {
+        position: relative;
+        width: 100%;
+        height: 220px; /* Default Height */
+        margin-top: 20px;
+        margin-bottom: 20px;
+        transition: height 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+        z-index: 100;
+        overflow: visible; 
+        max-width: 100%;
+    }
+
+    /* Logo Container Shared Styles */
+    .app-title-container {
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 2;
+        width: 220px;
+        margin: 0;
+        transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
     
-    .search-box { position: absolute; padding: 0; background: transparent; box-shadow: none; display: flex; flex-direction: column; align-items: center; z-index: 1; top: 130px; width: min(95%, 700px); left: max(2.5%, calc(50% - 350px)); margin: 0 !important; transform: none; transition: top 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); will-change: top, width, left; }
+    .synapse-logo-container {
+        position: relative;
+        display: inline-block;
+        max-width: 250px; 
+        overflow: hidden;
+        white-space: nowrap;
+        transition: max-width 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), width 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+        vertical-align: middle;
+    }
+
+    .synapse-text-logo {
+        position: relative;
+        z-index: 2;
+        font-size: 2.6rem;
+        font-weight: 900;
+        color: #000000;
+        letter-spacing: 2px;
+        line-height: 1;
+        transition: color 0.3s, opacity 0.3s;
+    }
+    
+    body.dark-mode .synapse-text-logo {
+        color: #ffffff;
+    }
+    
+    .logo-bg-wrapper {
+        position: absolute;
+        top: 1px;
+        bottom: 1px;
+        left: 0;
+        right: 0;
+        z-index: 1;
+    }
+
+    .bg-triangle-top {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        clip-path: polygon(0 0, 100% 0, 100% 100%);
+        background: linear-gradient(to right, rgba(var(--primary-rgb), 0.8), rgba(var(--primary-rgb), 0.6) 50%, rgba(var(--primary-rgb), 0));
+    }
+
+    .bg-triangle-bottom {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        clip-path: polygon(0 0, 100% 100%, 0 100%);
+        background: linear-gradient(to left, rgba(var(--primary-rgb), 0.8), rgba(var(--primary-rgb), 0.6) 50%, rgba(var(--primary-rgb), 0));
+    }
+
+    .title-ygo { 
+        position: absolute; 
+        top: -20px; 
+        left: 0; width: 100%; 
+        text-align: center; 
+        font-size: 1rem; font-weight: 700; color: var(--text-primary); letter-spacing: 2px; opacity: 0.8;
+        transition: opacity 0.3s ease;
+    }
+    .title-beta { 
+        position: absolute; 
+        bottom: -25px; 
+        left: 0; width: 100%; 
+        text-align: center; 
+        font-size: 0.85rem; font-weight: 700; color: var(--error-red); letter-spacing: 3px; 
+        transition: opacity 0.3s ease;
+    }
+    
+    /* Search Box Shared Styles */
+    .search-box { 
+        position: absolute;
+        padding: 0; 
+        background: transparent; 
+        box-shadow: none; 
+        display: flex; 
+        flex-direction: column; 
+        align-items: center; 
+        z-index: 1;
+        margin: 0;
+        transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+        will-change: top, left, width, margin-left;
+    }
     
     .search-header-row { width: 100%; max-width: 700px; margin: 0 auto; display: flex; justify-content: flex-start; padding-left: 5px; margin-bottom: 5px; transition: opacity 0.3s ease; }
-    .search-row { display: flex; align-items: center; justify-content: center; width: 100%; gap: 8px; max-width: 700px !important; justify-content: flex-start; transition: max-width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
     
-    body.mode-compact #dynamic-header-wrapper { height: 70px; margin-top: 0; max-width: 700px; margin-left: auto; margin-right: auto; }
-    body.mode-compact .app-title-container { top: 27px; width: 3.9rem !important; left: 10px; margin: 0 !important; }
-    body.mode-compact .title-ygo, body.mode-compact .title-beta { display: none !important; }
-    body.mode-compact .search-box { top: 22px; left: 80px; margin: 0 !important; width: min(calc(100% - 90px), 630px); max-width: 630px; align-items: flex-start; }
-    body.mode-compact .search-row { margin: 0; }
-    body.mode-compact .synapse-logo-container { max-width: 3.9rem; width: 3.9rem; }
-    body.mode-compact .synapse-text-logo { opacity: 0; }
-    body.mode-compact .search-header-row { opacity: 0; pointer-events: none; height: 0; margin: 0; }
+    .search-row { 
+        display: flex; align-items: center; justify-content: center; width: 100%; gap: 8px; 
+        max-width: 700px !important; 
+        justify-content: flex-start;
+        transition: margin 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), max-width 0.5s;
+    }
+    
+    /* === DESKTOP ANIMATION LOGIC (min-width: 801px) === */
+    @media only screen and (min-width: 801px) {
+        /* Home Mode (Desktop) */
+        .app-title-container {
+            top: 30px; 
+            left: 50%; 
+            transform: none; 
+            margin-left: -110px; /* Center of 220px */
+        }
+        
+        .search-box {
+            top: 130px;
+            left: 50%;
+            transform: none;
+            width: 700px;
+            margin-left: -350px; /* Center of 700px */
+            align-items: center;
+        }
+        
+        .search-row {
+            margin: 0 auto; 
+        }
 
-    #content-slider-wrapper { position: relative; width: 100%; overflow: hidden; transition: height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); min-height: 100px; }
-    .content-section { display: none; opacity: 0; width: 100%; transition: opacity 0.4s ease; top: 0; left: 0; }
-    .content-section.active { opacity: 1; display: block; }
-    #result-content-wrapper { width: 100%; }
-    #result-area { width: 100%; max-width: 700px; margin: 0 auto; padding-top: 30px; padding-bottom: 30px; overflow-x: auto; }
+        /* Compact Mode (Desktop) */
+        body.mode-compact #dynamic-header-wrapper {
+            height: 70px; 
+            margin-top: 0;
+            max-width: 700px;
+            margin-left: auto; 
+            margin-right: auto;
+        }
+
+        body.mode-compact .app-title-container {
+            top: 27px; 
+            left: 50%;
+            transform: none;
+            margin-left: -350px; /* Start of 700px box */
+            width: 3.9rem !important; 
+        }
+        
+        body.mode-compact .title-ygo, 
+        body.mode-compact .title-beta {
+            display: none !important;
+        }
+
+        body.mode-compact .search-box {
+            top: 22px;
+            left: 50%;
+            transform: none;
+            width: 633px; /* 700px - 67px */
+            margin-left: -283px; /* -350px + 67px */
+            align-items: flex-start;
+        }
+        
+        body.mode-compact .search-row {
+            margin: 0; 
+        }
+    }
+
+    /* === MOBILE/TABLET LOGIC (max-width: 800px) === */
+    @media only screen and (max-width: 800px) {
+        /* Home Mode (Mobile) */
+        .app-title-container {
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-left: 0;
+        }
+        
+        .search-box {
+            top: 130px;
+            left: 0;
+            width: 100%;
+            margin-left: 0;
+            transform: none;
+        }
+        
+        /* Compact Mode (Mobile) */
+        body.mode-compact #dynamic-header-wrapper {
+            height: 70px; 
+            margin-top: 0;
+        }
+
+        body.mode-compact .app-title-container {
+            top: 27px;
+            left: 0;
+            transform: none;
+            margin-left: 0;
+            width: 3.9rem !important;
+        }
+        
+        body.mode-compact .title-ygo, 
+        body.mode-compact .title-beta {
+            display: none !important;
+        }
+
+        body.mode-compact .search-box {
+            top: 22px;
+            left: 67px;
+            width: calc(100% - 67px);
+            margin-left: 0;
+            transform: none;
+            align-items: flex-start;
+        }
+        
+        body.mode-compact .search-row {
+            margin: 0;
+        }
+    }
+
+    /* Common Compact Mode Styles */
+    body.mode-compact .synapse-logo-container {
+        max-width: 3.9rem; 
+        width: 3.9rem;
+    }
+
+    body.mode-compact .synapse-text-logo { opacity: 0; }
+    
+    body.mode-compact .title-ygo, 
+    body.mode-compact .title-beta {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    body.mode-compact .search-header-row {
+        opacity: 0;
+        pointer-events: none;
+        height: 0;
+        margin: 0;
+    }
+
+    #content-slider-wrapper {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        transition: height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        min-height: 100px;
+    }
+
+    .content-section {
+        display: none;
+        opacity: 0;
+        width: 100%;
+        transition: opacity 0.4s ease;
+        top: 0;
+        left: 0;
+    }
+    .content-section.active {
+        opacity: 1;
+        display: block; 
+    }
+    
+    /* [FIX] New Wrapper for Result Area Animation */
+    #result-content-wrapper {
+        width: 100%;
+    }
+    
+    /* [MODIFIED] Result Area Constraints - Padding instead of Margin */
+    #result-area { 
+        width: 100%;
+        max-width: 700px;
+        margin: 0 auto; /* No vertical margin */
+        padding-top: 30px; /* Use padding for spacing */
+        padding-bottom: 30px;
+        overflow-x: auto; 
+    }
+    
+    /* [FIX] Selector for Result Area Tables */
     #result-area th { background: var(--primary-color); color: white; border-color: var(--primary-dark); }
-    .help-trigger-btn { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 4px; transition: color 0.2s; height: 18px !important; line-height: 1 !important; }
+
+    /* Existing Styles ... */
+    .help-trigger-btn {
+        font-size: 0.75rem; font-weight: 600; color: var(--text-muted); cursor: pointer;
+        display: flex; align-items: center; gap: 4px; transition: color 0.2s;
+        height: 18px !important; line-height: 1 !important;
+    }
     .help-trigger-btn i { font-size: 0.8rem; transform: translateY(-1px); }
     .help-trigger-btn:hover { color: var(--primary-color); }
-    .search-input-wrapper { flex: 1; position: relative; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 24px; padding: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: border-radius 0.2s ease, box-shadow 0.2s ease; z-index: 1001; }
+
+    .search-input-wrapper { 
+        flex: 1; position: relative; background: var(--bg-surface); border: 1px solid var(--border-color);
+        border-radius: 24px; padding: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        transition: border-radius 0.2s ease, box-shadow 0.2s ease; z-index: 1001;
+    }
     .search-input-wrapper.active { border-radius: 24px 24px 0 0; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-bottom: 1px solid transparent; }
+
     #search-btn { border-radius: 50px !important; width: 80px; height: 45px; padding: 0; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    input#card-search { text-align: left !important; font-size: 1.1rem; padding-left: 20px !important; padding-right: 40px !important; box-sizing: border-box; color: var(--text-primary); border-bottom: none !important; box-shadow: none !important; height: 46px !important; margin: 0 !important; width: 100%; display: block; }
+
+    input#card-search { 
+        text-align: left !important; font-size: 1.1rem; padding-left: 20px !important; padding-right: 40px !important;
+        box-sizing: border-box; color: var(--text-primary); border-bottom: none !important; box-shadow: none !important;
+        height: 46px !important; margin: 0 !important; width: 100%; display: block;
+    }
     input#card-search::placeholder { color: var(--text-muted); }
     body.dark-mode ::placeholder { color: #757575 !important; }
-    .clear-search-btn { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: rgba(0,0,0,0.25); display: none; z-index: 5; transition: color 0.2s; }
+    
+    .clear-search-btn { 
+        position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; 
+        color: rgba(0,0,0,0.25); display: none; z-index: 5; transition: color 0.2s;
+    }
     .clear-search-btn:hover { color: rgba(0,0,0,0.6); }
     body.dark-mode .clear-search-btn { color: rgba(255,255,255,0.25); }
     body.dark-mode .clear-search-btn:hover { color: rgba(255,255,255,0.7); }
+
     .btn.cyan-theme { background-color: var(--primary-color) !important; font-weight: 600; color: #fff; }
-    .btn.cyan-theme.disabled, .btn.cyan-theme:disabled { background-color: var(--disabled-bg) !important; color: var(--disabled-text) !important; }
-    .custom-dropdown { position: absolute; top: 100%; left: -1px; right: -1px; background-color: var(--bg-surface); border: 1px solid var(--border-color); border-top: 1px solid #eee; border-radius: 0 0 24px 24px; z-index: 1000; max-height: 250px; overflow-y: auto; display: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin: 0; padding: 5px 0 10px 0; list-style: none; }
+    
+    .btn.cyan-theme.disabled, .btn.cyan-theme:disabled {
+        background-color: var(--disabled-bg) !important;
+        color: var(--disabled-text) !important;
+    }
+    
+    .custom-dropdown {
+      position: absolute; top: 100%; left: -1px; right: -1px; 
+      background-color: var(--bg-surface); border: 1px solid var(--border-color); border-top: 1px solid #eee; 
+      border-radius: 0 0 24px 24px; z-index: 1000; max-height: 250px; overflow-y: auto; display: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin: 0; padding: 5px 0 10px 0; list-style: none;
+    }
     body.dark-mode .custom-dropdown { border-top: 1px solid #444; }
-    .custom-dropdown li { padding: 8px 20px; cursor: pointer; border-bottom: none; font-size: 0.95rem; color: var(--text-primary); display: block; white-space: normal; transition: background-color 0.1s; }
+
+    .custom-dropdown li {
+      padding: 8px 20px; cursor: pointer; border-bottom: none; font-size: 0.95rem; color: var(--text-primary);
+      display: block; white-space: normal; transition: background-color 0.1s;
+    }
     .custom-dropdown li:hover, .custom-dropdown li.active { background-color: var(--bg-sub); }
     .custom-dropdown li.text-suggest { color: var(--primary-color) !important; font-weight: 700 !important; }
     .custom-dropdown li .text-match { color: var(--text-primary) !important; font-weight: 400 !important; }
     .custom-dropdown li.no-result-item { font-style: italic; color: var(--text-muted) !important; cursor: default; pointer-events: none; font-weight: 400 !important; text-align: center; padding: 15px; }
+
     .dropdown-header { display: flex !important; align-items: center; justify-content: space-between !important; padding: 8px 15px !important; background-color: var(--bg-header) !important; cursor: default !important; }
     .dropdown-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; }
     .delete-icon { cursor: pointer; color: var(--text-muted); font-size: 1.1rem; transition: color 0.2s; }
     .delete-icon:hover { color: var(--error-red); }
+
     .recent-header-item { display: flex !important; align-items: center; justify-content: space-between !important; padding: 8px 20px !important; cursor: default !important; margin-bottom: 5px; }
     .recent-header-item:hover { background-color: transparent !important; }
     .recent-title { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
     .clear-all-btn { font-size: 0.8rem; color: var(--text-muted); cursor: pointer; text-decoration: underline; }
     .clear-all-btn:hover { color: var(--error-red); }
+
     .recent-item-row { display: flex !important; align-items: center; justify-content: space-between !important; }
     .recent-text { flex: 1; }
     .item-delete-btn { color: var(--text-muted); font-size: 1rem; padding: 4px; cursor: pointer; display: flex; align-items: center; }
     .item-delete-btn:hover { color: var(--error-red); }
+
     .url-input-container { position: relative; display: flex; align-items: center; margin-top: 20px; margin-bottom: 5px; }
     .url-input-container input { margin-bottom: 0 !important; padding-right: 40px !important; color: var(--text-primary); border-bottom: 1px solid var(--text-muted) !important; }
     .valid-icon { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: none; }
     .status-msg { font-size: 0.85rem; font-weight: 600; margin-bottom: 20px; min-height: 1.2rem; }
+    
     .guide-btn { cursor: pointer; color: var(--primary-dark); font-size: 1rem; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 4px; }
     .guide-btn i { transition: transform 0.2s; } 
     .guide-btn.active i { transform: rotate(90deg); }
     .guide-content { background: var(--bg-sub); padding: 18px; border-radius: 8px; font-size: 0.95rem; border: 1px solid var(--border-color); display: none; margin-bottom: 15px; color: var(--text-primary); }
     body.dark-mode .guide-content { color: #b0b0b0; }
+
     table { background: var(--bg-surface); font-size: 0.85rem; table-layout: fixed; width: 100%; border-collapse: collapse; color: var(--text-primary); }
     th { background: var(--bg-header); color: var(--text-secondary); font-weight: 700; padding: 10px 4px; text-align: center; border: 1px solid var(--border-color); font-size: 0.8rem; word-break: break-all; }
     td { border: 1px solid var(--border-color); text-align: center; padding: 6px 4px; position: relative; word-break: break-all; color: var(--text-primary); }
+    
     .col-card-no { width: 180px; } .col-loc { width: 110px; } .col-total { width: 60px; } .col-proc { width: 70px; } 
     .expand-btn { cursor: pointer; color: var(--primary-color); position: absolute; right: 4px; top: 50%; transform: translateY(-50%); font-size: 1.3rem; }
+    
     .sub-row { width: 100%; max-width: 800px; display: flex; justify-content: flex-start; align-items: flex-start; margin-top: 5px; min-height: 20px; } 
+    
     .modal { border-radius: 12px; width: 95% !important; max-width: 600px !important; background-color: var(--bg-surface); color: var(--text-primary); }
     .modal .modal-content { background-color: var(--bg-surface); }
     .modal .modal-footer { background-color: var(--bg-surface); border-top: 1px solid var(--border-color); }
     #settings-modal .modal-footer { border-top: none !important; }
     #add-result-modal { width: 95% !important; max-width: 1000px !important; }
+    
     #loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--overlay-bg); z-index: 11000; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
     body.dark-mode #loading-text { color: var(--primary-color) !important; }
+    
     .new-card-box { margin-bottom: 20px; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; background: var(--bg-surface); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+
     .summary-split-wrapper { display: flex; width: 100%; }
     .summary-left { width: 40%; background-color: var(--primary-color); color: white; font-weight: 700; font-size: 1rem; display: flex; align-items: center; justify-content: center; border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); text-align: center; padding: 10px; }
     .summary-right { width: 60%; }
+    
     .summary-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
     .summary-table td { border: 1px solid var(--border-color); border-left: none; padding: 10px; text-align: center; color: var(--text-primary); }
     .summary-table tr:first-child td { border-top: none; }
+    
     .border-double-top { border-top: 3px double var(--border-color) !important; background-clip: padding-box; position: relative; z-index: 1; }
     .summary-label-cell { background-color: var(--bg-sub); color: var(--text-secondary); font-weight: 600; width: 50%; }
     .summary-value-cell { width: 50%; font-weight: 500; }
+    
     .show-more-btn { width: 100%; background-color: var(--bg-sub); color: var(--primary-dark); font-weight: 600; padding: 8px 0; border: none; border-top: 1px solid var(--border-color); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; transition: background-color 0.2s; }
     .show-more-btn:hover { background-color: var(--border-color); }
     body.dark-mode .show-more-btn { color: var(--primary-color); }
+    
     .detail-slide-wrapper { max-height: 0; overflow-y: hidden; overflow-x: auto; transition: max-height 0.4s ease-in-out; border-top: none; }
+
     .split-table-wrapper { display: flex; width: 100%; border-top: 1px solid var(--border-color); }
     .fixed-side { width: 40%; flex-shrink: 0; border-right: 1px solid var(--border-color); background-color: var(--bg-surface); z-index: 2; }
     .scroll-side { width: 60%; overflow-x: auto; }
+    
     .split-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
     .split-table th { background-color: var(--bg-sub); color: var(--text-secondary); font-weight: 600; padding: 8px 4px; font-size: 0.85rem; border-top: none !important; border-left: none !important; border-bottom: 1px solid var(--border-color); border-right: 1px solid var(--border-color); white-space: nowrap; height: 35px; box-sizing: border-box; }
     .split-table td { padding: 8px 4px; font-size: 0.85rem; border-top: none !important; border-left: none !important; border-bottom: 1px solid var(--border-color); border-right: 1px solid var(--border-color); white-space: nowrap; height: 35px; box-sizing: border-box; text-align: center; color: var(--text-primary); }
     .split-table th:last-child, .split-table td:last-child { border-right: none; }
+
     .btn-flat-action { background-color: transparent !important; color: var(--text-secondary) !important; font-weight: 600; box-shadow: none !important; border: 1px solid var(--border-color); }
     .btn-flat-action:hover { background-color: var(--bg-header) !important; }
-    #intro-area { text-align: center; color: var(--text-secondary); padding-top: 40px; padding-bottom: 40px; margin: 0; line-height: 1.8; font-size: 0.95rem; }
+
+    /* [MODIFIED] Intro Area Styling to use Padding instead of Margin */
+    #intro-area { 
+        text-align: center; 
+        color: var(--text-secondary); 
+        padding-top: 40px; 
+        padding-bottom: 40px; 
+        margin: 0; 
+        line-height: 1.8; 
+        font-size: 0.95rem; 
+    }
     #intro-area a { color: var(--primary-color); font-weight: 700; text-decoration: underline; cursor: pointer; }
-    .centered-content-area { text-align: center; padding-top: 50px; padding-bottom: 50px; margin: 0; }
+    
+    /* [MODIFIED] Unified Content Area Styling (Margin 0, Padding only) */
+    .centered-content-area {
+        text-align: center;
+        padding-top: 50px;
+        padding-bottom: 50px;
+        margin: 0; /* Enforce 0 margin to prevent collapse issues */
+    }
+    
+    /* [MODIFIED] Footer Styles for v0.10.0 */
     #main-footer { text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 50px; padding-bottom: 30px; }
+    
     .footer-disclaimer { margin-bottom: 12px; color: var(--text-muted); font-size: 0.85rem; }
     .footer-disclaimer span { display: inline-block; } 
-    .footer-info-box { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; line-height: 1.5; }
+
+    /* New Flex Footer Layout */
+    .footer-info-box {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        line-height: 1.5;
+    }
+    
     .footer-item { white-space: nowrap; }
     .footer-separator { margin: 0 8px; user-select: none; opacity: 0.5; }
+    
     #main-footer a.maker-link { color: var(--text-muted); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; transition: color 0.2s; font-weight: 600; }
     #main-footer a.maker-link:hover { color: #f44336; }
-    @media only screen and (max-width: 600px) { .footer-separator.mobile-hide { display: none; } .footer-item.copyright { width: 100%; margin-top: 4px; } }
-    .sheet-name-display { display: inline-block; max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; color: var(--text-muted); font-size: 0.8rem; margin-left: 8px; }
-    @media only screen and (max-width: 600px) { .sheet-name-display { max-width: 100px; } }
+
+    /* Responsive Break for Copyright */
+    @media only screen and (max-width: 600px) {
+        .footer-separator.mobile-hide { display: none; }
+        .footer-item.copyright { width: 100%; margin-top: 4px; }
+    }
+
+    /* [NEW] Sheet Name Display Style */
+    .sheet-name-display {
+        display: inline-block;
+        max-width: 150px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        vertical-align: middle;
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        margin-left: 8px;
+    }
+    @media only screen and (max-width: 600px) {
+        .sheet-name-display { max-width: 100px; }
+    }
   </style>
 </head>
 <body>
@@ -515,25 +942,8 @@
       <div id="add-content-area" class="content-section centered-content-area">
           <i class="material-icons" style="font-size: 4rem; color: var(--text-muted); margin-bottom: 20px;">library_add</i>
           <h5 style="font-weight: 700; color: var(--text-primary);">카드 등록</h5>
-          
-          <table id="page-add-table" class="page-entry-table">
-              <tbody id="page-add-tbody">
-                  </tbody>
-              <tfoot id="page-add-tfoot">
-                  <tr>
-                      <td colspan="4" class="add-row-btn-cell">
-                          <button class="add-page-row-btn" onclick="addPageEntry()">
-                              <i class="material-icons" style="vertical-align:middle; font-size:1.2rem;">add</i> 추가 등록
-                          </button>
-                      </td>
-                  </tr>
-              </tfoot>
-          </table>
-
-          <div class="page-btn-container">
-              <button class="btn grey lighten-2 waves-effect waves-dark" style="color:#424242; font-weight:600;" onclick="checkAuthAndOpen('#add-card-modal')">기존 모달 열기</button>
-              <button class="btn cyan-theme waves-effect waves-light" onclick="submitPageEntries()">등록</button>
-          </div>
+          <p style="color: var(--text-secondary); margin-bottom: 30px;">새로운 카드를 리스트에 추가합니다.</p>
+          <button class="btn cyan-theme waves-effect waves-light" onclick="checkAuthAndOpen('#add-card-modal')">기존 모달 열기</button>
       </div>
 
       <div id="move-content-area" class="content-section centered-content-area">
@@ -557,7 +967,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.11.0</span>
+        <span class="footer-item">ver. 0.10.0</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
@@ -679,7 +1089,7 @@
   let isContinuingRegistration = false;
   let blurTimer = null;
   let currentRegion = 'ko';
-  let currentMode = 'home'; 
+  let currentMode = 'home'; // 'home' | 'search' | 'discard' | 'add' | 'move' | 'settings'
 
   let currentFocus = -1;
 
@@ -688,10 +1098,8 @@
     loadRegion();
     checkClearBtn(); 
     
+    // [NEW] Set initial active state
     updateActiveNav('home');
-    
-    // [MODIFIED] 초기화 함수 호출
-    initPageAdd();
 
     const modals = document.querySelectorAll('.modal');
     modals.forEach(modal => {
@@ -704,8 +1112,7 @@
                 }
                 if(el.id === 'manage-card-modal') resetManageModal(); 
                 if(el.id === 'add-result-modal') {
-                   // [MODIFIED] 등록 완료 후 모달 닫힘 -> 페이지 초기화 방식 변경
-                   handleContinueRegistration();
+                    location.reload(); 
                 }
             } 
         };
@@ -719,6 +1126,7 @@
 
     M.Tooltip.init(document.querySelectorAll('.tooltipped'));
     
+    // Search Input Logic
     const searchInput = document.getElementById('card-search');
     
     const handleFocusOrClick = () => {
@@ -742,6 +1150,8 @@
         const val = e.target.value;
         if (!val) {
             showRecentInDropdown();
+            // In input, we don't switch mode immediately, just clear text
+            document.getElementById('result-area').innerHTML = ''; 
         }
         else filterAndShowDropdown(val);
         checkClearBtn(); 
@@ -835,78 +1245,63 @@
     updateDisconnectBtn(); refreshInitialData();
   });
 
+  // [NEW] Function to update active nav items
   function updateActiveNav(mode) {
       document.querySelectorAll('.nav-item, .mobile-nav-item').forEach(el => el.classList.remove('active'));
       const targets = document.querySelectorAll(`[data-mode="${mode}"]`);
       targets.forEach(el => el.classList.add('active'));
   }
 
-  let transitionTimer = null;
-
+  // [NEW] Robust Mode Switching with Cross-Fade & Height Animation
   function switchToMode(mode) {
       if (currentMode === mode) return; 
       const previousMode = currentMode;
       currentMode = mode;
       
+      // Update Nav Active State
       updateActiveNav(mode);
       
       const body = document.body;
       const searchInput = document.getElementById('card-search');
       
+      // Header & Input Logic
       if (mode !== 'search') {
           searchInput.value = '';
           document.getElementById('clear-btn').style.display = 'none';
           document.getElementById('custom-dropdown').style.display = 'none';
           toggleSearchWrapper(false);
-          searchInput.placeholder = "카드 검색";
-      } else {
-          searchInput.placeholder = "";
       }
       
+      // Header Animation
       if (mode === 'home') {
           body.classList.remove('mode-compact');
       } else {
           body.classList.add('mode-compact');
       }
 
+      // Content Transition Logic
       const wrapper = document.getElementById('content-slider-wrapper');
       
-      if (transitionTimer) {
-          clearTimeout(transitionTimer);
-          transitionTimer = null;
-          
-          wrapper.style.height = wrapper.offsetHeight + 'px';
-
-          const sections = wrapper.querySelectorAll('.content-section');
-          sections.forEach(sec => {
-              sec.style.display = 'none';
-              sec.style.opacity = '0';
-              sec.style.position = '';
-              sec.style.width = '';
-              sec.style.top = '';
-              sec.style.left = '';
-              sec.classList.remove('active');
-          });
-          
-          const ghost = document.getElementById('result-ghost');
-          if(ghost && ghost.parentNode) ghost.parentNode.removeChild(ghost);
-      }
-
+      // 1. Identify Target
       let targetContentId = '';
       if (mode === 'home') targetContentId = 'intro-area';
-      else if (mode === 'search') targetContentId = 'result-content-wrapper'; 
+      else if (mode === 'search') targetContentId = 'result-content-wrapper'; // [FIX] Wrapper is the target
       else if (mode === 'discard') targetContentId = 'discard-content-area';
       else if (mode === 'add') targetContentId = 'add-content-area';
       else if (mode === 'move') targetContentId = 'move-content-area';
-      else if (mode === 'settings') targetContentId = 'settings-content-area'; 
+      else if (mode === 'settings') targetContentId = 'settings-content-area'; // [NEW]
 
       const currentEl = wrapper.querySelector('.content-section.active');
       const nextEl = document.getElementById(targetContentId);
 
-      if (!wrapper.style.height) {
-           wrapper.style.height = wrapper.offsetHeight + 'px';
-      }
+      // [FIX] MOVED: Reset logic moved to setTimeout below (inside cleanup)
 
+      // 2. Lock Height for Smooth Transition
+      const startHeight = wrapper.offsetHeight;
+      wrapper.style.height = startHeight + 'px';
+
+      // 3. Prepare Animation State
+      // Set current element to absolute so it doesn't push the new one down, but stays visible for fade out
       if(currentEl) {
           currentEl.style.position = 'absolute';
           currentEl.style.top = '0';
@@ -914,24 +1309,28 @@
           currentEl.style.width = '100%';
       }
 
+      // Prepare next element (hidden but in DOM to measure)
       nextEl.style.display = 'block';
-      nextEl.style.position = 'absolute'; 
+      nextEl.style.position = 'absolute'; // Prevent layout shift during measurement
       nextEl.style.opacity = '0';
       nextEl.style.top = '0';
       nextEl.style.left = '0';
       nextEl.style.width = '100%';
       
+      // Force Reflow & Measure
       const targetHeight = nextEl.scrollHeight;
 
+      // 4. Trigger Animations (Next Frame)
       requestAnimationFrame(() => {
-          wrapper.style.height = targetHeight + 'px'; 
+          wrapper.style.height = targetHeight + 'px'; // Animate Wrapper Height
           
-          if(currentEl) currentEl.style.opacity = '0'; 
-          nextEl.style.opacity = '1'; 
+          if(currentEl) currentEl.style.opacity = '0'; // Fade Out Old
+          nextEl.style.opacity = '1'; // Fade In New
       });
 
-      transitionTimer = setTimeout(() => {
-          wrapper.style.height = ''; 
+      // 5. Cleanup after transition
+      setTimeout(() => {
+          wrapper.style.height = ''; // Auto height for responsiveness
           
           if(currentEl) {
               currentEl.style.display = 'none';
@@ -941,22 +1340,18 @@
           }
           
           nextEl.classList.add('active');
-          nextEl.style.position = 'relative'; 
+          nextEl.style.position = 'relative'; // Restore to flow
           nextEl.style.opacity = '';
           nextEl.style.width = '';
           nextEl.style.top = '';
           nextEl.style.left = '';
 
-          const ghost = document.getElementById('result-ghost');
-          if(ghost && ghost.parentNode) ghost.parentNode.removeChild(ghost);
-
+          // [FIX] Delayed Reset for Search Result Area
           if ((mode === 'home' || mode === 'discard' || mode === 'add' || mode === 'move' || mode === 'settings') && previousMode === 'search') {
               document.getElementById('result-area').innerHTML = '';
           }
           
-          transitionTimer = null;
-          
-      }, 400); 
+      }, 400); // Match transition duration (0.4s)
   }
 
   function checkClearBtn() {
@@ -974,229 +1369,6 @@
       const wrapper = document.getElementById('search-wrapper');
       if(isOpen) wrapper.classList.add('active');
       else wrapper.classList.remove('active');
-  }
-
-  // [MODIFIED] initPageAdd: 0.11.0 초기화 로직 변경
-  function initPageAdd() {
-      document.getElementById('page-add-tbody').innerHTML = '';
-      addPageEntry();
-  }
-
-  // [MODIFIED] addPageEntry: 2행을 1세트로 추가 (tbody 생성 안 함)
-  function addPageEntry() {
-      const tbody = document.getElementById('page-add-tbody');
-      
-      // 현재 존재하는 '세트'의 개수 계산 (tr 개수 / 2)
-      const currentSets = tbody.querySelectorAll('tr').length / 2;
-      const nextNum = currentSets + 1;
-      
-      // 홀/짝 결정 (디자인용 클래스)
-      const isOdd = nextNum % 2 !== 0;
-      const groupClass = isOdd ? 'odd' : 'even';
-
-      // --- 첫 번째 행 (윗줄) ---
-      const trTop = document.createElement('tr');
-      trTop.className = `entry-row top-row entry-group ${groupClass}`;
-      trTop.innerHTML = `
-          <td rowspan="2" class="no-cell">${nextNum}</td>
-          <td style="width:30%;"><div class="card-name-disp">카드 번호 입력</div></td>
-          <td style="width:35%;"><input type="text" class="page-card-no" placeholder="카드 번호" oninput="handleCardNoInput(this)" onblur="fetchCardNameForPage(this)" onkeydown="if(event.key==='Enter') fetchCardNameForPage(this)"></td>
-          <td style="width:25%;"><select class="browser-default page-card-another" disabled><option value="" selected>일러스트</option></select></td>
-      `;
-
-      // --- 두 번째 행 (아랫줄) ---
-      const trBottom = document.createElement('tr');
-      trBottom.className = `entry-row bottom-row entry-group ${groupClass}`;
-      trBottom.innerHTML = `
-          <td><select class="browser-default page-card-proc" disabled><option value="" disabled selected>레어도</option>${allProcessingTypes.map(p => `<option value="${p}">${getLocalizedRarity(p)}</option>`).join('')}</select></td>
-          <td>
-            <div style="display:flex; width:100%; height:100%;">
-                <select class="browser-default page-card-loc" onchange="handlePageLocationChange(this)" disabled style="flex:1;"><option value="" disabled selected>보관 위치</option>${allLocations.map(l => `<option value="${l}">${l}</option>`).join('')}<option value="DIRECT">직접 추가</option></select>
-                <input type="text" class="direct-input loc-direct" style="display:none; flex:1; border-left:1px solid rgba(255,255,255,0.3) !important;" placeholder="입력">
-            </div>
-          </td>
-          <td><input type="number" class="page-card-qty" min="1" disabled placeholder="수량" onfocus="if(this.value=='0')this.value=''" onblur="if(this.value=='')this.value='0'"></td>
-      `;
-
-      tbody.appendChild(trTop);
-      tbody.appendChild(trBottom);
-  }
-
-  function handleCardNoInput(input) {
-      const start = input.selectionStart;
-      input.value = input.value.toUpperCase();
-      input.setSelectionRange(start, start);
-  }
-
-  // [MODIFIED] Location Change: Sibling 탐색 로직 변경
-  function handlePageLocationChange(sel) {
-      const container = sel.parentNode;
-      const directInput = container.querySelector('.loc-direct');
-      // sel은 bottomRow에 있음
-      const row = sel.closest('tr'); 
-      const qtyInput = row.querySelector('.page-card-qty');
-      
-      if (sel.value === 'DIRECT') {
-          sel.style.flex = "1"; 
-          directInput.style.display = "block";
-          directInput.style.flex = "1";
-          directInput.focus();
-      } else {
-          sel.style.flex = "1";
-          directInput.style.display = "none";
-          directInput.value = "";
-      }
-      
-      if (sel.value) {
-          qtyInput.disabled = false;
-          if (!qtyInput.value) qtyInput.value = "1";
-      } else {
-          qtyInput.disabled = true;
-          qtyInput.value = "";
-          qtyInput.placeholder = "수량";
-      }
-  }
-
-  // [MODIFIED] fetchCardNameForPage: Top/Bottom Row 탐색 적용
-  async function fetchCardNameForPage(input) {
-      const topRow = input.closest('tr');
-      const bottomRow = topRow.nextElementSibling; // 바로 다음 행이 짝꿍
-
-      const cardNo = input.value.trim();
-      const nameDiv = topRow.querySelector('.card-name-disp'); 
-      
-      const anotherSel = topRow.querySelector('.page-card-another');
-      const procSel = bottomRow.querySelector('.page-card-proc');
-      const locSel = bottomRow.querySelector('.page-card-loc');
-      const qtyInput = bottomRow.querySelector('.page-card-qty');
-
-      // 초기화
-      procSel.disabled = true; procSel.value = "";
-      locSel.disabled = true; locSel.value = "";
-      qtyInput.disabled = true; qtyInput.value = "";
-      anotherSel.disabled = true; anotherSel.innerHTML = '<option value="" selected>일러스트</option>';
-
-      if (!cardNo) {
-          nameDiv.innerText = "카드 번호 입력";
-          return;
-      }
-
-      if (clientCache[cardNo]) {
-          const cached = clientCache[cardNo];
-          nameDiv.innerText = cached.name;
-          applyPageCardDataToRows(cached, topRow, bottomRow);
-          return;
-      }
-
-      nameDiv.innerText = "조회 중...";
-      try {
-          const res = await callApi('getCardNameFromDb', { cardNo });
-          if (res.name.includes("오류") || res.name.includes("확인하세요")) {
-              nameDiv.innerText = res.name;
-          } else {
-              clientCache[cardNo] = { name: res.name, anotherCount: res.anotherCount, rarities: res.rarities };
-              nameDiv.innerText = res.name;
-              applyPageCardDataToRows(res, topRow, bottomRow);
-          }
-      } catch (e) {
-          nameDiv.innerText = "접속 오류";
-      }
-  }
-
-  // [NEW] 분리된 행에 데이터 적용
-  function applyPageCardDataToRows(data, topRow, bottomRow) {
-      const anotherSel = topRow.querySelector('.page-card-another');
-      const procSel = bottomRow.querySelector('.page-card-proc');
-      const locSel = bottomRow.querySelector('.page-card-loc');
-
-      const count = data.anotherCount || 1;
-      let optionsHtml = '';
-      if (count > 1) {
-          optionsHtml += `<option value="" disabled selected>일러스트</option>`;
-          optionsHtml += `<option value="">기본</option>`;
-          for(let i=2; i<=count; i++) {
-              let suffix = "th"; if(i===2) suffix="nd"; if(i===3) suffix="rd";
-              optionsHtml += `<option value="${i}${suffix}">${i}${suffix}</option>`;
-          }
-          anotherSel.disabled = false;
-      } else {
-          optionsHtml += `<option value="" selected>기본</option>`;
-          anotherSel.disabled = true;
-      }
-      anotherSel.innerHTML = optionsHtml;
-
-      if (!data.isFallback && data.rarities && data.rarities.length > 0) {
-          procSel.innerHTML = `<option value="" disabled selected>레어도</option>` + data.rarities.map(r => `<option value="${r}">${getLocalizedRarity(r)}</option>`).join('');
-      } else {
-          procSel.innerHTML = `<option value="" disabled selected>레어도</option>` + allProcessingTypes.map(p => `<option value="${p}">${getLocalizedRarity(p)}</option>`).join('');
-      }
-      procSel.disabled = false;
-      locSel.disabled = false;
-  }
-
-  // [MODIFIED] submitPageEntries: 2행씩 묶어서(Step=2) 순회
-  async function submitPageEntries() {
-      const tbody = document.getElementById('page-add-tbody');
-      const rows = tbody.querySelectorAll('tr'); 
-      const validRows = [];
-      const detailLog = [];
-      let successCount = 0; 
-      let successQty = 0;
-
-      for (let i = 0; i < rows.length; i += 2) {
-          const topRow = rows[i];
-          const bottomRow = rows[i+1];
-
-          const no = topRow.querySelector('.no-cell').innerText;
-          const cardNo = topRow.querySelector('.page-card-no').value.trim();
-          let nameText = topRow.querySelector('.card-name-disp').innerText;
-          
-          if (!cardNo) continue; 
-
-          let another = topRow.querySelector('.page-card-another').value;
-          let proc = bottomRow.querySelector('.page-card-proc').value;
-          
-          let locSelect = bottomRow.querySelector('.page-card-loc');
-          let loc = locSelect.value;
-          if (loc === 'DIRECT') loc = bottomRow.querySelector('.loc-direct').value.trim();
-          
-          const qtyVal = bottomRow.querySelector('.page-card-qty').value;
-          const qty = parseInt(qtyVal);
-
-          let failReason = null;
-          if (nameText.includes("입력") || nameText.includes("오류") || nameText.includes("확인")) {
-              failReason = "invalid_no"; nameText = "유효하지 않은 카드";
-          } else if (!proc) failReason = "no_proc";
-          else if (!loc) failReason = "no_loc";
-          else if (!qty || qty < 1) failReason = "invalid_qty";
-
-          if (failReason) {
-              detailLog.push({ no, name: nameText, cardNo, another, proc: proc||"미선택", loc: loc||"미선택", qty: qty||0, status: 'fail', failReason });
-              topRow.dataset.status = 'fail'; // Mark Fail
-          } else {
-              validRows.push([nameText, cardNo, proc, qty, loc, another]);
-              detailLog.push({ no, name: nameText, cardNo, another, proc, loc, qty, status: 'success' });
-              successCount++;
-              successQty += qty;
-              topRow.dataset.status = 'success'; // Mark Success
-          }
-      }
-
-      if (validRows.length > 0) {
-          showLoading(true, "등록 중...");
-          try {
-              await callApi('addCards', {}, validRows);
-              showLoading(false);
-              showResultModal(successCount, successQty, detailLog);
-          } catch (e) {
-              showLoading(false);
-              M.toast({html: '서버 통신 오류', classes: 'red darken-2'});
-          }
-      } else if (detailLog.length > 0) {
-          showResultModal(0, 0, detailLog); 
-      } else {
-          M.toast({html: '등록할 데이터가 없습니다.', classes: 'warning-yellow black-text'});
-      }
   }
 
   function decomposeHangul(str) { const CHO = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ']; const JUNG = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ']; const JONG = ['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','흐','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ']; let result = ""; for (let i = 0; i < str.length; i++) { const charCode = str.charCodeAt(i); if (charCode >= 0xAC00 && charCode <= 0xD7A3) { const code = charCode - 0xAC00; const choIndex = Math.floor(code / 588); const jungIndex = Math.floor((code % 588) / 28); const jongIndex = code % 28; result += CHO[choIndex] + JUNG[jungIndex] + JONG[jongIndex]; } else { result += str.charAt(i); } } return result; }
@@ -1235,52 +1407,64 @@
 
       const filteredRows = localCardDatabase.filter(row => targetNames.has(String(row[0]))); 
       
+      // [NEW] Logic for Cross-Fade within Search Mode
       if (currentMode === 'search') {
           const wrapper = document.getElementById('content-slider-wrapper');
-          const contentWrapper = document.getElementById('result-content-wrapper');
-          const resultArea = document.getElementById('result-area');
+          const contentWrapper = document.getElementById('result-content-wrapper'); // .content-section
+          const resultArea = document.getElementById('result-area'); // The Table
 
+          // 1. Lock Height (Animation Start)
           const oldHeight = wrapper.offsetHeight;
           wrapper.style.height = oldHeight + 'px';
 
+          // 2. Create Ghost (Clone of current table)
           const ghost = resultArea.cloneNode(true);
           ghost.id = 'result-ghost';
           ghost.style.position = 'absolute';
           ghost.style.top = '0';
+          // Match margins of resultArea to align perfectly
           ghost.style.left = '0';
           ghost.style.right = '0';
           ghost.style.marginLeft = 'auto';
           ghost.style.marginRight = 'auto';
-          ghost.style.marginTop = '0';
-          ghost.style.paddingTop = '30px';
+          ghost.style.marginTop = '0'; // Margin removed
+          ghost.style.paddingTop = '30px'; // Inherited, but key is margin 0
           ghost.style.width = '100%';
           ghost.style.maxWidth = '700px';
           ghost.style.zIndex = '5';
           ghost.style.transition = 'opacity 0.4s ease';
           
+          // Make parent relative so absolute ghost positions correctly
+          // [FIX] Move ghost to wrapper to avoid height impact on contentWrapper
           wrapper.appendChild(ghost);
 
+          // 3. Render New Data (Updates #result-area)
           renderTable(filteredRows); 
 
+          // 4. Prepare New State
           resultArea.style.opacity = '0';
           resultArea.style.transition = 'opacity 0.4s ease';
           
+          // Measure New Height - [FIX] Simple offsetHeight thanks to padding
           const newHeight = resultArea.offsetHeight;
 
+          // 5. Animate (Next Frame)
           requestAnimationFrame(() => {
               wrapper.style.height = newHeight + 'px';
               ghost.style.opacity = '0';
               resultArea.style.opacity = '1';
           });
 
+          // 6. Cleanup after 400ms
           setTimeout(() => {
               if(ghost.parentNode) ghost.parentNode.removeChild(ghost);
-              wrapper.style.height = ''; 
+              wrapper.style.height = ''; // Auto
               resultArea.style.opacity = '';
               resultArea.style.transition = '';
           }, 400);
 
       } else {
+          // Normal Switch (Not from search mode)
           renderTable(filteredRows); 
           switchToMode('search'); 
       }
@@ -1295,9 +1479,11 @@
   function getLocalizedRarity(key) { if (!key) return ""; const info = rarityLookup[key]; if (info && info.data[currentRegion]) { return info.data[currentRegion]; } return key; }
   
   function renderTable(rows) { 
+      // showLoading(false); // [FIX] Removed
       const resultArea = document.getElementById('result-area'); 
       if (rows.length === 0) { 
           resultArea.innerHTML = "<p class='center'>결과 없음</p>"; 
+          // [FIX] Removed animation triggering logic
           return; 
       } 
       const groups = {}; 
@@ -1306,6 +1492,7 @@
       Object.keys(groups).forEach(cardNo => { const rowId = `row-${cardNo}`.replace(/[^a-zA-Z0-9]/g, ''); const cardRows = rows.filter(r => String(r[1]) === cardNo); const totalQty = cardRows.reduce((sum, r) => sum + (parseInt(r[3]) || 0), 0); const locSet = new Set(cardRows.map(r => String(r[4])).filter(l => l)); const distinctKeys = [...new Set(cardRows.map(r => String(r[2]).trim()).filter(k => k))]; distinctKeys.sort((a, b) => { const infoA = rarityLookup[a]; const infoB = rarityLookup[b]; const idxA = infoA ? infoA.index : 999999; const idxB = infoB ? infoB.index : 999999; return idxA - idxB || a.localeCompare(b); }); const displayNamesForSummary = [...new Set(distinctKeys.map(k => rarityMap[k] || k))]; const procStr = displayNamesForSummary.join(", "); const locStr = [...locSet].join(", "); const anotherGroups = {}; cardRows.forEach(r => { const another = String(r[5] || "").trim(); const displayAnother = another === "" ? "기본" : another; if(!anotherGroups[displayAnother]) anotherGroups[displayAnother] = []; anotherGroups[displayAnother].push(r); }); let leftTableHtml = `<table class="split-table"><thead><tr><th class="fp-col-1">일러스트</th><th class="fp-col-2">보관 위치</th><th class="fp-col-3">총 수량</th></tr></thead><tbody>`; let rightTableHtml = `<table class="split-table"><thead><tr>`; distinctKeys.forEach(key => { const info = rarityLookup[key]; let displayName = key; let tooltipContent = key; if (info) { displayName = info.data.display || key; tooltipContent = info.data[currentRegion] || key; } tooltipContent = tooltipContent.replace(/\(/g, '<br>('); rightTableHtml += `<th class="sp-col tooltipped" data-position="top" data-tooltip="${tooltipContent}">${displayName}</th>`; }); rightTableHtml += `</tr></thead><tbody>`; const anotherKeys = Object.keys(anotherGroups).sort((a, b) => { if (a === "기본") return -1; if (b === "기본") return 1; return a.localeCompare(b, undefined, { numeric: true }); }); anotherKeys.forEach(another => { const grpRows = anotherGroups[another]; const locGroups = {}; grpRows.forEach(r => { const loc = String(r[4]); const proc = String(r[2]); const qty = parseInt(r[3]) || 0; if(!locGroups[loc]) locGroups[loc] = { total: 0, procs: {} }; locGroups[loc].total += qty; locGroups[loc].procs[proc] = (locGroups[loc].procs[proc] || 0) + qty; }); const locKeys = Object.keys(locGroups); locKeys.forEach((loc, idx) => { const d = locGroups[loc]; leftTableHtml += `<tr>`; if(idx === 0) leftTableHtml += `<td rowspan="${locKeys.length}">${another}</td>`; leftTableHtml += `<td>${loc}</td><td>${d.total}</td></tr>`; rightTableHtml += `<tr>`; distinctKeys.forEach(key => { const val = d.procs[key] || 0; rightTableHtml += `<td>${val}</td>`; }); rightTableHtml += `</tr>`; }); }); leftTableHtml += `</tbody></table>`; rightTableHtml += `</tbody></table>`; newHtml += ` <div class="new-card-box"> <div class="summary-split-wrapper"> <div class="summary-left">${cardNo}</div> <div class="summary-right"> <table class="summary-table"> <tr><td class="summary-label-cell">보관 위치</td><td class="summary-label-cell">수량</td></tr> <tr><td class="summary-value-cell">${locStr}</td><td class="summary-value-cell">${totalQty}</td></tr> <tr><td class="summary-label-cell border-double-top">보유 레어도</td><td class="summary-value-cell border-double-top">${procStr}</td></tr> </table> </div> </div> <div id="detail-${rowId}" class="detail-slide-wrapper"> <div class="split-table-wrapper"> <div class="fixed-side">${leftTableHtml}</div> <div class="scroll-side">${rightTableHtml}</div> </div> </div> <button class="show-more-btn" onclick="toggleNewDetail('detail-${rowId}')"><span>자세히 보기</span><i class="material-icons tiny">keyboard_arrow_down</i></button> </div> `; }); 
       resultArea.innerHTML = newHtml; 
       M.Tooltip.init(resultArea.querySelectorAll('.tooltipped'), { html: true, margin: 3 }); 
+      // [FIX] Removed animation triggering logic
   }
   function toggleNewDetail(detailId) { const content = document.getElementById(detailId); const btn = content.nextElementSibling; const textSpan = btn.querySelector('span'); const icon = btn.querySelector('i'); if (content.style.maxHeight) { content.style.maxHeight = null; textSpan.innerText = '자세히 보기'; icon.innerText = 'keyboard_arrow_down'; } else { content.style.maxHeight = content.scrollHeight + "px"; textSpan.innerText = '간략히 보기'; icon.innerText = 'keyboard_arrow_up'; } }
   function toggleAnother(rowId) {}
@@ -1323,40 +1510,7 @@
   async function submitNewCards() { const tbody = document.getElementById('add-card-tbody'); const validRows = []; const detailLog = []; let successCount = 0; let successQty = 0; for (let tr of tbody.children) { const no = tr.cells[0].innerText; const cardNo = tr.querySelector('.new-card-no').value.trim(); let name = tr.querySelector('.card-name-fetch').innerText; if (!cardNo) continue; let another = tr.querySelector('.new-card-another').value.trim(); let proc = tr.querySelector('.new-card-proc').value; let loc = tr.querySelector('.new-card-loc').value === 'DIRECT' ? tr.querySelector('.loc-direct').value.trim() : tr.querySelector('.new-card-loc').value; const qty = parseInt(tr.querySelector('.new-card-qty').value); let failReason = null; if (name.includes("유효하지 않은") || name.includes("확인하세요") || name.includes("결과 없음")) { failReason = "invalid_no"; name = "유효하지 않은 카드 번호"; } else if (name.includes("조회 중") || name.includes("오류")) { failReason = "error"; name = "조회 오류"; } else if (!proc) { failReason = "no_proc"; proc = "미선택"; } else if (!loc) { failReason = "no_loc"; loc = "미선택"; } if (failReason) { detailLog.push({ no, name, cardNo, another, proc, loc, qty, status: 'fail', failReason }); tr.dataset.status = 'fail'; } else { validRows.push([name, cardNo, proc, qty, loc, another]); detailLog.push({ no, name, cardNo, another, proc, loc, qty, status: 'success' }); successCount++; successQty += qty; tr.dataset.status = 'success'; } } if (validRows.length > 0) { const btn = document.getElementById('add-submit-btn'); btn.classList.add('disabled'); showLoading(true, "기록 중..."); try { await callApi('addCards', {}, validRows); showLoading(false); showResultModal(successCount, successQty, detailLog); } catch (e) { showLoading(false); btn.classList.remove('disabled'); M.toast({html: '서버 통신 오류', classes: 'red darken-2 rounded'}); } } else { showResultModal(0, 0, detailLog); } }
   function showResultModal(count, totalQty, detailLog) { const modal = M.Modal.getInstance(document.getElementById('add-result-modal')); document.getElementById('result-success-text').innerText = `${count}종의 카드 ${totalQty}장을 등록했습니다.`; const failCount = detailLog.filter(l => l.status === 'fail').length; document.getElementById('result-fail-text').innerText = failCount > 0 ? `(${failCount}종의 카드를 등록할 수 없습니다.)` : ""; hasRegisteredInSession = true; let summaryHtml = ""; const successLogs = detailLog.filter(l => l.status === 'success'); if (successLogs.length > 0) { const aggregated = {}; successLogs.forEach(l => { const name = l.name; const no = l.cardNo; const q = l.qty; if(!aggregated[name]) aggregated[name] = {}; if(!aggregated[name][no]) aggregated[name][no] = 0; aggregated[name][no] += q; }); Object.keys(aggregated).forEach(name => { const numbers = Object.keys(aggregated[name]); numbers.forEach((no, idx) => { summaryHtml += `<tr class="success-row">`; if(idx === 0) summaryHtml += `<td rowspan="${numbers.length}">${name}</td>`; summaryHtml += `<td>${no}</td><td>${aggregated[name][no]}장</td></tr>`; }); }); } const failLogs = detailLog.filter(l => l.status === 'fail'); if (failLogs.length > 0) { failLogs.forEach((l) => { let reason = l.name; if(l.failReason === "no_proc" || l.failReason === "no_loc") reason = `${l.failReason === "no_proc" ? "레어도" : "보관 위치"} 미선택`; else if(l.failReason === "invalid_no") reason = "존재하지 않은 카드 번호"; summaryHtml += `<tr class="fail-row">`; summaryHtml += `<td style="color:var(--error-red);">${reason}</td><td>${l.cardNo}</td><td>-</td></tr>`; }); } document.getElementById('result-summary-body').innerHTML = summaryHtml; let detailHtml = detailLog.map(l => { const rowClass = l.status === 'success' ? 'success-row' : 'fail-row'; return `<tr class="${rowClass}"><td>${l.no}</td><td style="${l.status==='fail' && (l.failReason==='invalid_no' || l.failReason==='error') ? 'color:var(--error-red); font-weight:700;' : ''}">${l.name}</td><td>${l.cardNo}</td><td>${l.another || '-'}</td><td style="${l.status==='fail' && l.failReason==='no_proc' ? 'color:var(--error-red); font-weight:700;' : ''}">${l.proc}</td><td style="${l.status==='fail' && l.failReason==='no_loc' ? 'color:var(--error-red); font-weight:700;' : ''}">${l.loc}</td><td>${l.qty}</td></tr>`; }).join(''); document.getElementById('result-detail-body').innerHTML = detailHtml; document.getElementById('result-detail-box').style.display = 'none'; document.getElementById('toggle-icon').innerText = 'keyboard_arrow_down'; modal.open(); }
   function toggleResultDetail() { const box = document.getElementById('result-detail-box'); const icon = document.getElementById('toggle-icon'); const isHidden = box.style.display === 'none'; box.style.display = isHidden ? 'block' : 'none'; icon.innerText = isHidden ? 'keyboard_arrow_up' : 'keyboard_arrow_down'; }
-  // [MODIFIED] handleContinueRegistration: 행 단위 삭제
-  function handleContinueRegistration() { 
-      M.Modal.getInstance(document.getElementById('add-result-modal')).close(); 
-      const tbody = document.getElementById('page-add-tbody'); 
-      const rows = Array.from(tbody.children); 
-      let hasFailures = false; 
-
-      // 2줄씩 묶어서 처리, 역순으로 순회해야 삭제 시 인덱스 문제 없음
-      for (let i = rows.length - 2; i >= 0; i -= 2) {
-          const topRow = rows[i];
-          const bottomRow = rows[i+1];
-          
-          if (topRow.dataset.status === 'success') {
-              tbody.removeChild(topRow);
-              tbody.removeChild(bottomRow);
-          } else {
-              hasFailures = true;
-              delete topRow.dataset.status; // 실패 상태 초기화
-          }
-      }
-
-      if (!hasFailures) { 
-          addPageEntry(); 
-      }
-      
-      // 인덱스 재정렬은 복잡하므로 여기서는 생략하고 새로고침을 유도하거나 그대로 둠
-      // (완벽하게 하려면 남은 행들의 No를 다시 매겨야 함)
-      // 간단히 남은 행들의 번호만 업데이트
-      const remainingRows = tbody.querySelectorAll('tr');
-      for (let i = 0; i < remainingRows.length; i += 2) {
-          const noCell = remainingRows[i].querySelector('.no-cell');
-          if (noCell) noCell.innerText = (i / 2) + 1;
-      }
-  }
+  function handleContinueRegistration() { M.Modal.getInstance(document.getElementById('add-result-modal')).close(); const tbody = document.getElementById('add-card-tbody'); let hasFailures = false; Array.from(tbody.children).forEach(tr => { if (tr.dataset.status === 'success') { tr.remove(); } else { hasFailures = true; delete tr.dataset.status; } }); if (!hasFailures) { addMoreRows(1); } else { reIndexRows(); const currentCount = tbody.children.length; const remainder = currentCount % 5; if (remainder !== 0) { addMoreRows(5 - remainder); } } document.getElementById('add-card-modal').dataset.keepData = "true"; const addCardModal = M.Modal.getInstance(document.getElementById('add-card-modal')); if (!addCardModal.isOpen) { addCardModal.open(); } }
   function saveSettings() { const url = document.getElementById('sheet-url').value; const match = url.match(/[-\w]{25,}/); if (match) { localStorage.setItem(STORAGE_KEY, match[0]); location.reload(); } }
   function disconnectSheet() { localStorage.removeItem(STORAGE_KEY); location.reload(); }
   function saveRecentSearch(name) { let recent = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]'); recent = [name, ...recent.filter(n => n !== name)].slice(0, 5); localStorage.setItem(RECENT_KEY, JSON.stringify(recent)); }
