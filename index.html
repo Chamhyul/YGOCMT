@@ -117,6 +117,11 @@
       --table-border-specific: rgb(180, 220, 220);
     }
 
+    /* [v0.14.0] 다크 모드 버튼 텍스트 가독성 개선 */
+    html.dark-mode .btn.cyan-theme {
+        color: #282828 !important;
+    }
+
     body, input, button, table, .btn, .modal-content, select { font-family: 'Pretendard', sans-serif !important; }
     
     body { 
@@ -198,18 +203,15 @@
     
     .content-cell {
         padding: 0;
-        /* v0.13.5: td에서 container-type 제거 (Wrapper로 이동) */
     }
 
-    /* [v0.13.5] Safari 이슈 해결을 위한 컨테이너 래퍼 */
+    /* [v0.14.0] 컨테이너 쿼리 로직 제거 후 단순 래퍼로 변경 */
     .content-wrapper {
         width: 100%;
         height: 100%;
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-        container-type: inline-size; /* 여기서 컨테이너 선언 */
-        container-name: cell-context;
     }
 
     .entry-row-top {
@@ -240,39 +242,31 @@
     }
     
     .input-wrap {
-        /* [v0.13.7] 기본값(flex) 제거 -> 아래 w-* 클래스에서 기본값 정의 */
+        /* [v0.14.0] 기본값 (모바일 우선) */
         width: 0; 
         border-right: 1px solid var(--table-border-specific) !important;
-        /* [v0.13.9] 딜레이 없음 (기본 상태는 즉시 반응) */
         transition: flex 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
     .input-wrap:last-child {
         border-right: none;
     }
 
-    /* [v0.13.7] 기본값(Base)을 모바일 비율로 설정 (튕김 방지 및 초기화) */
-    .w-img { flex: 1.1 !important; }
-    .w-rare { flex: 1 !important; }
-    .w-loc { flex: 1.2 !important; }
-    .w-qty { flex: 0.7 !important; }
+    /* [v0.14.0] 모바일 비율 (기본) */
+    .w-img { flex: 1.1; }
+    .w-rare { flex: 1; }
+    .w-loc { flex: 1.2; }
+    .w-qty { flex: 0.7; }
 
-    /* [v0.13.7] 컨테이너가 440px 초과(충분히 넓음)일 때만 Desktop(1:1:1:1) 적용 */
-    @container cell-context (min-width: 441px) {
-        /* [v0.13.9] 튕김 방지 핵심: Desktop 비율로 '진입'할 때만 0.45s 지연 */
-        /* 사이드바 애니메이션(0.4s) 동안 일시적으로 넓어져도 즉시 변하지 않음 */
+    /* [v0.14.0] 태블릿 및 데스크탑 뷰 (≥ 601px) 레이아웃 재설계 */
+    @media only screen and (min-width: 601px) {
+        /* 1:1:1:1 비율 강제 */
         .input-wrap { 
-            flex: 1 1 0px !important; 
+            flex: 1 !important; 
         }
-    }
-
-    /* [v0.13.9] 안전 구간 확장: 625px까지 강제 모바일 비율 적용 */
-    /* 사이드바 애니메이션 등으로 인해 600px ~ 625px 구간에서 컨테이너 너비가 일시적으로 넓어져도 */
-    /* 미디어 쿼리가 우선순위를 가져서 모바일 비율을 유지함 (튕김 방지) */
-    @media only screen and (max-width: 625px) {
-        .w-img { flex: 1.1 !important; }
-        .w-rare { flex: 1 !important; }
-        .w-loc { flex: 1.2 !important; }
-        .w-qty { flex: 0.7 !important; }
+        /* 수량 셀 최소 너비 확보 */
+        .w-qty {
+            min-width: 110px !important;
+        }
     }
 
     /* datalist 화살표(Indicator) 제거 */
@@ -871,7 +865,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.13.10</span>
+        <span class="footer-item">ver. 0.14.0</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
