@@ -115,6 +115,7 @@
       --table-border-specific: rgb(180, 220, 220);
     }
 
+    /* [v0.14.2] 다크 모드 버튼 텍스트 가독성 개선 */
     html.dark-mode .btn.cyan-theme {
         color: #282828 !important;
     }
@@ -133,7 +134,8 @@
         flex-direction: column;
     }
 
-    /* === HEADER & ANIMATION LOGIC (GOLDEN ANCHOR SYSTEM) === */
+    /* === HEADER & ANIMATION LOGIC (UNIFIED TRANSFORM SYSTEM) === */
+    /* 더 이상 모바일/PC를 나누지 않고, 부모 컨테이너(Wrapper) 기준 상대 좌표로 동작합니다. */
     
     #dynamic-header-wrapper { 
         position: relative; 
@@ -147,7 +149,7 @@
         max-width: 100%; 
     }
 
-    /* 1. Base Styles (Home Mode) */
+    /* 1. Logo Container Animation */
     .app-title-container { 
         position: absolute; 
         display: flex; 
@@ -156,26 +158,16 @@
         z-index: 2; 
         width: 220px; 
         margin: 0 !important; 
-        transform: none; 
         
-        /* Golden Anchor: Center */
+        /* Home Mode: Center of Wrapper */
         top: 30px;
         left: 50%;
-        margin-left: -110px !important; /* -Width/2 */
+        transform: translateX(-50%); /* Perfectly centered */
         
         transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); 
     }
 
-    .synapse-logo-container { 
-        position: relative; 
-        display: inline-block; 
-        max-width: 250px; 
-        overflow: hidden; 
-        white-space: nowrap; 
-        transition: max-width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); 
-        vertical-align: middle; 
-    }
-
+    /* 2. Search Box Animation & Fluid Width */
     .search-box { 
         position: absolute; 
         padding: 0; 
@@ -186,100 +178,79 @@
         align-items: center; 
         z-index: 1; 
         margin: 0 !important; 
-        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); 
-        will-change: top, left, width, margin-left; 
-
-        /* Golden Anchor: Center */
+        
+        /* Home Mode: Center of Wrapper */
         top: 130px;
-        width: min(95%, 700px); 
         left: 50%;
-        /* Fluid Margin: Moves fluidly with width */
-        margin-left: calc(min(95%, 700px) * -0.5) !important; 
+        transform: translateX(-50%); /* Perfectly centered */
+        
+        /* Fluid Width: Max 700px, but shrinks on mobile (95%) */
+        width: min(95%, 700px); 
+        
+        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); 
+        will-change: top, left, width, transform; 
     }
 
     .search-header-row { width: 100%; max-width: 700px; margin: 0 auto; display: flex; justify-content: flex-start; padding-left: 5px; margin-bottom: 5px; transition: opacity 0.3s ease; }
     
+    /* [v0.14.2] Flex Locking - Prevent Wrapping on Mobile */
     .search-row { 
-        display: flex; align-items: center; justify-content: center; width: 100%; gap: 8px; 
+        display: flex; 
+        align-items: center; 
+        justify-content: flex-start; /* Changed to start for compact mode alignment */
+        width: 100%; 
+        gap: 8px; 
         max-width: 700px !important; 
-        justify-content: flex-start; 
+        margin: 0 auto; /* Center content within the fluid box */
+        flex-wrap: nowrap; /* CRITICAL: Prevent line break */
         transition: margin 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), max-width 0.4s; 
-        margin: 0 auto;
     }
 
-    /* 2. Compact Mode (PC/Tablet > 600px) - Golden Anchor Shift */
-    @media only screen and (min-width: 601px) {
-        body.mode-compact #dynamic-header-wrapper { 
-            height: 70px; 
-            margin-top: 0; 
-            max-width: 700px; 
-            margin-left: auto; 
-            margin-right: auto; 
-        }
+    /* === COMPACT MODE (UNIFIED FOR ALL DEVICES) === */
+    /* 로고와 검색바가 좌측으로 이동하며, 검색바 너비는 남은 공간에 맞게 줄어듭니다. */
+    
+    body.mode-compact #dynamic-header-wrapper { 
+        height: 70px; 
+        margin-top: 0; 
+        max-width: 700px; 
+        margin-left: auto; 
+        margin-right: auto; 
+    }
 
-        body.mode-compact .app-title-container { 
-            top: 27px; 
-            left: 50%; /* Keep Anchor */
-            /* Calc Margin to place at left: 10px */
-            /* Formula: Desired_Left - 50vw */
-            margin-left: calc(10px - 50vw) !important; 
-            width: 3.9rem !important; 
-        }
-
-        body.mode-compact .search-box { 
-            top: 22px; 
-            left: 50%; /* Keep Anchor */
-            width: min(calc(100% - 90px), 630px); 
-            /* Calc Margin to place at left: 80px */
-            margin-left: calc(80px - 50vw) !important; 
-            align-items: flex-start; 
-        }
-
-        body.mode-compact .search-row { margin: 0; }
+    body.mode-compact .app-title-container { 
+        top: 27px; 
         
-        body.mode-compact .synapse-logo-container { max-width: 3.9rem; width: 3.9rem; }
-        body.mode-compact .synapse-text-logo { opacity: 0; }
-        body.mode-compact .title-ygo, body.mode-compact .title-beta { display: none !important; }
-        body.mode-compact .search-header-row { opacity: 0; pointer-events: none; height: 0; margin: 0; }
-    }
-
-    /* 3. Mobile Overrides (< 600px Only) */
-    /* Mobile uses simple positioning, no Golden Anchor math needed */
-    @media only screen and (max-width: 600px) {
-        /* Reset Home Mode for Mobile */
-        .app-title-container {
-            left: 50%;
-            margin-left: -110px !important;
-        }
-        .search-box {
-            left: 50%;
-            margin-left: -47.5% !important; /* Half of 95% */
-            width: 95%;
-        }
-
-        /* Compact Mode Mobile */
-        body.mode-compact #dynamic-header-wrapper {
-            margin-left: 0; margin-right: 0; max-width: 100%;
-        }
-
-        body.mode-compact .app-title-container {
-            left: 0;
-            margin-left: 0 !important;
-        }
-
-        body.mode-compact .search-box {
-            left: 67px;
-            width: calc(100% - 67px);
-            margin-left: 0 !important;
-        }
+        /* Move to Left Anchor */
+        left: 10px; 
+        transform: translateX(0); /* Reset center alignment */
         
-        body.mode-compact .synapse-logo-container { max-width: 3.9rem; width: 3.9rem; }
-        body.mode-compact .synapse-text-logo { opacity: 0; }
-        body.mode-compact .title-ygo, body.mode-compact .title-beta { display: none !important; }
-        body.mode-compact .search-header-row { opacity: 0; pointer-events: none; height: 0; margin: 0; }
+        width: 3.9rem !important; 
     }
+
+    body.mode-compact .search-box { 
+        top: 22px; 
+        
+        /* Move next to Logo */
+        left: 80px; 
+        transform: translateX(0); /* Reset center alignment */
+        
+        /* Fluid Width: Fill remaining space minus logo & margins */
+        width: calc(100% - 90px); 
+        align-items: flex-start; 
+    }
+
+    body.mode-compact .search-row { 
+        margin: 0; /* Remove internal centering margin */
+    }
+    
+    /* Compact Element Visibility */
+    body.mode-compact .synapse-logo-container { max-width: 3.9rem; width: 3.9rem; }
+    body.mode-compact .synapse-text-logo { opacity: 0; }
+    body.mode-compact .title-ygo, body.mode-compact .title-beta { display: none !important; }
+    body.mode-compact .search-header-row { opacity: 0; pointer-events: none; height: 0; margin: 0; }
 
     /* Common Styles */
+    .synapse-logo-container { position: relative; display: inline-block; max-width: 250px; overflow: hidden; white-space: nowrap; transition: max-width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); vertical-align: middle; }
     .synapse-text-logo { position: relative; z-index: 2; font-size: 2.6rem; font-weight: 900; color: #000000; letter-spacing: 2px; line-height: 1; transition: color 0.3s, opacity 0.3s; }
     html.dark-mode .synapse-text-logo { color: #ffffff; }
     .logo-bg-wrapper { position: absolute; top: 1px; bottom: 1px; left: 0; right: 0; z-index: 1; }
@@ -652,9 +623,16 @@
     .help-trigger-btn { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 4px; transition: color 0.2s; height: 18px !important; line-height: 1 !important; }
     .help-trigger-btn i { font-size: 0.8rem; transform: translateY(-1px); }
     @media (hover: hover) { .help-trigger-btn:hover { color: var(--primary-color); } }
-    .search-input-wrapper { flex: 1; position: relative; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 24px; padding: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: border-radius 0.2s ease, box-shadow 0.2s ease; z-index: 1001; }
+    .search-input-wrapper { 
+        flex: 1; 
+        min-width: 0; /* [v0.14.2] Allow shrinking below content size */
+        position: relative; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 24px; padding: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: border-radius 0.2s ease, box-shadow 0.2s ease; z-index: 1001; 
+    }
     .search-input-wrapper.active { border-radius: 24px 24px 0 0; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-bottom: 1px solid transparent; }
-    #search-btn { border-radius: 50px !important; width: 80px; height: 45px; padding: 0; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    #search-btn { 
+        border-radius: 50px !important; width: 80px; height: 45px; padding: 0; display: flex; align-items: center; justify-content: center; 
+        flex-shrink: 0; /* [v0.14.2] Prevent button shrink */
+    }
     input#card-search { text-align: left !important; font-size: 1.1rem; padding-left: 20px !important; padding-right: 40px !important; box-sizing: border-box; color: var(--text-primary); border-bottom: none !important; box-shadow: none !important; height: 46px !important; margin: 0 !important; width: 100%; display: block; }
     input#card-search::placeholder { color: var(--text-muted); }
     html.dark-mode ::placeholder { color: #757575 !important; }
@@ -993,7 +971,7 @@
         <span>해당 내용은 서버에 저장되지 않습니다.</span>
     </p>
     <div class="footer-info-box">
-        <span class="footer-item">ver. 0.14.1</span>
+        <span class="footer-item">ver. 0.14.2</span>
         <span class="footer-separator">|</span>
         <span class="footer-item">Made by <a href="https://www.youtube.com/@참혈" target="_blank" class="maker-link"><i class="fab fa-youtube"></i> 참혈</a></span>
         <span class="footer-separator mobile-hide">|</span>
